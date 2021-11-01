@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableReactiveMethodSecurity
-public class SecurityConfiguration  /*extends WebSecurityConfigurerAdapter*/ {
+public class SecurityConfiguration {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
 
@@ -24,7 +25,14 @@ public class SecurityConfiguration  /*extends WebSecurityConfigurerAdapter*/ {
     @Bean
     SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
         return http.cors().and().csrf().disable().authorizeExchange(
-                authorize -> authorize.anyExchange().authenticated()
+                authorize -> authorize
+                        .anyExchange()
+                        .authenticated()
+                        .and()
+                        .addFilterBefore(
+                                new JWTAuthorizationFilter(this.userService),
+                                SecurityWebFiltersOrder.AUTHENTICATION
+                        )
         ).build();
     }
 
