@@ -10,6 +10,10 @@ import java.util.Date;
 @Data
 @Document(collection = "user_profiles")
 public class UserProfile {
+    public enum FamilyStatus {
+        SINGLE, MARRIED
+    };
+
     @Id
     @NotNull
     private String id;
@@ -26,9 +30,9 @@ public class UserProfile {
 
     private String aboutMe;
 
-    private int kids;
+    private int kids = 0;
 
-    private String familyStatus;
+    private FamilyStatus familyStatus = FamilyStatus.SINGLE;
 
     public UserProfile() {}
 

@@ -1,49 +1,36 @@
 package com.romanm.jwtservicedata.configs.auth;
 
-import com.auth0.jwt.algorithms.Algorithm;
-import com.romanm.jwtservicedata.constants.AuthenticationConfigConstants;
-import com.romanm.jwtservicedata.models.auth.AuthUser;
+
 import com.romanm.jwtservicedata.services.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import com.auth0.jwt.JWT;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Фильтр для идентификации токена по публичному ключу
  */
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+public class JWTAuthorizationFilter implements WebFilter {
     private UserService userService;
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
-        super(authenticationManager);
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(exchange);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return chain.filter(exchange);
     }
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, UserService userService) {
-        super(authenticationManager);
+
+    public JWTAuthorizationFilter(UserService userService) {
         this.userService = userService;
     }
 
-    /**
-     *
-     * @param request
-     * @param response
-     * @param chain
-     * @throws IOException
-     * @throws ServletException
-     */
-    @Override
+
+  /*  @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
 
@@ -56,15 +43,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
-    }
+    }*/
 
-    /**
-     *
-     * @param request
-     * @return
-     */
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
+
+    private UsernamePasswordAuthenticationToken getAuthentication(ServerWebExchange exchange) {
+        /*String token = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
         if (token != null) {
             // parse the token.
             String username = null;
@@ -95,7 +78,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
             }
             return null;
-        }
+        }*/
         return null;
     }
 }
