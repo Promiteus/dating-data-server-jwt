@@ -23,8 +23,6 @@ public class SecurityConfiguration {
         this.userService = userService;
     }
 
-
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
        return http

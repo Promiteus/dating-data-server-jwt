@@ -1,21 +1,21 @@
 package com.romanm.jwtservicedata.controllers;
 
 import com.romanm.jwtservicedata.models.Product;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping(value = "/api")
 public class ProductController {
-    private List<Product> products;
+    private Flux<Product> products;
 
 
     public ProductController() {
-        products = List.of(
+        products = Flux.just(
                 new Product("Кресло"),
                 new Product("Стиральная машина"),
                 new Product("Варочная панель"),
@@ -24,7 +24,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/products")
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(products);
+    public ResponseEntity<Flux<Product>> getAll() {
+        return ResponseEntity.accepted().contentType(MediaType.APPLICATION_JSON).body(products);
     }
 }
