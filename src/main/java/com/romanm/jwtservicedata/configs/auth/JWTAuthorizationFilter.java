@@ -1,58 +1,65 @@
 package com.romanm.jwtservicedata.configs.auth;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.romanm.jwtservicedata.constants.AuthenticationConfigConstants;
+import com.romanm.jwtservicedata.models.auth.AuthUser;
 import com.romanm.jwtservicedata.services.UserService;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 
+
 /**
  * Фильтр для идентификации токена по публичному ключу
  */
 public class JWTAuthorizationFilter implements WebFilter {
-    private UserService userService;
-
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(exchange);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return chain.filter(exchange);
-    }
-
+    private final UserService userService;
 
     public JWTAuthorizationFilter(UserService userService) {
         this.userService = userService;
     }
 
 
-  /*  @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
 
-        if (header == null || !header.startsWith(AuthenticationConfigConstants.TOKEN_PREFIX)) {
-            chain.doFilter(request, response);
-            return;
+        if (exchange.getRequest().getHeaders().get(AuthenticationConfigConstants.HEADER_STRING) != null) {
+            String header = exchange.getRequest().getHeaders().get(AuthenticationConfigConstants.HEADER_STRING).get(0);
+
+            if (header == null || !header.startsWith(AuthenticationConfigConstants.TOKEN_PREFIX)) {
+                return response.setComplete();
+            }
+
+            AuthUser authUser = getAuthentication(exchange);
+            if (authUser == null) {
+                return response.setComplete();
+            }
+        } else {
+            AuthenticationConfigConstants.getDecodedUserMsg(null, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
+            return response.setComplete();
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(request, response);
-    }*/
+        response.setStatusCode(HttpStatus.OK); //Если токен валидный и срок его не истек
+        return chain.filter(exchange);
+    }
 
 
-    private UsernamePasswordAuthenticationToken getAuthentication(ServerWebExchange exchange) {
-        /*String token = request.getHeader(AuthenticationConfigConstants.HEADER_STRING);
+
+    private AuthUser getAuthentication(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().get(AuthenticationConfigConstants.HEADER_STRING).get(0);
+
         if (token != null) {
-            // parse the token.
-            String username = null;
+            String userName = null;
             try {
-                username = JWT.require(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()))
+                userName = JWT.require(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()))
                         .build()
                         .verify(token.replace(AuthenticationConfigConstants.TOKEN_PREFIX, ""))
                         .getSubject();
@@ -60,13 +67,12 @@ public class JWTAuthorizationFilter implements WebFilter {
                 AuthenticationConfigConstants.invalidToken(e.getMessage());
             }
 
-            if (username != null) {
-                AuthenticationConfigConstants.getDecodedUserMsg(username, request.getRequestURI(), request.getMethod());
-
-                AuthUser authUser = this.userService.readUserByUsername(username);
+            AuthenticationConfigConstants.getDecodedUserMsg(userName, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
+            if (userName != null) {
+                AuthUser authUser = this.userService.readUserByUsername(userName);
 
                 if (authUser == null) {
-                    AuthenticationConfigConstants.getUserNotFoundMsg(username);
+                    AuthenticationConfigConstants.getUserNotFoundMsg(userName);
                     return null;
                 }
 
@@ -74,11 +80,10 @@ public class JWTAuthorizationFilter implements WebFilter {
                     AuthenticationConfigConstants.userBlocked(authUser.getUsername());
                     return null;
                 }
-
-                return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                return authUser;
             }
             return null;
-        }*/
+        }
         return null;
     }
 }

@@ -14,6 +14,8 @@ public class AuthenticationConfigConstants {
     public static final String MSG_USER_NOT_FOUND = "User '%s' not found!";
     public static final String MSG_USER_BLOCKED = "User '%s' was blocked!";
 
+    public static final String UNKNOWN_USER = "Uncknown";
+
     public static String prefixMsg(String msg) {
         return MSG_PREFIX+msg;
     }
@@ -56,7 +58,7 @@ public class AuthenticationConfigConstants {
      * @param method
      */
     public static void getDecodedUserMsg(String username, String url, String method) {
-        String msg = String.format("User '%s' requested data: %s %s", username, method, url);
+        String msg = String.format("User '%s' requested data: %s %s", (username == null) ? UNKNOWN_USER : username, method, url);
         log.info(prefixMsg(msg));
     }
 }
