@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.Product;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = Api.API_PREFIX)
 public class ProductController {
     private Flux<Product> products;
 

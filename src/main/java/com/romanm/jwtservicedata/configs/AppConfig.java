@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
-@EnableReactiveMongoRepositories
+@EnableReactiveMongoRepositories(value = "com.romanm.jwtservicedata.repositories")
 public class AppConfig {
     @Bean
     public BCryptPasswordEncoder getPasswordEncoder() {

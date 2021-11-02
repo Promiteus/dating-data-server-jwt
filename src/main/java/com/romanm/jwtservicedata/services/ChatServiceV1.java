@@ -1,0 +1,30 @@
+package com.romanm.jwtservicedata.services;
+
+import com.romanm.jwtservicedata.models.ChatMessage;
+import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
+import com.romanm.jwtservicedata.services.interfaces.IChatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+@Service
+public class ChatServiceV1 implements IChatService {
+    private final ChatMessageRepository chatMessageRepository;
+
+    @Autowired
+    public ChatServiceV1(ChatMessageRepository chatMessageRepository) {
+        this.chatMessageRepository = chatMessageRepository;
+    }
+
+    @Override
+    public Mono<ChatMessage> saveMessage(ChatMessage chatMessage) {
+        return this.chatMessageRepository.save(chatMessage);
+    }
+
+    @Override
+    public Mono<List<ChatMessage>> findMessages(String userId) {
+        return this.chatMessageRepository.findChatMessageByUserId(userId);
+    }
+}
