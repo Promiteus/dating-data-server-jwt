@@ -1,8 +1,10 @@
 package com.romanm.jwtservicedata.models.auth;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -18,12 +20,19 @@ public class AuthUser implements Serializable {
     private String password;
     private List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
     private boolean disabled;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date regDate;
+    private String email;
+    private boolean verifiedEmail;
 
     public AuthUser(String username, String password, List<GrantedAuthority> grantedAuthorities, boolean disabled) {
         this.username = username;
         this.password = password;
         this.grantedAuthorities = grantedAuthorities;
         this.disabled = disabled;
+        this.email = username;
+
+        this.regDate =new Date();
     }
 
     @Override
@@ -34,6 +43,9 @@ public class AuthUser implements Serializable {
                 ", password=''" +
                 ", grantedAuthorities=" + grantedAuthorities +
                 ", disabled=" + disabled +
+                ", regDate=" + regDate +
+                ", email='" + email + '\'' +
+                ", verifiedEmail=" + verifiedEmail +
                 '}';
     }
 }
