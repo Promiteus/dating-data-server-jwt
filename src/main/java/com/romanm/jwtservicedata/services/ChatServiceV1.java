@@ -4,7 +4,8 @@ import com.romanm.jwtservicedata.models.ChatMessage;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
 import com.romanm.jwtservicedata.services.interfaces.IChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,7 +26,9 @@ public class ChatServiceV1 implements IChatService {
     }
 
     @Override
-    public Flux<ChatMessage> findMessages(String userId, Pageable pageable) {
-        return this.chatMessageRepository.findChatMessageByUserId(userId, pageable);
+    public Flux<ChatMessage> findMessages(String userId, int page, int size, Sort.Direction direction) {
+        return this.chatMessageRepository.findChatMessageByUserId(userId, PageRequest.of(page, size, direction));
     }
+
+
 }
