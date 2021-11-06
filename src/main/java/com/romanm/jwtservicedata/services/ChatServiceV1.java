@@ -27,7 +27,7 @@ public class ChatServiceV1 implements IChatService {
 
     @Override
     public Flux<ChatMessage> findMessages(String userId, int page, int size, Sort.Direction direction) {
-        return this.chatMessageRepository.findChatMessageByUserId(userId, PageRequest.of(page, size, direction));
+        return this.chatMessageRepository.findChatMessageByUserId(userId);
     }
 
 

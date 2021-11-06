@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,12 @@ public class ChatMessage implements Serializable {
     @Indexed(unique = true)
     private String userId;
     private String message;
-    private LocalDateTime localDateTime;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
+
+    public ChatMessage(String userId, String message) {
+        this.message = message;
+        this.userId = userId;
+        this.timestamp = LocalDateTime.now();
+    }
 }
