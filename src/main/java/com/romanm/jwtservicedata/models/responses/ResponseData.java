@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 
 @Data
+@Getter
 @NoArgsConstructor
 public class ResponseData<T> implements Serializable {
     private Flux<T> data;
