@@ -21,7 +21,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
-@Document(collection = "user_profiles")
+@Document(collection = CommonConstants.USER_PROFILE_COLLECTION)
 public class UserProfile implements Serializable {
     @NotNull
     @Indexed(unique = true)

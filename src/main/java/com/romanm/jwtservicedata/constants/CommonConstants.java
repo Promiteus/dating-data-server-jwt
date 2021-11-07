@@ -15,4 +15,7 @@ public class CommonConstants
     }
 
     public static final String COMMENT_COLLECTION = "comments";
+    public static final String LIKE_COLLECTION = "likes";
+    public static final String CHAT_MESSAGE_COLLECTION = "chat_messages";
+    public static final String USER_PROFILE_COLLECTION = "user_profiles";
 }

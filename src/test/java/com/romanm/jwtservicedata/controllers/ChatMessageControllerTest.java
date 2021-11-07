@@ -22,6 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -37,7 +38,7 @@ public class ChatMessageControllerTest {
     public void getChatMessagePage() {
         Flux<ChatMessage> messages = Flux.create(chatMessageFluxSink -> {
             for (int i = 0; i < 100; i++) {
-                chatMessageFluxSink.next(new ChatMessage(Integer.toString(i), "message "+i));
+                chatMessageFluxSink.next(new ChatMessage(Integer.toString(i), Integer.toString(i+1000), "message "+i));
             }
             chatMessageFluxSink.complete();
         });
