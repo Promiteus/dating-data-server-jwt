@@ -7,7 +7,6 @@ import com.romanm.jwtservicedata.services.interfaces.IChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -35,10 +34,10 @@ public class ChatMessageController {
         Flux<ChatMessage> chatMessages = this.chatService.findMessages(userId, page, pageSize, Sort.Direction.ASC);
 
         return Mono.create(sink -> {
-            List<ChatMessage> msgList = new ArrayList<ChatMessage>();
+            List<ChatMessage> msgList = new ArrayList<>();
             chatMessages.collectList().subscribe(item -> {
                 msgList.addAll(item);
-                sink.success(ResponseEntity.ok(new ResponseData<ChatMessage>(0, 10, msgList)));
+                sink.success(ResponseEntity.ok(new ResponseData<>(0, 10, msgList)));
             });
         });
     }
