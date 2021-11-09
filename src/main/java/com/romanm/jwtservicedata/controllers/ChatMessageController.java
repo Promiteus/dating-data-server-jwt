@@ -35,10 +35,14 @@ public class ChatMessageController {
 
         return Mono.create(sink -> {
             List<ChatMessage> msgList = new ArrayList<>();
-            chatMessages.collectList().subscribe(item -> {
-                msgList.addAll(item);
+            if (chatMessages != null) {
+                chatMessages.collectList().subscribe(item -> {
+                    msgList.addAll(item);
+                    sink.success(ResponseEntity.ok(new ResponseData<>(0, 10, msgList)));
+                });
+            } else {
                 sink.success(ResponseEntity.ok(new ResponseData<>(0, 10, msgList)));
-            });
+            }
         });
     }
 
