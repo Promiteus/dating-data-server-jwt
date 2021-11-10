@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping(value = Api.API_PREFIX)
 public class UserProfileController {
 
-    @GetMapping(value = Api.API_USER_PRIFILE_USER_ID)
+    @GetMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<ResponseEntity<UserProfile>> getUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
 
         return Mono.create(sink -> {
@@ -18,7 +18,7 @@ public class UserProfileController {
         });
     }
 
-    @PostMapping(value = Api.API_USER_PRIFILE)
+    @PostMapping(value = Api.API_USER_PROFILE)
     public Mono<ResponseEntity<UserProfile>> updateUserProfile(@RequestBody UserProfile userProfile) {
 
         return Mono.create(sink -> {
@@ -26,7 +26,7 @@ public class UserProfileController {
         });
     }
 
-    @DeleteMapping(value = Api.API_USER_PRIFILE_USER_ID)
+    @DeleteMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<Void> removeUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
 
         return Mono.create(sink -> {
