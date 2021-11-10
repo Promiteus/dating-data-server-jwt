@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-@Service
+@Service("chatServiceV1")
 public class ChatServiceV1 implements IChatService {
     private final ChatMessageRepository chatMessageRepository;
 
