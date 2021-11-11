@@ -3,7 +3,7 @@ package com.romanm.jwtservicedata.constants;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AuthenticationConfigConstants {
+public class MessageConstants {
     public static final String SECRET = "Java_to_Dev_Secret";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";

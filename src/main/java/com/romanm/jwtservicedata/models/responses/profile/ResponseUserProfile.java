@@ -3,12 +3,14 @@ package com.romanm.jwtservicedata.models.responses.profile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.models.UserProfile;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class ResponseUserProfile {
     private UserProfile userProfile; //Профиль пользователя
     private List<UserProfile> lastVisitors; //Список последних 10 посетителей

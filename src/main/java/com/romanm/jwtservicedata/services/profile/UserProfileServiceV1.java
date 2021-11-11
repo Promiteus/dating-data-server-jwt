@@ -6,24 +6,45 @@ import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("userProfileServiceV1")
 public class UserProfileServiceV1 implements IUserProfileService {
 
-    private UserProfileRepository userProfileRepository;
-    private VisitorRepository visitorRepository;
+    private final UserProfileRepository userProfileRepository;
+    private final VisitorRepository visitorRepository;
 
     @Autowired
     public UserProfileServiceV1(UserProfileRepository userProfileRepository, VisitorRepository visitorRepository) {
         this.userProfileRepository = userProfileRepository;
         this.visitorRepository = visitorRepository;
+    }
+
+    private void success(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
+        ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
+
+        log.info("profile: "+profile);
+        visitorFlux.collectList().subscribe(visitors -> {
+            if ((visitors != null) && (visitors.size() > 0)) {
+                List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
+                this.userProfileRepository.findUserProfilesByUserIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
+                    responseUserProfile.getLastVisitors().addAll(userProfiles);
+                    //Профиль пользователя с визитерами
+                    sink.success(responseUserProfile);
+                });
+            }
+            //Профиль пользователя без визитеров
+            sink.success(responseUserProfile);
+        });
     }
 
     /**
@@ -44,23 +65,12 @@ public class UserProfileServiceV1 implements IUserProfileService {
         Flux<Visitor> visitorFlux = this.visitorRepository.findVisitorByUserId(userId);
 
         return Mono.create(sink -> {
-            userProfile.subscribe(profile -> {
-                ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
-
-                visitorFlux.collectList().subscribe(visitors -> {
-                    if ((visitors != null) && (visitors.size() > 0)) {
-                        List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
-                        this.userProfileRepository.findUserProfilesByUserIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
-                            responseUserProfile.getLastVisitors().addAll(userProfiles);
-                            //Профиль пользователя с визитерами
-                            sink.success(responseUserProfile);
-                        });
-                    }
-                    //Профиль пользователя без визитеров
-                    sink.success(responseUserProfile);
-                });
-            });
-        });
+            userProfile.doOnSuccess(profile -> {
+                this.success(sink, profile, visitorFlux);
+             }).subscribe(profile -> {
+                this.success(sink, profile, visitorFlux);
+             });
+         });
     }
 
     /**
@@ -92,7 +102,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
                 sink.success(false);
             });
         }
-        this.userProfileRepository.removeByUserId(userId);
+        this.userProfileRepository.deleteByUserId(userId);
 
         return Mono.create(sink -> {
             this.userProfileRepository.findUserProfileByUserId(userId).subscribe(profile -> {
