@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,6 +24,9 @@ import java.util.Date;
 @Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Document(collection = CommonConstants.USER_PROFILE_COLLECTION)
 public class UserProfile implements Serializable {
+    @Id
+    @NotNull
+    private String id;
     @NotNull
     @Indexed(unique = true)
     private String userId; //код пользователя по регистрации

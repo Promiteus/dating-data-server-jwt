@@ -38,37 +38,40 @@ public class UserProfileServiceV1Test {
     }
 
     @Test
-    public void getUserProfileMonoTest() {
-       // this.userProfileRepository.deleteByUserId(TEST_USER_ID).block();
+    public void getUserProfileMonoTest() throws InterruptedException {
+        this.userProfileRepository.removeUserProfileByUserId(TEST_USER_ID).block();
+        log.info(MessageConstants.prefixMsg("Deleted profile! "));
 
 
         UserProfile userProfileTest = new UserProfile();
-        userProfileTest.setUserId(TEST_USER_ID);
-        userProfileTest.setFirstName("Roman");
-        userProfileTest.setLastName("Matveev");
-        userProfileTest.setBirthDate(new Date(1987, Calendar.MAY, 22));
-        userProfileTest.setKids(0);
-        userProfileTest.setWeight(68);
-        userProfileTest.setHeight(170);
-        userProfileTest.setAboutMe("Обо мне");
-        this.userProfileRepository.save(userProfileTest).subscribe(profile -> {
-            log.info(MessageConstants.prefixMsg("userProfile save: " + profile));
-        });
+            userProfileTest.setUserId(TEST_USER_ID);
+            userProfileTest.setFirstName("Roman");
+            userProfileTest.setLastName("Matveev");
+            Calendar c = Calendar.getInstance();
+            c.set(1987, Calendar.MAY, 23, 0, 0);
+            userProfileTest.setBirthDate(c.getTime());
+            userProfileTest.setKids(0);
+            userProfileTest.setWeight(68);
+            userProfileTest.setHeight(170);
+            userProfileTest.setAboutMe("Обо мне");
+            this.userProfileRepository.save(userProfileTest).subscribe(profile -> {
+                log.info(MessageConstants.prefixMsg("userProfile save: " + profile));
+            });
 
-        Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileByUserId("12");
+            Thread.sleep(1000);
 
-        userProfileMono.doOnSuccess(userProfile -> {
-            log.info(MessageConstants.prefixMsg("userProfile doOnSuccess: " + userProfile));
-        }).doOnSubscribe(cons -> {
-            log.info(MessageConstants.prefixMsg("userProfile doOnSubscribe: " + cons));
-        }).doOnError(error -> {
-            log.info(MessageConstants.prefixMsg("Error: " + error.getMessage()));
-        }).subscribe(userProfile -> {
-            log.info(MessageConstants.prefixMsg("userProfile instant: " + userProfile));
+            Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileByUserId("12");
 
-            this.userProfileRepository.delete(userProfile).block();
-            log.info(MessageConstants.prefixMsg("Removed profile with userId: " + userProfileTest.getUserId()));
-        });
+            userProfileMono.doOnSuccess(userProfile -> {
+                log.info(MessageConstants.prefixMsg("userProfile doOnSuccess: " + userProfile));
+            }).doOnSubscribe(cons -> {
+                log.info(MessageConstants.prefixMsg("userProfile doOnSubscribe: " + cons));
+            }).doOnError(error -> {
+                log.info(MessageConstants.prefixMsg("Error: " + error.getMessage()));
+            }).subscribe(userProfile -> {
+                log.info(MessageConstants.prefixMsg("userProfile instant: " + userProfile));
+
+            });
 
 
     }

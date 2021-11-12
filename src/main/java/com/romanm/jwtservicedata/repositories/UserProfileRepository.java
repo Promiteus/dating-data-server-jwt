@@ -13,8 +13,5 @@ import java.util.List;
 public interface UserProfileRepository extends ReactiveCrudRepository<UserProfile, String> {
      Mono<UserProfile> findUserProfileByUserId(String userId);
      Flux<UserProfile> findUserProfilesByUserIdIn(List<String> userIds);
-
-     @Query(value="{userId:'?0'}")
-     Mono<Void> deleteByUserId(String userId);
-
+     Mono<UserProfile> removeUserProfileByUserId(String userId);
 }

@@ -49,8 +49,8 @@ public class UserProfileServiceV1 implements IUserProfileService {
 
     /**
      * Получить сосnавную сущность профиля пользовтаеля
-     * @param userId
-     * @return
+     * @param userId String
+     * @return Mono<ResponseUserProfile>
      */
     @Override
     public Mono<ResponseUserProfile> getUserProfile(String userId) {
@@ -75,8 +75,8 @@ public class UserProfileServiceV1 implements IUserProfileService {
 
     /**
      * Сохранить новый профиль или изменить текущий
-     * @param userProfile
-     * @return
+     * @param userProfile UserProfile
+     * @return  Mono<UserProfile>
      */
     @Override
     public Mono<UserProfile> saveOrUpdateUserProfile(UserProfile userProfile) {
@@ -91,9 +91,9 @@ public class UserProfileServiceV1 implements IUserProfileService {
 
     /**
      * Удалить профиль пользователя
-     * @param userId
-     * @param soft
-     * @return
+     * @param userId String
+     * @param soft boolean
+     * @return Mono<Boolean>
      */
     @Override
     public Mono<Boolean> removeUserProfile(String userId, boolean soft) {
@@ -102,12 +102,11 @@ public class UserProfileServiceV1 implements IUserProfileService {
                 sink.success(false);
             });
         }
-        this.userProfileRepository.deleteByUserId(userId);
 
         return Mono.create(sink -> {
-            this.userProfileRepository.findUserProfileByUserId(userId).subscribe(profile -> {
-                sink.success(profile == null);
-            });
+            this.userProfileRepository.removeUserProfileByUserId(userId).doOnSuccess(cons -> {
+                sink.success(cons != null);
+            }).subscribe();
         });
     }
 
