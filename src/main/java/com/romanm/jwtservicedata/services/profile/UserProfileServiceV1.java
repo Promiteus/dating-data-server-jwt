@@ -23,12 +23,23 @@ public class UserProfileServiceV1 implements IUserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final VisitorRepository visitorRepository;
 
+    /**
+     *
+     * @param userProfileRepository UserProfileRepository
+     * @param visitorRepository VisitorRepository
+     */
     @Autowired
     public UserProfileServiceV1(UserProfileRepository userProfileRepository, VisitorRepository visitorRepository) {
         this.userProfileRepository = userProfileRepository;
         this.visitorRepository = visitorRepository;
     }
 
+    /**
+     *
+     * @param sink MonoSink<ResponseUserProfile>
+     * @param profile UserProfile
+     * @param visitorFlux Flux<Visitor>
+     */
     private void success(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
         ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
 

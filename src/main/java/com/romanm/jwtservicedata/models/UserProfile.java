@@ -26,20 +26,24 @@ import java.util.Date;
 public class UserProfile implements Serializable {
     @Id
     @NotNull
-    //@Indexed(unique = true)
     private String userId; //код пользователя по регистрации
     @NotBlank
     private String firstName; //Имя
     private String lastName; //Фамилия
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthDate; //Год рождения
+    @Indexed(name = "height")
     private int height; //Рост
+    @Indexed(name = "weight")
     private int weight; //Масса тела
     @Size(max = 1000)
     private String aboutMe; //О себе
+   // @Indexed(useGeneratedName = true)
     private int kids = 0; //Количество детей
     private CommonConstants.FamilyStatus familyStatus = CommonConstants.FamilyStatus.SINGLE; //Семейное положение
     private long rank = 1000; //Ранг по позиции анкеты
+   // @Indexed(useGeneratedName = true)
     private CommonConstants.SexOrientation sexOrientation = CommonConstants.SexOrientation.HETERO; //Суксуальная ориентация
+    //@Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
 }
