@@ -26,9 +26,7 @@ import java.util.Date;
 public class UserProfile implements Serializable {
     @Id
     @NotNull
-    private String id;
-    @NotNull
-    @Indexed(unique = true)
+    //@Indexed(unique = true)
     private String userId; //код пользователя по регистрации
     @NotBlank
     private String firstName; //Имя

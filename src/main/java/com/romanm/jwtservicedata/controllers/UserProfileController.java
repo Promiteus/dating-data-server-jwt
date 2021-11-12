@@ -32,23 +32,20 @@ public class UserProfileController {
                     sink.success(ResponseEntity.notFound().build());
                 }
             });
-            //sink.success(ResponseEntity.notFound().build());
         });
     }
 
     @PostMapping(value = Api.API_USER_PROFILE)
-    public Mono<ResponseEntity<UserProfile>> updateUserProfile(@RequestBody UserProfile userProfile) {
+    public Mono<ResponseEntity<UserProfile>> updateOrSaveUserProfile(@RequestBody UserProfile userProfile) {
 
         Mono<UserProfile> userProfileMono = this.userProfileService.saveOrUpdateUserProfile(userProfile);
 
         return Mono.create(sink -> {
-            userProfileMono.subscribe(profile -> {
-                if (profile != null) {
-                    sink.success(ResponseEntity.accepted().build());
-                } else {
-                    sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
-                }
-            });
+            userProfileMono.doOnSuccess(userProfile1 -> {
+                sink.success(ResponseEntity.accepted().build());
+            }).doOnError(error -> {
+                sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
+            }).subscribe();
         });
     }
 

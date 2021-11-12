@@ -67,9 +67,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
         return Mono.create(sink -> {
             userProfile.doOnSuccess(profile -> {
                 this.success(sink, profile, visitorFlux);
-             }).subscribe(profile -> {
-                this.success(sink, profile, visitorFlux);
-             });
+             }).subscribe();
          });
     }
 
