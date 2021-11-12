@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.models.responses.profile;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.models.UserProfile;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
