@@ -32,7 +32,7 @@ public class UserProfileControllerTest {
     private IUserProfileService userProfileService;
 
     public void initEmptyVisitors() {
-        log.info(MessageConstants.prefixMsg("init() test"));
+        log.info(MessageConstants.prefixMsg("initEmptyVisitors() test"));
 
                  UserProfile userProfileTest = new UserProfile();
                  userProfileTest.setUserId("100");
@@ -46,19 +46,22 @@ public class UserProfileControllerTest {
                  userProfileTest.setHeight(170);
                  userProfileTest.setAboutMe("Обо мне ");
 
+        //200
         Mockito.when(this.userProfileService.getUserProfile("100")).thenReturn(Mono.just(new ResponseUserProfile(userProfileTest, new ArrayList<>())));
-        Mockito.when(this.userProfileService.getUserProfile("")).thenReturn(Mono.just(new ResponseUserProfile(null, new ArrayList<>())));
+        //NOT FOUND 404
+        Mockito.when(this.userProfileService.getUserProfile("20")).thenReturn(Mono.just(new ResponseUserProfile(null, new ArrayList<>())));
 
         //ResponseUserProfile responseUserProfile = this.userProfileService.getUserProfile("100").block();
         log.info(MessageConstants.prefixMsg(this.userProfileService.getUserProfile("100").block().toString()));
+        log.info(MessageConstants.prefixMsg(this.userProfileService.getUserProfile("20").block().toString()));
     }
 
     /**
-     * Тест запроса GET /api/user_profile/100
+     * Тест запроса GET /api/user_profile/100 (200)
      */
     @Test
-    public void getUserProfile() {
-        log.info(MessageConstants.prefixMsg("getUserProfile() test"));
+    public void getUserProfileEmptyVisitorsV1() {
+        log.info(MessageConstants.prefixMsg("getUserProfileEmptyVisitorsV1() test"));
         this.initEmptyVisitors();
 
         this.webTestClient
@@ -72,6 +75,38 @@ public class UserProfileControllerTest {
                     log.info(MessageConstants.prefixMsg("Got body: "+body));
                     Assert.assertEquals("100", body.getUserProfile().getUserId());
                 });
+    }
+
+    /**
+     * Тест запроса GET /api/user_profile (405)
+     */
+    @Test
+    public void getUserProfileEmptyVisitorsV2() {
+        log.info(MessageConstants.prefixMsg("getUserProfileEmptyVisitorsV2() test"));
+        this.initEmptyVisitors();
+
+        this.webTestClient
+                .get()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE)
+                .exchange()
+                .expectStatus()
+                .is4xxClientError();
+    }
+
+    /**
+     * Тест запроса GET /api/user_profile/20 (200)
+     */
+    @Test
+    public void getUserProfileEmptyVisitorsV3() {
+        log.info(MessageConstants.prefixMsg("getUserProfileEmptyVisitorsV1() test"));
+        this.initEmptyVisitors();
+
+        this.webTestClient
+                .get()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/20")
+                .exchange()
+                .expectStatus()
+                .isNotFound();
     }
 
     @Test

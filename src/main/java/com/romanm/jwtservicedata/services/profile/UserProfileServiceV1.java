@@ -43,7 +43,6 @@ public class UserProfileServiceV1 implements IUserProfileService {
     private void success(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
         ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
 
-        log.info("profile: "+profile);
         visitorFlux.collectList().subscribe(visitors -> {
             if ((visitors != null) && (visitors.size() > 0)) {
                 List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
@@ -76,7 +75,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
         Flux<Visitor> visitorFlux = this.visitorRepository.findVisitorByUserId(userId);
 
         return Mono.create(sink -> {
-            userProfile.doOnSuccess(profile -> {
+             userProfile.doOnSuccess(profile -> {
                 this.success(sink, profile, visitorFlux);
              }).subscribe();
          });

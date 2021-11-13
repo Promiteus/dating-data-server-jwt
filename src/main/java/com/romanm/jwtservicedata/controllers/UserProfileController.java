@@ -26,7 +26,7 @@ public class UserProfileController {
         return Mono.create(sink -> {
             Mono<ResponseUserProfile> responseUserProfileMono = this.userProfileService.getUserProfile(userId);
             responseUserProfileMono.subscribe(userProfile -> {
-                if  (userProfile != null) {
+                if  (userProfile.getUserProfile() != null) {
                     sink.success(ResponseEntity.ok().body(userProfile));
                 } else {
                     sink.success(ResponseEntity.notFound().build());
