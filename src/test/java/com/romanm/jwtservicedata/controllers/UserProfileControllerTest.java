@@ -117,15 +117,32 @@ public class UserProfileControllerTest {
     }
 
     @Test
-    public void removeUserProfile() {
-        log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile() test"));
-        this.initEmptyVisitors();
+    public void removeUserProfile202() {
+        log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile202() test"));
+        Mockito.when(this.userProfileService.removeUserProfile("100", false)).thenReturn(Mono.just(true));
 
         this.webTestClient
                 .delete()
                 .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/100")
                 .exchange()
                 .expectStatus()
-                .isOk();
+                .isAccepted();
+
+        log.info(MessageConstants.prefixMsg("Deleting was successful, code 202!"));
+    }
+
+    @Test
+    public void removeUserProfile304() {
+        log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile304() test"));
+        Mockito.when(this.userProfileService.removeUserProfile("20", false)).thenReturn(Mono.just(false));
+
+        this.webTestClient
+                .delete()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/20")
+                .exchange()
+                .expectStatus()
+                .isNotModified();
+
+        log.info(MessageConstants.prefixMsg("Deleting was failed, code 304!"));
     }
 }

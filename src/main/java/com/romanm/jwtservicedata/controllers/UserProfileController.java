@@ -16,11 +16,20 @@ public class UserProfileController {
 
     private final IUserProfileService userProfileService;
 
+    /**
+     * Конструктор UserProfileController
+     * @param userProfileService IUserProfileService
+     */
     @Autowired
     public UserProfileController(IUserProfileService userProfileService) {
         this.userProfileService = userProfileService;
     }
 
+    /**
+     * Получить профиль пользователя
+     * @param userId String
+     * @return Mono<ResponseEntity<ResponseUserProfile>>
+     */
     @GetMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<ResponseEntity<ResponseUserProfile>> getUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
         return Mono.create(sink -> {
@@ -35,6 +44,11 @@ public class UserProfileController {
         });
     }
 
+    /**
+     * Создать/изменить профиль пользователя
+     * @param userProfile UserProfile
+     * @return Mono<ResponseEntity<UserProfile>>
+     */
     @PostMapping(value = Api.API_USER_PROFILE)
     public Mono<ResponseEntity<UserProfile>> updateOrSaveUserProfile(@RequestBody UserProfile userProfile) {
 
@@ -49,6 +63,11 @@ public class UserProfileController {
         });
     }
 
+    /**
+     * Удалить профиль пользователя
+     * @param userId String
+     * @return  Mono<ResponseEntity<Void>>
+     */
     @DeleteMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<ResponseEntity<Void>> removeUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
 
