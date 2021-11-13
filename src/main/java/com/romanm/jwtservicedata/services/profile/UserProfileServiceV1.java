@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
         visitorFlux.collectList().subscribe(visitors -> {
             if ((visitors != null) && (visitors.size() > 0)) {
                 List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
-                this.userProfileRepository.findUserProfilesByUserIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
+                this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
                     responseUserProfile.getLastVisitors().addAll(userProfiles);
                     //Профиль пользователя с визитерами
                     sink.success(responseUserProfile);
@@ -71,7 +72,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
             });
         }
 
-        Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileByUserId(userId);
+        Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
         Flux<Visitor> visitorFlux = this.visitorRepository.findVisitorByUserId(userId);
 
         return Mono.create(sink -> {
@@ -94,6 +95,8 @@ public class UserProfileServiceV1 implements IUserProfileService {
             });
         }
 
+        //userProfile.setUserId(UUID.randomUUID().toString());
+        log.info("save userProfile: "+userProfile);
         return this.userProfileRepository.save(userProfile);
     }
 
@@ -112,7 +115,7 @@ public class UserProfileServiceV1 implements IUserProfileService {
         }
 
         return Mono.create(sink -> {
-            this.userProfileRepository.removeUserProfileByUserId(userId).doOnSuccess(cons -> {
+            this.userProfileRepository.removeUserProfileById(userId).doOnSuccess(cons -> {
                 sink.success(cons != null);
             }).subscribe();
         });

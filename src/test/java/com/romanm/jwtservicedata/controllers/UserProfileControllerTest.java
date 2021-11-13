@@ -35,7 +35,7 @@ public class UserProfileControllerTest {
         log.info(MessageConstants.prefixMsg("initEmptyVisitors() test"));
 
                  UserProfile userProfileTest = new UserProfile();
-                 userProfileTest.setUserId("100");
+                 userProfileTest.setId("100");
                  userProfileTest.setFirstName("Roman");
                  userProfileTest.setLastName("Matveev");
                  Calendar c = Calendar.getInstance();
@@ -73,7 +73,7 @@ public class UserProfileControllerTest {
                 .expectBody(ResponseUserProfile.class)
                 .value(body -> {
                     log.info(MessageConstants.prefixMsg("Got body: "+body));
-                    Assert.assertEquals("100", body.getUserProfile().getUserId());
+                    Assert.assertEquals("100", body.getUserProfile().getId());
                 });
     }
 
@@ -94,7 +94,7 @@ public class UserProfileControllerTest {
     }
 
     /**
-     * Тест запроса GET /api/user_profile/20 (200)
+     * Тест запроса GET /api/user_profile/20 (404)
      */
     @Test
     public void getUserProfileEmptyVisitorsV3() {
@@ -112,10 +112,20 @@ public class UserProfileControllerTest {
     @Test
     public void updateOrSaveUserProfile() {
         log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile() test"));
+
+
     }
 
     @Test
     public void removeUserProfile() {
         log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile() test"));
+        this.initEmptyVisitors();
+
+        this.webTestClient
+                .delete()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/100")
+                .exchange()
+                .expectStatus()
+                .isOk();
     }
 }

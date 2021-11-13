@@ -5,8 +5,6 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -21,12 +19,12 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+//@Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Document(collection = CommonConstants.USER_PROFILE_COLLECTION)
 public class UserProfile implements Serializable {
     @Id
     @NotNull
-    private String userId; //код пользователя по регистрации
+    private String id; //код пользователя по регистрации
     @NotBlank
     private String firstName; //Имя
     private String lastName; //Фамилия

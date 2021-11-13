@@ -30,7 +30,7 @@ public class UserProfileServiceV1Test {
 
     @Test
     public void getUserProfileMonoBlockTest() {
-        Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileByUserId("12");
+        Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileById("12");
 
         UserProfile userProfile = userProfileMono.block();
 
@@ -39,12 +39,12 @@ public class UserProfileServiceV1Test {
 
     @Test
     public void getUserProfileMonoTest() throws InterruptedException {
-        this.userProfileRepository.removeUserProfileByUserId(TEST_USER_ID).block();
+        this.userProfileRepository.removeUserProfileById(TEST_USER_ID).block();
         log.info(MessageConstants.prefixMsg("Deleted profile! "));
 
 
         UserProfile userProfileTest = new UserProfile();
-            userProfileTest.setUserId(TEST_USER_ID);
+            userProfileTest.setId(TEST_USER_ID);
             userProfileTest.setFirstName("Roman");
             userProfileTest.setLastName("Matveev");
             Calendar c = Calendar.getInstance();
@@ -60,7 +60,7 @@ public class UserProfileServiceV1Test {
 
             Thread.sleep(1000);
 
-            Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileByUserId("12");
+            Mono<UserProfile> userProfileMono = this.userProfileRepository.findUserProfileById("12");
 
             userProfileMono.doOnSuccess(userProfile -> {
                 log.info(MessageConstants.prefixMsg("userProfile doOnSuccess: " + userProfile));

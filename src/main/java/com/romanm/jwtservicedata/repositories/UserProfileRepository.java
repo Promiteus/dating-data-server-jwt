@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface UserProfileRepository extends ReactiveCrudRepository<UserProfile, String> {
-     Mono<UserProfile> findUserProfileByUserId(String userId);
-     Flux<UserProfile> findUserProfilesByUserIdIn(List<String> userIds);
-     Mono<UserProfile> removeUserProfileByUserId(String userId);
+     Mono<UserProfile> findUserProfileById(String id);
+     Flux<UserProfile> findUserProfilesByIdIn(List<String> ids);
+     Mono<UserProfile> removeUserProfileById(String id);
 }
