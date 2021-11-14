@@ -6,26 +6,18 @@ import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
-import com.romanm.jwtservicedata.services.profile.UserProfileServiceV1;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -126,7 +118,7 @@ public class UserProfileControllerTest {
      */
     @Test
     public void getUserProfileEmptyVisitorsV3() {
-        log.info(MessageConstants.prefixMsg("getUserProfileEmptyVisitorsV1() test"));
+        log.info(MessageConstants.prefixMsg("getUserProfileEmptyVisitorsV3() test"));
         this.initEmptyVisitors();
 
         this.webTestClient
@@ -141,17 +133,18 @@ public class UserProfileControllerTest {
     public void updateOrSaveUserProfile() {
         log.info(MessageConstants.prefixMsg("updateOrSaveUserProfile() test"));
         UserProfile userProfile = this.getUserProfile();
+        userProfile.setId("10001");
 
         Mockito.when(this.userProfileService.saveOrUpdateUserProfile(userProfile)).thenReturn(Mono.just(userProfile));
 
-        this.webTestClient
+      /*  this.webTestClient
                 .post()
                 .uri(Api.API_PREFIX+Api.API_USER_PROFILE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromObject(userProfile))
-                .exchange();
-              /*  .expectStatus()
+                .body(Mono.just(userProfile), UserProfile.class)
+                .exchange()
+                .expectStatus()
                 .isAccepted();*/
 
       //  Mockito.verify(this.userProfileService, Mockito.times(1)).saveOrUpdateUserProfile(userProfile);

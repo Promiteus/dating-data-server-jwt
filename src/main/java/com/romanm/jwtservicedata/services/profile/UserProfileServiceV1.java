@@ -95,12 +95,6 @@ public class UserProfileServiceV1 implements IUserProfileService {
             });
         }
 
-        //userProfile.setUserId(UUID.randomUUID().toString());
-       /* Mono<UserProfile> profileMono = this.userProfileRepository.save(userProfile);
-        profileMono.doOnSuccess(s -> {
-            log.info("save userProfile: "+s);
-        }).subscribe();*/
-
         return this.userProfileRepository.save(userProfile);
     }
 
