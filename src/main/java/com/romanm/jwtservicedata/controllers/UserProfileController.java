@@ -55,8 +55,12 @@ public class UserProfileController {
         Mono<UserProfile> userProfileMono = this.userProfileService.saveOrUpdateUserProfile(userProfile);
 
         return Mono.create(sink -> {
-            userProfileMono.doOnSuccess(userProfile1 -> {
-                sink.success(ResponseEntity.accepted().build());
+            userProfileMono.doOnSuccess(profile -> {
+                if (profile != null) {
+                    sink.success(ResponseEntity.accepted().body(profile));
+                } else {
+                    sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
+                }
             }).doOnError(error -> {
                 sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
             }).subscribe();
