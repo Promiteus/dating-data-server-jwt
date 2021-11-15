@@ -33,7 +33,7 @@ public class UserProfileControllerIntegration {
     @Autowired
     private IUserProfileService userProfileService;
 
-    private static final String BREARER_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzNzczNjA3Mn0.H4LXCNO7NKUMrTu7DrTuYFwpk7K1MqVsoAxB74K6dMIg_bJgnIFe0YVPHjR8IjVgkwZSuKYuW0ITAhQsfW9_PQ";
+   // private static final String BREARER_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzNzczNjA3Mn0.H4LXCNO7NKUMrTu7DrTuYFwpk7K1MqVsoAxB74K6dMIg_bJgnIFe0YVPHjR8IjVgkwZSuKYuW0ITAhQsfW9_PQ";
 
     @Autowired
     private WebTestClient webTestClient;
@@ -62,33 +62,53 @@ public class UserProfileControllerIntegration {
                 .build();
     }
 
-    private void saveOrUpdateUserProfileRequestPostTest(WebClient webClient) {
-        UserProfile userProfile1 = this.getUserProfile();
-        userProfile1.setId("100001");
+    private void saveOrUpdateUserProfileRequestPostTest() {
+        UserProfile userProfile = this.getUserProfile();
+        userProfile.setId("100001");
+        this.userProfileService.removeUserProfile(userProfile.getId(), false).block();
 
-        webClient.post()
+        log.info(MessageConstants.prefixMsg("Trying to save new profile..."));
+        this.webTestClient.post()
                 .uri(Api.API_PREFIX+Api.API_USER_PROFILE)
-                .body(Mono.just(userProfile1), UserProfile.class)
+                .body(Mono.just(userProfile), UserProfile.class)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(UserProfile.class)
-                .doOnSuccess(res -> {
-                    log.info(MessageConstants.prefixMsg("Saved profile with id: "+userProfile1.getId()));
-                }).doOnError(error -> {
-                    log.info(MessageConstants.prefixMsg(String.format("Error was occured for 'id=%s'. Error: %s", userProfile1.getId(),  error.getMessage())));
-                }).subscribe();
+                .exchange()
+                .expectStatus()
+                .isAccepted()
+                .expectBody(UserProfile.class)
+                .value(res -> {
+                    log.info(MessageConstants.prefixMsg("Saved profile with id: "+userProfile.getId()));
+                });
+
+        log.info(MessageConstants.prefixMsg("Trying to update existing profile..."));
+        userProfile.setFirstName("Sergey");
+        userProfile.setLastName("Chertinov");
+        this.webTestClient.post()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE)
+                .body(Mono.just(userProfile), UserProfile.class)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isAccepted()
+                .expectBody(UserProfile.class)
+                .value(res -> {
+                    log.info(MessageConstants.prefixMsg("Updated profile with id: "+userProfile.getId()));
+                });
+
+        //Удалить тестируемую запись
+        this.userProfileService.removeUserProfile(userProfile.getId(), false).block();
     }
 
-    private void getResponseUserProfileGetTest(WebClient webClient) {
+    private void getResponseUserProfileGetTest() {
         UserProfile userProfile = this.getUserProfile();
         userProfile.setId("100002");
 
         this.userProfileService.removeUserProfile(userProfile.getId(), false).block();
         this.userProfileService.saveOrUpdateUserProfile(userProfile).block();
 
-
+        //Получить тестовую запись
         this.webTestClient.get()
-                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/100002")
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/"+userProfile.getId())
                 //.header(MessageConstants.HEADER_STRING, MessageConstants.TOKEN_PREFIX + BREARER_KEY)
                 .exchange()
                 .expectStatus()
@@ -96,14 +116,48 @@ public class UserProfileControllerIntegration {
                 .expectBody(ResponseUserProfile.class)
                 .value(resp -> {
                     log.info(MessageConstants.prefixMsg("Got response data: "+resp));
+                    this.userProfileService.removeUserProfile(userProfile.getId(), false).block();
+                });
+    }
+
+    private void removeUserProfileAndCheckTest() throws InterruptedException {
+        UserProfile userProfile = this.getUserProfile();
+        userProfile.setId("2839940555");
+        //Создать тестовую запись
+        this.userProfileService.saveOrUpdateUserProfile(userProfile).block();
+
+        log.info(MessageConstants.prefixMsg("Trying to delete created profile..."));
+        //Удалить тестовую запись
+        this.webTestClient.delete()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/"+userProfile.getId())
+                .exchange()
+                .expectStatus()
+                .isAccepted();
+
+        Thread.sleep(1000);
+
+        log.info(MessageConstants.prefixMsg("Trying find removed profile..."));
+        this.webTestClient.get()
+                .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/"+userProfile.getId())
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ResponseUserProfile.class)
+                .value(resp -> {
+                    log.info(MessageConstants.prefixMsg("Found profile: "+resp));
+                    if (resp == null) {
+                        log.info(MessageConstants.prefixMsg(String.format("Profile '%s' was deleted successfully!", userProfile.getId())));
+                    }
                 });
     }
 
     @Test
-    public void stepRestTest()  {
-        WebClient webClient = this.createWebClient();
-        //this.saveOrUpdateUserProfileRequestPostTest(webClient);
-        this.getResponseUserProfileGetTest(webClient);
-
+    public void stepRestTest() throws InterruptedException {
+        //Получить профиль пользователя из конечной точки
+        this.getResponseUserProfileGetTest();
+        //Сохранить профиль пользователя из конечной точки
+        this.saveOrUpdateUserProfileRequestPostTest();
+        //Удалить профиль пользователя из конечной точки
+        this.removeUserProfileAndCheckTest();
     }
 }
