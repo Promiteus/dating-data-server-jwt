@@ -4,6 +4,7 @@ import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
+import com.romanm.jwtservicedata.models.builders.UserProfileBuilder;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +34,20 @@ public class UserProfileControllerIntegration {
     private WebTestClient webTestClient;
 
     private UserProfile getUserProfile() {
-        UserProfile userProfileTest = new UserProfile();
-        userProfileTest.setId("100");
-        userProfileTest.setFirstName("Roman");
-        userProfileTest.setLastName("Matveev");
         Calendar c = Calendar.getInstance();
         c.set(1987, Calendar.MAY, 23, 0, 0);
-        userProfileTest.setBirthDate(c.getTime());
-        userProfileTest.setKids(0);
-        userProfileTest.setWeight(68);
-        userProfileTest.setHeight(170);
-        userProfileTest.setAboutMe("Обо мне ");
-        userProfileTest.setFamilyStatus(CommonConstants.FamilyStatus.MARRIED);
-        userProfileTest.setSex(CommonConstants.Sex.MAN);
-        userProfileTest.setSexOrientation(CommonConstants.SexOrientation.HOMO);
-        userProfileTest.setRank(2000);
-
-        return userProfileTest;
+        return UserProfileBuilder.create("100")
+          .setFirstName("Roman")
+          .setLastName("Matveev")
+          .setBirthDate(c.getTime())
+          .setKids(0)
+          .setWeight(68)
+          .setHeight(170)
+          .setAboutMe("Обо мне ")
+          .setFamilyStatus(CommonConstants.FamilyStatus.MARRIED)
+          .setSex(CommonConstants.Sex.MAN)
+          .setSexOrientation(CommonConstants.SexOrientation.HOMO)
+          .setRank(2000).build();
     }
 
     private WebClient createWebClient() {
