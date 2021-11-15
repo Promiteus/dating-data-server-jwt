@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.configs.auth.TestSecurityConfiguration;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
@@ -12,8 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,6 +27,8 @@ import java.util.Calendar;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(value = {"test"})
+@Import(value = TestSecurityConfiguration.class)
 public class UserProfileControllerIntegration {
     @Autowired
     private IUserProfileService userProfileService;
@@ -84,7 +89,7 @@ public class UserProfileControllerIntegration {
 
         this.webTestClient.get()
                 .uri(Api.API_PREFIX+Api.API_USER_PROFILE+"/100002")
-                .header(MessageConstants.HEADER_STRING, MessageConstants.TOKEN_PREFIX + BREARER_KEY)
+                //.header(MessageConstants.HEADER_STRING, MessageConstants.TOKEN_PREFIX + BREARER_KEY)
                 .exchange()
                 .expectStatus()
                 .isOk()
