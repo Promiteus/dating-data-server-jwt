@@ -13,8 +13,14 @@ public class MessageConstants {
 
     public static final String MSG_USER_NOT_FOUND = "User '%s' not found!";
     public static final String MSG_USER_BLOCKED = "User '%s' was blocked!";
+    public static final String MSG_SAVED_USER = "Saved user: %s";
+    public static final String MSG_CANT_SAVE_USER = "Can't save user: %s";
+    public static final String MSG_USER_PROFILE_COLLECTION_FILLED = "UserProfile collection is already filled!";
+    public static final String MSG_SAVED_CHAT_MESSAGES = "Saved chat messages count %d!";
+    public static final String MSG_CANT_SAVE_CHAT_MESSAGES = "Can't save chat messages!";
 
     public static final String UNKNOWN_USER = "Uncknown";
+
 
     public static String prefixMsg(String msg) {
         return MSG_PREFIX+msg;
