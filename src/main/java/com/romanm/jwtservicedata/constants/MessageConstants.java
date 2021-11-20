@@ -14,10 +14,12 @@ public class MessageConstants {
     public static final String MSG_USER_NOT_FOUND = "User '%s' not found!";
     public static final String MSG_USER_BLOCKED = "User '%s' was blocked!";
     public static final String MSG_SAVED_USER = "Saved user: %s";
-    public static final String MSG_CANT_SAVE_USER = "Can't save user: %s";
+    public static final String MSG_CANT_SAVE_USER = "Can't save users: %s";
     public static final String MSG_USER_PROFILE_COLLECTION_FILLED = "UserProfile collection is already filled!";
+    public static final String MSG_ALL_PROFILES_SAVED = "All profiles saved!";
     public static final String MSG_SAVED_CHAT_MESSAGES = "Saved chat messages count %d!";
-    public static final String MSG_CANT_SAVE_CHAT_MESSAGES = "Can't save chat messages!";
+    public static final String MSG_CANT_SAVE_CHAT_MESSAGES = "Can't save chat messages: %s!";
+    public static final String MSG_CHAT_MESSAGE_FROM_USER = "Сообщение от %s номер %d.";
 
     public static final String UNKNOWN_USER = "Uncknown";
 
@@ -28,8 +30,8 @@ public class MessageConstants {
 
     /**
      *
-     * @param username
-     * @return
+     * @param username String
+     * @return String
      */
     public static String getUserNotFoundMsg(String username) {
         String msg = String.format(MSG_USER_NOT_FOUND, username);
@@ -39,7 +41,7 @@ public class MessageConstants {
 
     /**
      *
-     * @param username
+     * @param username String
      */
     public static void userBlocked(String username) {
         String msg = String.format(MSG_USER_BLOCKED, username);
@@ -48,8 +50,8 @@ public class MessageConstants {
 
     /**
      *
-     * @param message
-     * @return
+     * @param message String
+     * @return String
      */
     public static String invalidToken(String message) {
         String msg = String.format("Invalid token: '%s' !", message);
@@ -59,9 +61,9 @@ public class MessageConstants {
 
     /**
      *
-     * @param username
-     * @param url
-     * @param method
+     * @param username String
+     * @param url String
+     * @param method String
      */
     public static void getDecodedUserMsg(String username, String url, String method) {
         String msg = String.format("User '%s' requested data: %s %s", (username == null) ? UNKNOWN_USER : username, method, url);

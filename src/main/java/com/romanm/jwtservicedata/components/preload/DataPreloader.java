@@ -11,8 +11,11 @@ import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +33,7 @@ public class DataPreloader {
         Calendar c = Calendar.getInstance();
 
         if (this.userProfileRepository.count().block() == 0) {
+            List<UserProfile> userProfiles = new ArrayList<>();
 
             c.set(1987, Calendar.MAY, 23, 0, 0);
             UserProfile roman = UserProfileBuilder.create("200")
@@ -44,7 +48,7 @@ public class DataPreloader {
                     .setSex(CommonConstants.Sex.MAN)
                     .setSexOrientation(CommonConstants.SexOrientation.HETERO)
                     .setRank(2000).build();
-            this.saveUserProfile(roman);
+            userProfiles.add(roman);
 
             c.set(1990, Calendar.FEBRUARY, 2, 0, 0);
             UserProfile egor = UserProfileBuilder.create("201")
@@ -59,7 +63,7 @@ public class DataPreloader {
                     .setSex(CommonConstants.Sex.MAN)
                     .setSexOrientation(CommonConstants.SexOrientation.HETERO)
                     .setRank(2000).build();
-            this.saveUserProfile(egor);
+            userProfiles.add(egor);
 
             c.set(1992, Calendar.MAY, 6, 0, 0);
             UserProfile artem = UserProfileBuilder.create("202")
@@ -74,10 +78,10 @@ public class DataPreloader {
                     .setSex(CommonConstants.Sex.MAN)
                     .setSexOrientation(CommonConstants.SexOrientation.HETERO)
                     .setRank(2000).build();
-            this.saveUserProfile(artem);
+            userProfiles.add(artem);
 
-            c.set(1992, Calendar.MAY, 6, 0, 0);
-            UserProfile kot = UserProfileBuilder.create("202")
+            c.set(1987, Calendar.MAY, 22, 0, 0);
+            UserProfile kot = UserProfileBuilder.create("203")
                     .setFirstName("Konstantin")
                     .setLastName("Matveev")
                     .setBirthDate(c.getTime())
@@ -89,21 +93,55 @@ public class DataPreloader {
                     .setSex(CommonConstants.Sex.MAN)
                     .setSexOrientation(CommonConstants.SexOrientation.HETERO)
                     .setRank(2000).build();
-            this.saveUserProfile(kot);
+            userProfiles.add(kot);
+
+            this.saveUserProfiles(userProfiles).collectList().block();
+            this.fillChatMessagesCollectionByStartData().collectList().block();
         } else {
             log.info(MessageConstants.prefixMsg(MessageConstants.MSG_USER_PROFILE_COLLECTION_FILLED));
         }
     }
 
+    public void fillStarterData() {
+
+    }
+
+    public Flux<UserProfile> fillChatMessagesCollectionByStartData() {
+        if (this.chatMessageRepository.count().block() == 0) {
+
+          return this.userProfileRepository.findAll().doOnNext(profileItem -> {
+
+               this.userProfileRepository.findAll().doOnNext(innerProfileItem -> {
+                   if (!profileItem.equals(innerProfileItem)) {
+                       log.info(profileItem.getId()+" >> "+innerProfileItem.getId());
+                       for (int i = 0; i < 20; i++) {
+                           this.chatMessageRepository.save(
+                                   new ChatMessage(
+                                           profileItem.getId(),
+                                           innerProfileItem.getId(),
+                                           String.format(
+                                                   MessageConstants.MSG_CHAT_MESSAGE_FROM_USER,
+                                                   innerProfileItem.getFirstName(),
+                                                   i)
+                                   )
+                           ).subscribe();
+                       }
+                   }
+               }).subscribe();
+            });
+        }
+        return Flux.empty();
+    }
+
     /**
-     * Сохранить профиль
-     * @param userProfile UserProfile
+     * Сохранить группу профилей
+     * @param userProfiles List<UserProfile>
      */
-    private void saveUserProfile(UserProfile userProfile) {
-        this.userProfileRepository.save(userProfile).doOnError(s -> {
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_CANT_SAVE_USER, userProfile.getFirstName())));
-        }).subscribe(s -> {
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_SAVED_USER, userProfile.getFirstName())));
+    private Flux<UserProfile> saveUserProfiles(List<UserProfile> userProfiles) {
+       return this.userProfileRepository.saveAll(userProfiles).doOnError(s -> {
+            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_CANT_SAVE_USER, s.getMessage())));
+        }).doOnNext(s -> {
+            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_SAVED_USER, s.getFirstName())));
         });
     }
 
@@ -111,12 +149,10 @@ public class DataPreloader {
      * Сохранить группу сообщений
      * @param chatMessages List<ChatMessage>
      */
-    private void saveChatMessages(List<ChatMessage> chatMessages) {
-        this.chatMessageRepository.saveAll(chatMessages).doOnError(s -> {
-            log.info(MessageConstants.prefixMsg(MessageConstants.MSG_CANT_SAVE_CHAT_MESSAGES));
-        }).subscribe(s -> {
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_SAVED_CHAT_MESSAGES, chatMessages.size())));
-        });
+    private Flux<ChatMessage> saveChatMessages(List<ChatMessage> chatMessages) {
+       return this.chatMessageRepository.saveAll(chatMessages).doOnError(s -> {
+            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_CANT_SAVE_CHAT_MESSAGES, s.getMessage())));
+       });
     }
 
 }

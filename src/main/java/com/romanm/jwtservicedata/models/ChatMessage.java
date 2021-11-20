@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
@@ -30,16 +29,16 @@ public class ChatMessage implements Serializable {
     private String userId;
     @NotNull
     @NotBlank
-    private String toUserId;
+    private String fromUserId;
     @NotBlank
     private String message;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
-    public ChatMessage(String userId, String toUserId, String message) {
+    public ChatMessage(String userId, String fromUserId, String message) {
         this.message = message;
         this.userId = userId;
-        this.toUserId = toUserId;
+        this.fromUserId = fromUserId;
         this.timestamp = LocalDateTime.now();
     }
 }
