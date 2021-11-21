@@ -1,16 +1,16 @@
 package com.romanm.jwtservicedata.components.preload;
 
-import com.romanm.jwtservicedata.components.preload.interfaces.SingleExecutor;
+import com.romanm.jwtservicedata.components.preload.interfaces.SingleSaver;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.ChatMessage;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-public class ChatMessageSaver implements SingleExecutor<ChatMessage, ReactiveCrudRepository> {
+public class ChatMessageSaver implements SingleSaver<List<ChatMessage>, ReactiveCrudRepository> {
 
     private ReactiveCrudRepository r;
 
@@ -19,7 +19,7 @@ public class ChatMessageSaver implements SingleExecutor<ChatMessage, ReactiveCru
     }
 
     @Override
-    public Flux<ChatMessage> execute(String[] args) {
+    public Mono<List<ChatMessage>> save(String[] args) {
         List<ChatMessage> chatMessageList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             chatMessageList.add(
@@ -28,6 +28,6 @@ public class ChatMessageSaver implements SingleExecutor<ChatMessage, ReactiveCru
                     )
             );
         }
-        return r.saveAll(chatMessageList);
+        return Mono.from(r.saveAll(chatMessageList));
     }
 }

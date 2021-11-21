@@ -1,9 +1,8 @@
 package com.romanm.jwtservicedata.components.preload;
 
-import com.romanm.jwtservicedata.components.preload.interfaces.SingleExecutor;
+import com.romanm.jwtservicedata.components.preload.interfaces.SingleSaver;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
-import com.romanm.jwtservicedata.models.ChatMessage;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.builders.UserProfileBuilder;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
@@ -38,7 +37,6 @@ public class DataPreloader {
     private Flux<UserProfile> fillUserProfileCollectionByStartData() {
         Calendar c = Calendar.getInstance();
 
-        if (this.userProfileRepository.count().block() == 0) {
             List<UserProfile> userProfiles = new ArrayList<>();
 
             c.set(1987, Calendar.MAY, 23, 0, 0);
@@ -101,65 +99,37 @@ public class DataPreloader {
                     .setRank(2000).build();
             userProfiles.add(kot);
 
-            return this.saveUserProfiles(userProfiles);
-
-        } else {
-            log.info(MessageConstants.prefixMsg(MessageConstants.MSG_USER_PROFILE_COLLECTION_FILLED));
-        }
-
-        return Flux.empty();
+        return this.saveUserProfiles(userProfiles);
     }
 
     public void fillStarterData() {
-        //Заполнить коллекцию тестовыми профилями
-        this.fillUserProfileCollectionByStartData().collectList().block();
-        //Заполнить коллекцию чат-переписки тестовыми данными
-       // this.fillChatMessagesCollectionByStartData().collectList().block();
-
-        this.fillChatMessagesCollectionByStartDataV2(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
+        if (this.userProfileRepository.count().block() == 0) {
+            //Заполнить коллекцию начальными профилями
+            this.fillUserProfileCollectionByStartData().collectList().block();
+            //Заполнить коллекцию чат-переписки начальными данными
+            this.fillCollectionByUserPairsStartData(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
+            //Заполнить коллекцию посетителей начальными данными
+            this.fillCollectionByUserPairsStartData(new VisitorSaver(this.visitorRepository)).collectList().block();
+        } else {
+            log.info(MessageConstants.prefixMsg(MessageConstants.MSG_USER_PROFILE_COLLECTION_FILLED));
+        }
     }
+
 
     /**
-     * Заполнить коллекцию чат-переписки тестовыми данными
-     * @return Flux<UserProfile>
+     * Заполняет парными записями коллекции для заполнения стартовыми данными
+     * @param executor SingleExecutor<ChatMessage, ReactiveCrudRepository>
+     * @return Flux<?>
      */
-    private Flux<UserProfile> fillChatMessagesCollectionByStartData() {
-        if (this.chatMessageRepository.count().block() == 0) {
-
-          return this.userProfileRepository.findAll().doOnNext(profileItem -> {
-
-               this.userProfileRepository.findAll().doOnNext(innerProfileItem -> {
-                   if (!profileItem.equals(innerProfileItem)) {
-                       log.info(profileItem.getId()+" >> "+innerProfileItem.getId());
-                       for (int i = 0; i < 20; i++) {
-                           this.chatMessageRepository.save(
-                                   new ChatMessage(
-                                           profileItem.getId(),
-                                           innerProfileItem.getId(),
-                                           String.format(
-                                                   MessageConstants.MSG_CHAT_MESSAGE_FROM_USER,
-                                                   innerProfileItem.getFirstName(),
-                                                   i)
-                                   )
-                           ).subscribe();
-                       }
-                   }
-               }).subscribe();
-            }).delayElements(Duration.ofMillis(5));
-        }
-        return Flux.empty();
-    }
-
-    private Flux<UserProfile> fillChatMessagesCollectionByStartDataV2(SingleExecutor<ChatMessage, ReactiveCrudRepository> executor) {
-        if (this.chatMessageRepository.count().block() == 0) {
+    private Flux<?> fillCollectionByUserPairsStartData(SingleSaver<?, ReactiveCrudRepository> executor) {
+        if (this.userProfileRepository.count().block() != 0) {
 
             return this.userProfileRepository.findAll().doOnNext(profileItem -> {
 
                 this.userProfileRepository.findAll().doOnNext(innerProfileItem -> {
                     if (!profileItem.equals(innerProfileItem)) {
-                        log.info(profileItem.getId()+" >> "+innerProfileItem.getId());
 
-                            executor.execute(new String[] {
+                            executor.save(new String[] {
                                     profileItem.getId(),
                                     innerProfileItem.getId(),
                                     innerProfileItem.getFirstName()
@@ -184,14 +154,6 @@ public class DataPreloader {
         });
     }
 
-    /**
-     * Сохранить группу сообщений
-     * @param chatMessages List<ChatMessage>
-     */
-    private Flux<ChatMessage> saveChatMessages(List<ChatMessage> chatMessages) {
-       return this.chatMessageRepository.saveAll(chatMessages).doOnError(s -> {
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_CANT_SAVE_CHAT_MESSAGES, s.getMessage())));
-       });
-    }
+
 
 }

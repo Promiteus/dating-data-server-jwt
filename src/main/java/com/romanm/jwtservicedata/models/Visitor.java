@@ -7,11 +7,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Document(collection = CommonConstants.VISITOR_COLLECTION)
-public class Visitor {
+public class Visitor implements Serializable {
     @Id
     @NotNull
     private String id;
@@ -20,7 +21,7 @@ public class Visitor {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
-    public Visitor(String userId, String visitorUserId, String likeUserId) {
+    public Visitor(String userId, String visitorUserId) {
         this.userId = userId;
         this.visitorUserId = visitorUserId;
 
