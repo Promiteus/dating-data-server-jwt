@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.components.preload;
 
+import com.romanm.jwtservicedata.components.preload.interfaces.SingleExecutor;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.ChatMessage;
@@ -10,6 +11,7 @@ import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -112,7 +114,9 @@ public class DataPreloader {
         //Заполнить коллекцию тестовыми профилями
         this.fillUserProfileCollectionByStartData().collectList().block();
         //Заполнить коллекцию чат-переписки тестовыми данными
-        this.fillChatMessagesCollectionByStartData().collectList().block();
+       // this.fillChatMessagesCollectionByStartData().collectList().block();
+
+        this.fillChatMessagesCollectionByStartDataV2(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
     }
 
     /**
@@ -141,6 +145,28 @@ public class DataPreloader {
                        }
                    }
                }).subscribe();
+            }).delayElements(Duration.ofMillis(5));
+        }
+        return Flux.empty();
+    }
+
+    private Flux<UserProfile> fillChatMessagesCollectionByStartDataV2(SingleExecutor<ChatMessage, ReactiveCrudRepository> executor) {
+        if (this.chatMessageRepository.count().block() == 0) {
+
+            return this.userProfileRepository.findAll().doOnNext(profileItem -> {
+
+                this.userProfileRepository.findAll().doOnNext(innerProfileItem -> {
+                    if (!profileItem.equals(innerProfileItem)) {
+                        log.info(profileItem.getId()+" >> "+innerProfileItem.getId());
+
+                            executor.execute(new String[] {
+                                    profileItem.getId(),
+                                    innerProfileItem.getId(),
+                                    innerProfileItem.getFirstName()
+                            }).subscribe();
+
+                    }
+                }).subscribe();
             }).delayElements(Duration.ofMillis(5));
         }
         return Flux.empty();

@@ -48,7 +48,7 @@ public class ChatMessageControllerTest {
        log.info("chatMessage first: "+chatMessageFirst);
        log.info("chatMessageList size: "+chatMessageList.size());
 
-      this.webClient.get().uri(Api.API_PREFIX+Api.API_CHAT_MESSAGES).accept(MediaType.APPLICATION_JSON)
+       this.webClient.get().uri(Api.API_PREFIX+Api.API_CHAT_MESSAGES).accept(MediaType.APPLICATION_JSON)
                .exchange().expectStatus().isOk();
     }
 }
