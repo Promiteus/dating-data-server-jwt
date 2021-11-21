@@ -24,6 +24,6 @@ public class AppConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
          //Заполнить начальными профилями базу
-         this.dataPreloader.fillUserProfileCollectionByStartData();
+         this.dataPreloader.fillStarterData();
     }
 }

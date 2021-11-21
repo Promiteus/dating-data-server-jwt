@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +29,11 @@ public class DataPreloader {
     @Autowired
     private VisitorRepository visitorRepository;
 
-    public void fillUserProfileCollectionByStartData() {
+    /**
+     * Заполнить коллекцию тестовыми профилями
+     * @return Flux<UserProfile>
+     */
+    private Flux<UserProfile> fillUserProfileCollectionByStartData() {
         Calendar c = Calendar.getInstance();
 
         if (this.userProfileRepository.count().block() == 0) {
@@ -95,18 +99,27 @@ public class DataPreloader {
                     .setRank(2000).build();
             userProfiles.add(kot);
 
-            this.saveUserProfiles(userProfiles).collectList().block();
-            this.fillChatMessagesCollectionByStartData().collectList().block();
+            return this.saveUserProfiles(userProfiles);
+
         } else {
             log.info(MessageConstants.prefixMsg(MessageConstants.MSG_USER_PROFILE_COLLECTION_FILLED));
         }
+
+        return Flux.empty();
     }
 
     public void fillStarterData() {
-
+        //Заполнить коллекцию тестовыми профилями
+        this.fillUserProfileCollectionByStartData().collectList().block();
+        //Заполнить коллекцию чат-переписки тестовыми данными
+        this.fillChatMessagesCollectionByStartData().collectList().block();
     }
 
-    public Flux<UserProfile> fillChatMessagesCollectionByStartData() {
+    /**
+     * Заполнить коллекцию чат-переписки тестовыми данными
+     * @return Flux<UserProfile>
+     */
+    private Flux<UserProfile> fillChatMessagesCollectionByStartData() {
         if (this.chatMessageRepository.count().block() == 0) {
 
           return this.userProfileRepository.findAll().doOnNext(profileItem -> {
@@ -128,7 +141,7 @@ public class DataPreloader {
                        }
                    }
                }).subscribe();
-            });
+            }).delayElements(Duration.ofMillis(5));
         }
         return Flux.empty();
     }
