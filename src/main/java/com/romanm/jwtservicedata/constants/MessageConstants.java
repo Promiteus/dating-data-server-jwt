@@ -16,9 +16,6 @@ public class MessageConstants {
     public static final String MSG_SAVED_USER = "Saved user: %s";
     public static final String MSG_CANT_SAVE_USER = "Can't save users: %s";
     public static final String MSG_USER_PROFILE_COLLECTION_FILLED = "UserProfile collection is already filled!";
-    public static final String MSG_ALL_PROFILES_SAVED = "All profiles saved!";
-    public static final String MSG_SAVED_CHAT_MESSAGES = "Saved chat messages count %d!";
-    public static final String MSG_CANT_SAVE_CHAT_MESSAGES = "Can't save chat messages: %s!";
     public static final String MSG_CHAT_MESSAGE_FROM_USER = "Сообщение от %s номер %s.";
 
     public static final String UNKNOWN_USER = "Uncknown";

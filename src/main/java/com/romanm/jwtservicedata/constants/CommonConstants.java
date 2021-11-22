@@ -14,6 +14,7 @@ public class CommonConstants
         HETERO, HOMO, SKIPED
     }
 
+    public static final String MONGO_DB = "Chat";
     public static final String COMMENT_COLLECTION = "comments";
     public static final String VISITOR_COLLECTION = "visitors";
     public static final String CHAT_MESSAGE_COLLECTION = "chat_messages";

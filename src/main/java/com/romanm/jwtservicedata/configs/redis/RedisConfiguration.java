@@ -1,4 +1,4 @@
-package com.romanm.jwtservicedata.configs;
+package com.romanm.jwtservicedata.configs.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
