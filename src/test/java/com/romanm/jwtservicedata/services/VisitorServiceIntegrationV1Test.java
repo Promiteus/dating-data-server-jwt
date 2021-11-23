@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.services;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.repositories.VisitorPagebleRepository;
+import com.romanm.jwtservicedata.services.mongodb.MongoVisitorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +28,8 @@ import static org.junit.Assert.*;
 public class VisitorServiceIntegrationV1Test {
     @Autowired
     private VisitorPagebleRepository visitorPagebleRepository;
+    @Autowired
+    private MongoVisitorOperations mongoVisitorOperations;
 
     @Test
     public void findPagebleVisitorsByUserId() {
@@ -42,22 +45,16 @@ public class VisitorServiceIntegrationV1Test {
     @Test
     public void findDistinctVisitorsByUserId() {
         List<Visitor> visitorList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            visitorList.add(this.visitorPagebleRepository.save(new Visitor("200", "201")).delayElement(Duration.ofMillis(500)).block());
+        for (int i = 0; i < 30; i++) {
+            visitorList.add(new Visitor("200", "201"));
         }
+        this.visitorPagebleRepository.saveAll(visitorList).delayElements(Duration.ofMillis(500)).publish().connect();
 
-        Flux<Visitor> visitorFlux = this.visitorPagebleRepository.findVisitorByUserIdOrderByTimestampDesc("200", PageRequest.of(0, 4));
+        List<Visitor> visitors = this.mongoVisitorOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc("200", 10).collectList().block();
+        log.info(MessageConstants.prefixMsg("Got visitors count: "+visitors.size()));
+        log.info(MessageConstants.prefixMsg("Got visitors: "+visitors));
 
-        log.info(MessageConstants.prefixMsg("Got visitors: "+visitorList));
-        try {
-            Thread.sleep(6000);
+        this.visitorPagebleRepository.deleteAll(visitorList).block();
 
-
-            visitorList.forEach(visitor -> {
-                this.visitorPagebleRepository.delete(visitor).subscribe();
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

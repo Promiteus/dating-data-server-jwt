@@ -27,4 +27,16 @@ public class Visitor implements Serializable {
 
         this.timestamp = LocalDateTime.now();
     }
+
+    public static String getVisitorUserIdFieldName() {
+        return Visitor.class.getDeclaredFields()[1].getName();
+    }
+
+    public static String getVisitorVisitorUserIdFieldName() {
+        return Visitor.class.getDeclaredFields()[2].getName();
+    }
+
+    public static String getVisitorTimestampFieldName() {
+        return Visitor.class.getDeclaredFields()[3].getName();
+    }
 }

@@ -1,5 +1,7 @@
 package com.romanm.jwtservicedata.constants;
 
+import com.romanm.jwtservicedata.models.Visitor;
+
 public class CommonConstants
 {
     public static enum FamilyStatus {
@@ -20,4 +22,6 @@ public class CommonConstants
     public static final String CHAT_MESSAGE_COLLECTION = "chat_messages";
     public static final String USER_PROFILE_COLLECTION = "user_profiles";
     public static final String LIKES_COLLECTION = "likes";
+
+
 }

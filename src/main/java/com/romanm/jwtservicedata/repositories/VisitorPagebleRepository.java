@@ -12,8 +12,5 @@ import java.util.List;
 @Repository("visitorPagebleRepository")
 public interface VisitorPagebleRepository extends ReactiveSortingRepository<Visitor, String> {
     Flux<Visitor> findVisitorByUserIdOrderByTimestampDesc(String userId, Pageable page);
-
     Mono<Void> removeByUserIdIn(List<String> userIds);
-
-    //mongoTemplate.getCollection("collectionName").distinct("filedName", requestIds);
 }
