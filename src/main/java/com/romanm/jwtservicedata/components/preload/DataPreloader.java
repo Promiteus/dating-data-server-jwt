@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Класс для загрузки стартовых коллекций для mongodb
+ */
 @Slf4j
 @Component
 public class DataPreloader {

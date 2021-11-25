@@ -45,16 +45,18 @@ public class VisitorServiceIntegrationV1Test {
     @Test
     public void findDistinctVisitorsByUserId() {
         List<Visitor> visitorList = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             visitorList.add(new Visitor("200", "201"));
         }
         this.visitorPagebleRepository.saveAll(visitorList).delayElements(Duration.ofMillis(500)).publish().connect();
 
-        List<Visitor> visitors = this.mongoVisitorOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc("200", 10).collectList().block();
+        List<Visitor> visitors = this.mongoVisitorOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc("200", 0, 30).collectList().block();
         log.info(MessageConstants.prefixMsg("Got visitors count: "+visitors.size()));
         log.info(MessageConstants.prefixMsg("Got visitors: "+visitors));
 
-        this.visitorPagebleRepository.deleteAll(visitorList).block();
+        if (visitorList.size() > 0) {
+            this.visitorPagebleRepository.deleteAll(visitorList).block();
+        }
 
     }
 }

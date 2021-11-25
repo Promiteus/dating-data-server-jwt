@@ -16,12 +16,12 @@ public class MongoVisitorOperations {
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
 
-    public Flux<Visitor> findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(String userId, int pageSize) {
+    public Flux<Visitor> findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(String userId, int page, int pageSize) {
         Query query = new Query();
         query.addCriteria(Criteria.where(Visitor.getVisitorUserIdFieldName()).is(userId));
         query.with(Sort.by(Visitor.getVisitorTimestampFieldName()).descending());
-        //query.with(PageRequest.of(page, pageSize));
-        return reactiveMongoTemplate.find(query, Visitor.class).distinct(Visitor::getVisitorUserId).limitRate(pageSize);
+        query.with(PageRequest.of(page, pageSize));
+        return reactiveMongoTemplate.find(query, Visitor.class).distinct(Visitor::getVisitorUserId);//.limitRate(pageSize);
     }
 
 
