@@ -39,7 +39,7 @@ public class ChatMessageControllerTest {
             }
             chatMessageFluxSink.complete();
         });
-       Mockito.when(this.chatService.findMessages("123", 0, 10, Sort.Direction.ASC))
+       Mockito.when(this.chatService.findMessages("200", "201", 0, 10, Sort.Direction.ASC))
                 .thenReturn(messages);
 
        ChatMessage chatMessageFirst =  messages.blockFirst();

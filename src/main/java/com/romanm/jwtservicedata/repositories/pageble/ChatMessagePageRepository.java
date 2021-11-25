@@ -8,5 +8,6 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface ChatMessagePageRepository extends ReactiveSortingRepository<ChatMessage, String> {
-    Flux<ChatMessage> findChatMessageByUserIdAndFromUserId(String userId, String fromUserId, Pageable pageable);
+   // Flux<ChatMessage> findChatMessageByUserIdAndFromUserId(String userId, String fromUserId, Pageable pageable);
+    Flux<ChatMessage> findChatMessageByUserIdAndFromUserIdOrderByTimestampDesc(String userId, String fromUserId, Pageable pageable);
 }

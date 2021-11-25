@@ -32,13 +32,13 @@ public class ChatMessagePageRepositoryTest {
        List<ChatMessage> chatMessageList = new ArrayList<>();
 
        int controlPageSize = 20;
-       chatMessageList = this.chatMessagePageRepository.findChatMessageByUserIdAndFromUserId("200", "201", PageRequest.of(0, controlPageSize)).collectList().block();
+       chatMessageList = this.chatMessagePageRepository.findChatMessageByUserIdAndFromUserIdOrderByTimestampDesc("200", "201", PageRequest.of(0, controlPageSize)).collectList().block();
 
        if ((chatMessageList != null) && (chatMessageList.size() == controlPageSize)) {
 
            int pageSize = 10;
            this.chatMessagePageRepository
-                   .findChatMessageByUserIdAndFromUserId("200", "201", PageRequest.of(0, pageSize))
+                   .findChatMessageByUserIdAndFromUserIdOrderByTimestampDesc("200", "201", PageRequest.of(0, pageSize))
                    .collectList()
                    .doOnSuccess(s -> {
                         s.forEach(item -> {

@@ -9,5 +9,5 @@ import reactor.core.publisher.Mono;
 
 public interface IChatService {
     public Mono<ChatMessage> saveMessage(ChatMessage chatMessage);
-    public Flux<ChatMessage> findMessages(String userId, int page, int size, Sort.Direction direction);
+    public Flux<ChatMessage> findMessages(String userId, String fromUserId, int page, int size, Sort.Direction direction);
 }

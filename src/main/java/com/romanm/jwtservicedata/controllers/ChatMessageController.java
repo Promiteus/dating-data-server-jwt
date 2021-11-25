@@ -28,10 +28,11 @@ public class ChatMessageController {
 
     @GetMapping(value = Api.API_CHAT_MESSAGES)
     public Mono<ResponseEntity<ResponseData<ChatMessage>>> getChatMessages(@RequestParam(value = Api.PARAM_PAGE, defaultValue = "0", required = false) int page,
-                                                                   @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "10", required = false) int pageSize,
-                                                                   @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId) {
+                                                                           @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "10", required = false) int pageSize,
+                                                                           @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
+                                                                           @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId) {
 
-        Flux<ChatMessage> chatMessages = this.chatService.findMessages(userId, page, pageSize, Sort.Direction.ASC);
+        Flux<ChatMessage> chatMessages = this.chatService.findMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC);
 
         return Mono.create(sink -> {
             List<ChatMessage> msgList = new ArrayList<>();
