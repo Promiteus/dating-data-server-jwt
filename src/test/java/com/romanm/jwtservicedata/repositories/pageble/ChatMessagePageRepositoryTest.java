@@ -13,13 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -35,10 +31,10 @@ public class ChatMessagePageRepositoryTest {
     public void chatMessagePageTest() {
        List<ChatMessage> chatMessageList = new ArrayList<>();
 
-       int controlPageSize = 30;
+       int controlPageSize = 20;
        chatMessageList = this.chatMessagePageRepository.findChatMessageByUserIdAndFromUserId("200", "201", PageRequest.of(0, controlPageSize)).collectList().block();
 
-       if ((chatMessageList != null) && (chatMessageList.size() > 0)) {
+       if ((chatMessageList != null) && (chatMessageList.size() == controlPageSize)) {
 
            int pageSize = 10;
            this.chatMessagePageRepository
