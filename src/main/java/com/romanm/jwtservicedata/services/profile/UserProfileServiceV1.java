@@ -1,11 +1,13 @@
 package com.romanm.jwtservicedata.services.profile;
 
+import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.mongodb.MongoVisitorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,43 +25,47 @@ public class UserProfileServiceV1 implements IUserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final VisitorRepository visitorRepository;
+    private final MongoVisitorOperations mongoVisitorOperations;
 
     /**
-     *
      * @param userProfileRepository UserProfileRepository
      * @param visitorRepository VisitorRepository
+     * @param mongoVisitorOperations MongoVisitorOperations
      */
     @Autowired
-    public UserProfileServiceV1(UserProfileRepository userProfileRepository, VisitorRepository visitorRepository) {
+    public UserProfileServiceV1(UserProfileRepository userProfileRepository, VisitorRepository visitorRepository, MongoVisitorOperations mongoVisitorOperations) {
         this.userProfileRepository = userProfileRepository;
         this.visitorRepository = visitorRepository;
+        this.mongoVisitorOperations = mongoVisitorOperations;
     }
 
     /**
-     *
+     * Преобразователь рекактивных данных в формат ResponseUserProfile
      * @param sink MonoSink<ResponseUserProfile>
      * @param profile UserProfile
      * @param visitorFlux Flux<Visitor>
      */
-    private void success(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
+    private void toResponseDataFormat(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
         ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
 
         visitorFlux.collectList().subscribe(visitors -> {
             if ((visitors != null) && (visitors.size() > 0)) {
                 List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
                 this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
+                    log.info(MessageConstants.prefixMsg("UserProfiles visitors: "+userProfiles));
                     responseUserProfile.getLastVisitors().addAll(userProfiles);
                     //Профиль пользователя с визитерами
                     sink.success(responseUserProfile);
                 });
+            } else {
+                //Профиль пользователя без визитеров
+                sink.success(responseUserProfile);
             }
-            //Профиль пользователя без визитеров
-            sink.success(responseUserProfile);
         });
     }
 
     /**
-     * Получить сосnавную сущность профиля пользовтаеля
+     * Получить составную сущность профиля пользовтаеля по идентификатору пользователя - ResponseUserProfile
      * @param userId String
      * @return Mono<ResponseUserProfile>
      */
@@ -71,13 +77,14 @@ public class UserProfileServiceV1 implements IUserProfileService {
                 sink.success(null);
             });
         }
-
+        //Получить данные профиля текущего пользователя
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
-        Flux<Visitor> visitorFlux = this.visitorRepository.findVisitorByUserId(userId);
+        //Запросить первые 30 посетителей, начиная с текущей даты, для текущего пользователя
+        Flux<Visitor> visitorFlux = this.mongoVisitorOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30);//this.visitorRepository.findVisitorByUserId(userId);
 
         return Mono.create(sink -> {
              userProfile.doOnSuccess(profile -> {
-                this.success(sink, profile, visitorFlux);
+                this.toResponseDataFormat(sink, profile, visitorFlux);
              }).subscribe();
          });
     }
