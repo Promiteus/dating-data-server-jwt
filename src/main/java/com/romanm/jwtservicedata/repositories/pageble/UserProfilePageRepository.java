@@ -1,4 +1,4 @@
-package com.romanm.jwtservicedata.repositories;
+package com.romanm.jwtservicedata.repositories.pageble;
 
 import com.romanm.jwtservicedata.models.UserProfile;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +9,6 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 @Repository
-public interface UserProfilePagebleRepository extends ReactiveSortingRepository<UserProfile, String> {
+public interface UserProfilePageRepository extends ReactiveSortingRepository<UserProfile, String> {
     Flux<UserProfile> findUserProfilesByIdIn(List<String> ids, Pageable page);
 }

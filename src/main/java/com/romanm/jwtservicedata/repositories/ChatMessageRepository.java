@@ -8,4 +8,5 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface ChatMessageRepository extends ReactiveCrudRepository<ChatMessage, String> {
     Flux<ChatMessage> findChatMessageByUserId(String userId);
+    Flux<ChatMessage> findChatMessageByUserIdAndFromUserId(String userId, String fromUserId);
 }
