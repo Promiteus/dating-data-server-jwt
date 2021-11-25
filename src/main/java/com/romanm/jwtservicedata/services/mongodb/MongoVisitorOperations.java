@@ -16,6 +16,13 @@ public class MongoVisitorOperations {
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
 
+    /**
+     * Постраничный запрос уникальных посетителей, отсортированный по последней дате посещения
+     * @param userId String
+     * @param page int
+     * @param pageSize int
+     * @return Flux<Visitor>
+     */
     public Flux<Visitor> findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(String userId, int page, int pageSize) {
         Query query = new Query();
         query.addCriteria(Criteria.where(Visitor.getVisitorUserIdFieldName()).is(userId));
