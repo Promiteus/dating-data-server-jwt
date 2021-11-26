@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles(value = {"test"})
-public class VisitorServiceIntegrationV1Test {
+public class VisitorServiceV1IntegrationTest {
     @Autowired
     private VisitorPagebleRepository visitorPagebleRepository;
     @Autowired

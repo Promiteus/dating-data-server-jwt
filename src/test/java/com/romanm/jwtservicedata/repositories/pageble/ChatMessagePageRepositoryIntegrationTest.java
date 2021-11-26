@@ -21,7 +21,7 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = {"test"})
-public class ChatMessagePageRepositoryTest {
+public class ChatMessagePageRepositoryIntegrationTest {
     @Autowired
     private ChatMessagePageRepository chatMessagePageRepository;
     @Autowired
