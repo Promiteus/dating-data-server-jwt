@@ -69,14 +69,18 @@ public class ChatMessageControllerIntegrationTest {
 
                     try {
                         try {
-                            String json =
+                            String jsonFirst =
                                     new ObjectMapper().writeValueAsString(data.getData().get(0));
+                            Map<String, String> mapFirst = new ObjectMapper().readValue(jsonFirst, HashMap.class);
+                            String jsonLast =
+                                    new ObjectMapper().writeValueAsString(data.getData().get(pageSize-1));
+                            Map<String, String> mapLast = new ObjectMapper().readValue(jsonLast, HashMap.class);
 
-                            Map<String, String> mapFirst = new ObjectMapper().readValue(json, HashMap.class);
-                            log.info(MessageConstants.prefixMsg("Got chat first json data: "+json));
                             log.info(MessageConstants.prefixMsg("Got chat first message: "+mapFirst.get("message")));
+                            log.info(MessageConstants.prefixMsg("Got chat last message: "+mapLast.get("message")));
 
                             Assert.assertEquals(String.format(messageContent, pageSize-1), mapFirst.get("message"));
+                            Assert.assertEquals(String.format(messageContent, 0), mapLast.get("message"));
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
