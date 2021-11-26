@@ -14,7 +14,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableReactiveMethodSecurity
-//@Profile(value = "default")
 @Profile(value = {"dev"})
 public class SecurityConfiguration {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
