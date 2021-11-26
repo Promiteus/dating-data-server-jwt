@@ -1,6 +1,5 @@
 package com.romanm.jwtservicedata.repositories.pageble;
 
-
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.ChatMessage;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
@@ -15,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
