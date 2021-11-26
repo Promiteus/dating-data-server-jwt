@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
@@ -26,12 +27,15 @@ public class ChatMessage implements Serializable {
     private String id;
     @NotNull
     @NotBlank
+    @Indexed(name = "userId")
     private String userId;
     @NotNull
     @NotBlank
+    @Indexed(name = "fromUserId")
     private String fromUserId;
     @NotBlank
     private String message;
+    @Indexed(name = "timestamp")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 

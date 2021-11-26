@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,9 @@ public class Visitor implements Serializable {
     @Id
     @NotNull
     private String id;
+    @Indexed(name = "userId")
     private String userId;
+    @Indexed(name = "visitorUserId")
     private String visitorUserId;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;

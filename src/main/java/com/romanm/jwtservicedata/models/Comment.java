@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
@@ -19,8 +20,10 @@ public class Comment implements Serializable {
     @NotNull
     private String id;
     @NotNull
+    @Indexed(name = "userId")
     private String userId;
     @NotNull
+    @Indexed(name = "toUserId")
     private String toUserId;
     @NotBlank
     @Size(max = 255)
