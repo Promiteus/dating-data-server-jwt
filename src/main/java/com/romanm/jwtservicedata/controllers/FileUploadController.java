@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
@@ -76,9 +78,9 @@ public class FileUploadController {
     @PostMapping(value = Api.API_USER_IMAGES_SOME_USER_ID)
     public Mono<ResponseEntity<?>> saveImages(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
-            @RequestPart(value = Api.PARAM_FILES, required = true) Mono<FilePart[]> files) {
+            @RequestPart(value = Api.PARAM_FILES, required = true) Mono<List<FilePart>> files) {
 
-        log.info("Saving files! userId: "+userId+" files: "+files.block().length);
+        log.info("Saving files! userId: "+userId+" files: "+files.block().size());
 
         return Mono.create(sink -> {
             sink.success(ResponseEntity.ok().build());
