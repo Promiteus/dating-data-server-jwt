@@ -1,6 +1,6 @@
 package com.romanm.jwtservicedata.configs.auth;
 
-import com.romanm.jwtservicedata.services.UserService;
+import com.romanm.jwtservicedata.services.UserServiceV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +17,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Profile(value = {"dev"})
 public class SecurityConfiguration {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserService userService;
+    private final UserServiceV1 userService;
 
     @Autowired
-    public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+    public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceV1 userService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
     }

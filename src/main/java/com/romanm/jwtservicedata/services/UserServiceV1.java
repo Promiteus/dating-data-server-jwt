@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserServiceV1 {
 
     private final RedisRepository redisRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(RedisRepository redisRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceV1(RedisRepository redisRepository, BCryptPasswordEncoder passwordEncoder) {
         this.redisRepository = redisRepository;
         this.passwordEncoder = passwordEncoder;
     }

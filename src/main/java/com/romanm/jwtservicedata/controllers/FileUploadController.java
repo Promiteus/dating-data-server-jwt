@@ -1,7 +1,9 @@
 package com.romanm.jwtservicedata.controllers;
 
 import com.romanm.jwtservicedata.constants.Api;
+import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class FileUploadController {
-
+    @Autowired
+    private StorageService storageService;
 
     /**
      * Получить все изображения пользователя по userId

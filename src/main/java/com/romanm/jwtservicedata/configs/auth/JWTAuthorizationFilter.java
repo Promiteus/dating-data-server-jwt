@@ -5,7 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.auth.AuthUser;
-import com.romanm.jwtservicedata.services.UserService;
+import com.romanm.jwtservicedata.services.UserServiceV1;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -19,9 +19,9 @@ import reactor.core.publisher.Mono;
  * Фильтр для идентификации токена по публичному ключу
  */
 public class JWTAuthorizationFilter implements WebFilter {
-    private final UserService userService;
+    private final UserServiceV1 userService;
 
-    public JWTAuthorizationFilter(UserService userService) {
+    public JWTAuthorizationFilter(UserServiceV1 userService) {
         this.userService = userService;
     }
 

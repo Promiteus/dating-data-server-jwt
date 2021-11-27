@@ -1,7 +1,7 @@
 package com.romanm.jwtservicedata.configs.auth;
 
 
-import com.romanm.jwtservicedata.services.UserService;
+import com.romanm.jwtservicedata.services.UserServiceV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +14,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableReactiveMethodSecurity
 @Profile(value = {"test"})
 public class TestSecurityConfiguration {
-    private final UserService userService;
+    private final UserServiceV1 userService;
 
     @Autowired
-    public TestSecurityConfiguration( UserService userService) {
+    public TestSecurityConfiguration(UserServiceV1 userService) {
         this.userService = userService;
     }
 
