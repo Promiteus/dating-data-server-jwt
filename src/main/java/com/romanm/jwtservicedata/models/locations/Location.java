@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.models.locations;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,8 +16,10 @@ public class Location {
     @NotNull
     private String id;
     @NotBlank
+    @Indexed
     private String country;
     @NotBlank
+    @Indexed
     private String state;
 
     private List<Locality> localityList;
