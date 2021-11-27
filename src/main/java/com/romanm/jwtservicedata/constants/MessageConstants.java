@@ -10,6 +10,7 @@ public class MessageConstants {
     public static final String CACHE_USERS_KEY = "users";
 
     public static final String MSG_PREFIX = ">> ";
+    public static final String ERROR_MSG_PREFIX = "--- [error]: ";
 
     public static final String MSG_USER_NOT_FOUND = "User '%s' not found!";
     public static final String MSG_USER_BLOCKED = "User '%s' was blocked!";
@@ -23,6 +24,10 @@ public class MessageConstants {
 
     public static String prefixMsg(String msg) {
         return MSG_PREFIX+msg;
+    }
+
+    public static String errorPrefixMsg(String msg) {
+        return ERROR_MSG_PREFIX+msg;
     }
 
     /**
