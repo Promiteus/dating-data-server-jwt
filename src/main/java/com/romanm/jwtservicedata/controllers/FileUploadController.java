@@ -40,7 +40,7 @@ public class FileUploadController {
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
             @RequestPart(value = Api.PARAM_FILE, required = true) Mono<FilePart> file) {
 
-        log.info("Got file! userId: "+userId+" file: "+file.block());
+        log.info("Saving new file! userId: "+userId+" file: "+file.block());
 
         return Mono.create(sink -> {
             sink.success(ResponseEntity.ok().build());
@@ -54,13 +54,13 @@ public class FileUploadController {
      * @param file Mono<FilePart>
      * @return Mono<ResponseEntity<?>>
      */
-    @PutMapping(value = Api.API_USER_IMAGES_USER_ID)
+    @PutMapping(value = Api.API_USER_IMAGES)
     public Mono<ResponseEntity<?>> updateImage(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
             @RequestPart(value = Api.PARAM_IMAGE_ID, required = true) String imageId,
             @RequestPart(value = Api.PARAM_FILE, required = true) Mono<FilePart> file) {
 
-        log.info("Got file! userId: "+userId+" file: "+" imageId: "+imageId+" file: "+file.block());
+        log.info("Updating file! userId: "+userId+" imageId: "+imageId+" file: "+file.block());
 
         return Mono.create(sink -> {
             sink.success(ResponseEntity.accepted().build());
@@ -76,7 +76,9 @@ public class FileUploadController {
     @PostMapping(value = Api.API_USER_IMAGES_SOME_USER_ID)
     public Mono<ResponseEntity<?>> saveImages(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
-            @RequestPart(value = Api.PARAM_FILES, required = true) Mono<FilePart> files) {
+            @RequestPart(value = Api.PARAM_FILES, required = true) Mono<FilePart[]> files) {
+
+        log.info("Saving files! userId: "+userId+" files: "+files.block().length);
 
         return Mono.create(sink -> {
             sink.success(ResponseEntity.ok().build());
