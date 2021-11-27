@@ -3,7 +3,7 @@ package com.romanm.jwtservicedata.services.profile;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
-import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ public class UserProfileServiceV1Test {
     private static final String TEST_USER_ID = "12";
 
     @Autowired
-    private IUserProfileService userProfileService;
+    private UserProfileService userProfileService;
 
     @Autowired
     private UserProfileRepository userProfileRepository;

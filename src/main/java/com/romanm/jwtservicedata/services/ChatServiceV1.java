@@ -3,7 +3,7 @@ package com.romanm.jwtservicedata.services;
 import com.romanm.jwtservicedata.models.ChatMessage;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
 import com.romanm.jwtservicedata.repositories.pageble.ChatMessagePageRepository;
-import com.romanm.jwtservicedata.services.interfaces.IChatService;
+import com.romanm.jwtservicedata.services.interfaces.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 
 @Service("chatServiceV1")
-public class ChatServiceV1 implements IChatService {
+public class ChatServiceV1 implements ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatMessagePageRepository chatMessagePageRepository;
 

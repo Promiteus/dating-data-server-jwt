@@ -6,7 +6,7 @@ import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
-import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import com.romanm.jwtservicedata.services.mongodb.MongoVisitorOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service("userProfileServiceV1")
-public class UserProfileServiceV1 implements IUserProfileService {
+public class UserProfileServiceV1 implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final VisitorRepository visitorRepository;

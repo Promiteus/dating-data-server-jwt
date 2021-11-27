@@ -3,7 +3,7 @@ package com.romanm.jwtservicedata.controllers;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.ChatMessage;
 import com.romanm.jwtservicedata.models.responses.ResponseData;
-import com.romanm.jwtservicedata.services.interfaces.IChatService;
+import com.romanm.jwtservicedata.services.interfaces.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -19,10 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class ChatMessageController {
-    private final IChatService chatService;
+    private final ChatService chatService;
 
     @Autowired
-    public ChatMessageController(IChatService chatService) {
+    public ChatMessageController(ChatService chatService) {
         this.chatService = chatService;
     }
 

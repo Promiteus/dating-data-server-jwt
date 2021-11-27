@@ -5,7 +5,7 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
-import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class UserProfileControllerTest {
 
     @MockBean
     @Qualifier("userProfileServiceV1")
-    private IUserProfileService userProfileService;
+    private UserProfileService userProfileService;
 
    /* @Configuration
     static class ServiceTestConf {

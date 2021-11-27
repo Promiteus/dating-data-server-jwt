@@ -3,7 +3,7 @@ package com.romanm.jwtservicedata.controllers;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
-import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,14 @@ import reactor.core.publisher.Mono;
 @RequestMapping(value = Api.API_PREFIX)
 public class UserProfileController {
 
-    private final IUserProfileService userProfileService;
+    private final UserProfileService userProfileService;
 
     /**
      * Конструктор UserProfileController
      * @param userProfileService IUserProfileService
      */
     @Autowired
-    public UserProfileController(IUserProfileService userProfileService) {
+    public UserProfileController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
     }
 

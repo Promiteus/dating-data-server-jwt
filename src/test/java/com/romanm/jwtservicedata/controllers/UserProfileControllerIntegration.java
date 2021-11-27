@@ -7,7 +7,7 @@ import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.builders.UserProfileBuilder;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
-import com.romanm.jwtservicedata.services.interfaces.IUserProfileService;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ import java.util.Calendar;
 @Import(value = TestSecurityConfiguration.class)
 public class UserProfileControllerIntegration {
     @Autowired
-    private IUserProfileService userProfileService;
+    private UserProfileService userProfileService;
 
    // private static final String BREARER_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzNzczNjA3Mn0.H4LXCNO7NKUMrTu7DrTuYFwpk7K1MqVsoAxB74K6dMIg_bJgnIFe0YVPHjR8IjVgkwZSuKYuW0ITAhQsfW9_PQ";
 
