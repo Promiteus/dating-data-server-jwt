@@ -23,6 +23,7 @@ public class MessageConstants {
     public static final String MSG_ERR_FILE_SAVING = "Can't save file '%s'! Error: %s";
     public static final String MSG_CANT_DELETE_FILE = "Can't delete file '%s' !";
     public static final String MSG_DELETED_FILE_SUCCESSFUL = "File '%s' was deleted successfully!";
+    public static final String MSG_FILES_COUNT = "Files count: %d";
 
     public static final String UNKNOWN_USER = "Uncknown";
 

@@ -9,7 +9,9 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 @Slf4j
 public class StorageServiceBase {
@@ -25,7 +27,7 @@ public class StorageServiceBase {
      */
     private void createWorkDir(String dir) {
         try {
-             Files.createDirectory(Paths.get(dir));
+            Files.createDirectory(Paths.get(dir));
         } catch (IOException e) {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
         }
@@ -45,7 +47,14 @@ public class StorageServiceBase {
      * @param userId String
      * @return int
      */
-    private int getFIlesCount(String userId) {
+    private long getFilesCount(String userId) {
+        try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)))) {
+            long filesCount = files.count();
+            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, filesCount)));
+            return filesCount;
+        } catch (IOException e) {
+            log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
+        }
         return 0;
     }
 
@@ -67,6 +76,10 @@ public class StorageServiceBase {
         return Mono.create(sink -> {
             file.doOnSuccess(filePart -> {
                 String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
+
+                if (this.getFilesCount(userId) > 3) {
+                    sink.success(false);
+                }
 
                 filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
                     log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
@@ -105,8 +118,11 @@ public class StorageServiceBase {
         return false;
     }
 
-
-    protected void deleteAll() {
-        FileSystemUtils.deleteRecursively(Paths.get(this.baseDir).toFile());
+    /**
+     * Удалить все файлы из каталога пользователя
+     * @param userId String
+     */
+    protected void deleteAll(String userId) {
+        FileSystemUtils.deleteRecursively(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)).toFile());
     }
 }

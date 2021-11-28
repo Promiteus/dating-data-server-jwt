@@ -19,6 +19,12 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         super(CommonConstants.MULTIMEDIA_FILE_DIR);
     }
 
+    /**
+     * Сохранить файл в каталог пользователя
+     * @param userId String
+     * @param filePartMono Mono<FilePart>
+     * @return Mono<Boolean>
+     */
     @Override
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
@@ -31,6 +37,12 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         });
     }
 
+    /**
+     * Сохранить файлы (список) в каталог пользователя
+     * @param userId String
+     * @param filesPartMono Mono<List<FilePart>>
+     * @return Mono<Boolean>
+     */
     @Override
     public Mono<Boolean> saveAll(String userId, Mono<List<FilePart>> filesPartMono) {
         return Mono.create(sink -> {
@@ -44,6 +56,12 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         });
     }
 
+    /**
+     * Удалить выбранный файл из каталога пользователя
+     * @param userId String
+     * @param fileName String
+     * @return Mono<Boolean>
+     */
     @Override
     public Mono<Boolean> remove(String userId, String fileName) {
         return Mono.create(sink -> {
@@ -55,9 +73,5 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         });
     }
 
-    private Mono<Boolean> failedAction() {
-        return Mono.create(sink -> {
-            sink.success(true);
-        });
-    }
+
 }
