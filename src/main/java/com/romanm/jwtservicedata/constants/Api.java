@@ -5,7 +5,7 @@ public class Api {
     public final static String PARAM_PAGE = "page";
     public final static String PARAM_PAGE_SIZE = "size";
     public final static String PARAM_USER_ID = "user_id";
-    public final static String PARAM_IMAGE_ID = "image_id";
+    public final static String PARAM_FILE_ID = "file_id";
     public final static String PARAM_FROM_USER_ID = "from_user_id";
     public final static String PARAM_FILE = "file";
     public final static String PARAM_FILES = "files";

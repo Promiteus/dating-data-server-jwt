@@ -45,10 +45,10 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     @Override
-    public Mono<Boolean> remove(String userId, String imageId) {
+    public Mono<Boolean> remove(String userId, String fileName) {
         return Mono.create(sink -> {
-            if ((userId != null) && (imageId != null)) {
-                sink.success(true);
+            if ((userId != null) && (fileName != null)) {
+                sink.success(this.deleteUserFile(fileName, userId));
             } else {
                 sink.success(false);
             }

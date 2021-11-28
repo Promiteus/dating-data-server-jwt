@@ -19,7 +19,11 @@ public class StorageServiceBase {
         this.baseDir = baseDir;
     }
 
-    protected void createWorkDir(String dir) {
+    /**
+     * Создание каталога
+     * @param dir String
+     */
+    private void createWorkDir(String dir) {
         try {
              Files.createDirectory(Paths.get(dir));
         } catch (IOException e) {
@@ -27,26 +31,26 @@ public class StorageServiceBase {
         }
     }
 
-    protected boolean isDirExists(String dir) {
+    /**
+     * Проверка существования каталога
+     * @param dir String
+     * @return boolean
+     */
+    private boolean isDirExists(String dir) {
         return Files.exists(Paths.get(dir));
     }
 
-    private Mono<Boolean> saveFileItem(FilePart filePart, String userId) {
-        return Mono.create(monoSink -> {
-            String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
-
-            filePart.transferTo(Paths.get(fileName)).doOnSuccess(t -> {
-                log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
-                monoSink.success(true);
-            }).doOnError(err -> {
-                log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage())));
-                monoSink.success(false);
-            }).subscribe();
-        });
+    /**
+     * Получить число файлов в каталоге
+     * @param userId String
+     * @return int
+     */
+    private int getFIlesCount(String userId) {
+        return 0;
     }
 
     /**
-     *
+     * Сохранить/изменить файл пользователя в каталоге
      * @param file Mono<FilePart>
      * @param userId String
      * @return Mono<Boolean>
@@ -79,16 +83,26 @@ public class StorageServiceBase {
         });
     }
 
-    protected void deleteUserFile(String fileName, String userId) {
+    /**
+     * Удалить файл пользователя из каталога
+     * @param fileName String
+     * @param userId String
+     * @return boolean
+     */
+    protected boolean deleteUserFile(String fileName, String userId) {
         try {
-            Files.deleteIfExists(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileName));
+           String file = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileName;
+           boolean res = Files.deleteIfExists(Paths.get(file));
+           if (res) {
+               log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_DELETED_FILE_SUCCESSFUL, file)));
+           } else {
+               log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_CANT_DELETE_FILE, file)));
+           }
+           return res;
         } catch (IOException e) {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
         }
-    }
-
-    protected void deleteAllUserFiles(String fileName, String userId) {
-        FileSystemUtils.deleteRecursively(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)).toFile());
+        return false;
     }
 
 
