@@ -20,6 +20,7 @@ public class MessageConstants {
     public static final String MSG_CHAT_MESSAGE_FROM_USER = "Сообщение от %s номер %s.";
 
     public static final String MSG_FILE_SAVED_SUCCESSFUL = "File '%s' was saved successfully!";
+    public static final String MSG_ERR_FILE_SAVING = "Can't save file '%s'! Error: %s";
 
     public static final String UNKNOWN_USER = "Uncknown";
 

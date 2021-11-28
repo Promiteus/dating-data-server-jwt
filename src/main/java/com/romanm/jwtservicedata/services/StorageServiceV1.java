@@ -15,14 +15,12 @@ import java.util.Optional;
 @Service
 public class StorageServiceV1 extends StorageServiceBase implements StorageService {
 
-
     public StorageServiceV1() {
         super(CommonConstants.MULTIMEDIA_FILE_DIR);
     }
 
     @Override
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
-
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
                 this.save(file).doOnSuccess(sink::success).subscribe();

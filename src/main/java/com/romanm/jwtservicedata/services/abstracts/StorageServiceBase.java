@@ -32,6 +32,17 @@ public class StorageServiceBase {
         return Files.exists(Paths.get(dir));
     }
 
+    private Mono<Boolean> saveFileItem(FilePart filePart) {
+        return Mono.create(monoSink -> {
+            filePart.transferTo(this.fileDirectory).doOnSuccess(t -> {
+                log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
+                monoSink.success(true);
+            }).doOnError(err -> {
+                monoSink.success(false);
+            }).subscribe();
+        });
+    }
+
     protected Mono<Boolean> save(Mono<FilePart> file) {
         if (!this.dirExists(CommonConstants.MULTIMEDIA_FILE_DIR)) {
             this.createWorkDir(CommonConstants.MULTIMEDIA_FILE_DIR);
@@ -39,9 +50,13 @@ public class StorageServiceBase {
 
         return Mono.create(sink -> {
             file.doOnSuccess(filePart -> {
-                filePart.transferTo(this.fileDirectory);
-                log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
-                sink.success(true);
+                filePart.transferTo(this.fileDirectory).doOnSuccess(t -> {
+                    log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
+                    sink.success(true);
+                }).doOnError(err -> {
+                    log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage())));
+                    sink.success(false);
+                }).subscribe();
             }).doOnError(err -> {
                 log.info(MessageConstants.errorPrefixMsg(err.getMessage()));
                 sink.success(false);

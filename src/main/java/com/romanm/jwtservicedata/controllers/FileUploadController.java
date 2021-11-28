@@ -5,6 +5,7 @@ import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
@@ -48,7 +49,9 @@ public class FileUploadController {
         log.info("Saving new file! userId: "+userId+" file: "+file.block());
 
         return Mono.create(sink -> {
-            sink.success(ResponseEntity.ok().build());
+            this.storageService.save(userId, file).doOnSuccess(res -> {
+                sink.success(res ? ResponseEntity.ok().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
+            }).subscribe();
         });
     }
 
