@@ -14,7 +14,11 @@ import java.nio.file.Paths;
 
 @Slf4j
 public class StorageServiceBase {
-    private final Path fileDirectory = Paths.get(CommonConstants.MULTIMEDIA_FILE_DIR);
+    private final Path fileDirectory;
+
+    public StorageServiceBase(String dir) {
+        this.fileDirectory = Paths.get(dir);
+    }
 
     protected void createWorkDir(String dir) {
         try {
@@ -25,7 +29,7 @@ public class StorageServiceBase {
     }
 
     protected boolean dirExists(String dir) {
-       return Files.exists(Paths.get(dir));
+        return Files.exists(Paths.get(dir));
     }
 
     protected Mono<Boolean> save(Mono<FilePart> file) {
@@ -35,7 +39,7 @@ public class StorageServiceBase {
 
         return Mono.create(sink -> {
             file.doOnSuccess(filePart -> {
-                filePart.transferTo(fileDirectory);
+                filePart.transferTo(this.fileDirectory);
                 log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
                 sink.success(true);
             }).doOnError(err -> {
@@ -45,7 +49,9 @@ public class StorageServiceBase {
         });
     }
 
-
+    protected void deleteFile(String fileName) {
+       // Files.delete();
+    }
 
     protected void deleteAll() {
         FileSystemUtils.deleteRecursively(fileDirectory.toFile());

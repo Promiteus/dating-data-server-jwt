@@ -1,11 +1,13 @@
 package com.romanm.jwtservicedata.services;
 
+import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,10 @@ import java.util.Optional;
 @Service
 public class StorageServiceV1 extends StorageServiceBase implements StorageService {
 
+
+    public StorageServiceV1() {
+        super(CommonConstants.MULTIMEDIA_FILE_DIR);
+    }
 
     @Override
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
