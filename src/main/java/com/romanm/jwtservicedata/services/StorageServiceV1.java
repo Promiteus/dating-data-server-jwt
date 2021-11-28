@@ -23,7 +23,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
-                this.save(file).doOnSuccess(sink::success).subscribe();
+                this.save(file, userId).doOnSuccess(sink::success).subscribe();
             });
             } else {
                 sink.success(false);
