@@ -5,12 +5,14 @@ import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -56,6 +58,19 @@ public class StorageServiceBase {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
         }
         return 0;
+    }
+
+    /**
+     * Сохранить список файлов в каталог пользователя
+     * @param files Mono<List<FilePart>>
+     * @param userId String
+     * @return Mono<?>
+     */
+    protected Flux<?> saveAll(Flux<FilePart> files, String userId) {
+       /* files.doOnSuccess(s -> {
+
+        }).subscribe();*/
+        return Flux.empty();
     }
 
     /**
@@ -121,8 +136,9 @@ public class StorageServiceBase {
     /**
      * Удалить все файлы из каталога пользователя
      * @param userId String
+     * @return boolean
      */
-    protected void deleteAll(String userId) {
-        FileSystemUtils.deleteRecursively(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)).toFile());
+    protected boolean deleteAll(String userId) {
+        return FileSystemUtils.deleteRecursively(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)).toFile());
     }
 }

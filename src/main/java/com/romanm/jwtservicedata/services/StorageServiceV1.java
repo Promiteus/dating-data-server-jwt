@@ -6,6 +6,7 @@ import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -40,13 +41,13 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     /**
      * Сохранить файлы (список) в каталог пользователя
      * @param userId String
-     * @param filesPartMono Mono<List<FilePart>>
+     * @param files Flux<FilePart>
      * @return Mono<Boolean>
      */
     @Override
-    public Mono<Boolean> saveAll(String userId, Mono<List<FilePart>> filesPartMono) {
+    public Mono<Boolean> saveAll(String userId, Flux<FilePart> files) {
         return Mono.create(sink -> {
-            if (userId != null) {Optional.ofNullable(filesPartMono).ifPresent(files -> {
+            if (userId != null) {Optional.ofNullable(files).ifPresent(f -> {
 
                 sink.success(true);
             });
@@ -70,6 +71,22 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
             } else {
                 sink.success(false);
             }
+        });
+    }
+
+    /**
+     * Удалить все файлы из каталога пользователя
+     * @param userId String
+     * @return Mono<Boolean>
+     */
+    @Override
+    public Mono<Boolean> removeAll(String userId) {
+        return Mono.create(sink -> {
+           if (userId != null) {
+               sink.success(this.deleteAll(userId));
+           } else {
+               sink.success(false);
+           }
         });
     }
 

@@ -40,7 +40,7 @@ public class FileUploadController {
      * @return Mono<ResponseEntity<?>>
      */
     @PostMapping(value = Api.API_USER_IMAGES, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<?>> saveImage(
+    public Mono<ResponseEntity<?>> saveFile(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
             @RequestPart(value = Api.PARAM_FILE, required = true) Mono<FilePart> file) {
 
@@ -58,12 +58,26 @@ public class FileUploadController {
      * @return Mono<ResponseEntity<?>>
      */
     @DeleteMapping(value = Api.API_USER_IMAGES, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<?>> updateImage(
+    public Mono<ResponseEntity<?>> deleteFile(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
             @RequestPart(value = Api.PARAM_FILE_ID, required = true) String fileName) {
 
         return Mono.create(sink -> {
             this.storageService.remove(userId, fileName).doOnSuccess(res -> {
+                sink.success(res ? ResponseEntity.accepted().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
+            }).subscribe();
+        });
+    }
+
+    /**
+     * Удалить все файлы (изображения) каталога пользователя
+     * @param userId String
+     * @return Mono<ResponseEntity<?>>
+     */
+    @DeleteMapping(value = Api.API_USER_IMAGES_ALL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<ResponseEntity<?>> deleteFiles(@RequestPart(value = Api.PARAM_USER_ID, required = true) String userId) {
+        return Mono.create(sink -> {
+            this.storageService.removeAll(userId).doOnSuccess(res -> {
                 sink.success(res ? ResponseEntity.accepted().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
             }).subscribe();
         });
@@ -76,7 +90,7 @@ public class FileUploadController {
      * @return Mono<ResponseEntity<?>>
      */
     @PostMapping(value = Api.API_USER_IMAGES_SOME_USER_ID)
-    public Mono<ResponseEntity<?>> saveImages(
+    public Mono<ResponseEntity<?>> saveFiles(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
             @RequestPart(value = Api.PARAM_FILES, required = true) Mono<List<FilePart>> files) {
 
