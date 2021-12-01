@@ -2,11 +2,9 @@ package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
-import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -54,7 +52,7 @@ public class StorageServiceBase {
     private long getFilesCount(String userId) {
         try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)))) {
             long filesCount = files.count();
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, filesCount)));
+            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, userId, filesCount)));
             return filesCount;
         } catch (IOException e) {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
@@ -68,7 +66,7 @@ public class StorageServiceBase {
      * @param userId String
      * @return Mono<?>
      */
-    protected Mono<Boolean> saveAll(List<FilePart> files, String userId) {
+    protected Mono<Boolean> saveAll(List<FilePart> files, String userId, int maxFilesCount) {
         if (!this.isDirExists(this.baseDir)) {
             this.createWorkDir(this.baseDir);
         }
@@ -79,13 +77,23 @@ public class StorageServiceBase {
 
         return Mono.create(monoSink -> {
 
-            if (files.size() == 0) {
+            //log.info(MessageConstants.prefixMsg("Input files count: "+files.size()+" files list: "+files.get(0).filename().isEmpty()));
+
+            if (files.size() > maxFilesCount) {
                 monoSink.success(false);
-            } else {
+                return;
+            }
+
+            if (files.get(0).filename().isEmpty()) {
+                monoSink.success(false);
+                return;
+            }
+
                 for (FilePart fileItem: files) {
                     String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileItem.filename();
 
-                    if (this.getFilesCount(userId) > 3) {
+                    if (this.getFilesCount(userId) > maxFilesCount-1) {
+                        monoSink.success(false);
                         break;
                     }
 
@@ -93,11 +101,10 @@ public class StorageServiceBase {
                         log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileItem.filename())));
                     }).doOnError(err -> {
                         log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileItem.filename(), err.getMessage())));
-                    }).delayElement(Duration.ofMillis(100)).subscribe();
-                }
+                    }).delayElement(Duration.ofMillis(500)).subscribe();
 
+                }
                 monoSink.success(true);
-            }
         });
     }
 

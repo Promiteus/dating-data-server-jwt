@@ -47,7 +47,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      */
     @Override
     public Mono<Boolean> saveAll(String userId, List<FilePart> files) {
-        return this.saveAll(files, userId);
+        return this.saveAll(files, userId, 3);
     }
 
     /**

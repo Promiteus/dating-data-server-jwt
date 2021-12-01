@@ -96,7 +96,7 @@ public class FileUploadController {
 
         return Mono.create(sink -> {
             this.storageService.saveAll(userId, files).doOnSuccess(s -> {
-                sink.success(ResponseEntity.ok().build());
+                sink.success(s ? ResponseEntity.ok().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
             }).subscribe();
         });
     }
