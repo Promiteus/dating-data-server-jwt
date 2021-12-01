@@ -21,8 +21,10 @@ public class MessageConstants {
 
     public static final String MSG_FILE_SAVED_SUCCESSFUL = "File '%s' was saved successfully!";
     public static final String MSG_ERR_FILE_SAVING = "Can't save file '%s'! Error: %s";
-    public static final String MSG_CANT_DELETE_FILE = "Can't delete file '%s' !";
+    public static final String MSG_CANT_DELETE_FILE = "Can't delete file '%s' or it was deleted before!";
+    public static final String MSG_CANT_DELETE_FILES = "Can't delete files of directory '%s' or its were deleted before!";
     public static final String MSG_DELETED_FILE_SUCCESSFUL = "File '%s' was deleted successfully!";
+    public static final String MSG_DELETED_FILES_SUCCESSFUL = "Files in directory '208' were deleted successfully and directory was too!";
     public static final String MSG_FILES_COUNT = "Files in directory '%s' count: %d";
 
     public static final String UNKNOWN_USER = "Uncknown";
