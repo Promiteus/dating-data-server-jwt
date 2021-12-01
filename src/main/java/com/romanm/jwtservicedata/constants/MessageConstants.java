@@ -27,7 +27,7 @@ public class MessageConstants {
     public static final String MSG_DELETED_FILES_SUCCESSFUL = "Files in directory '208' were deleted successfully and directory was too!";
     public static final String MSG_FILES_COUNT = "Files in directory '%s' count: %d";
 
-    public static final String UNKNOWN_USER = "Uncknown";
+    public static final String UNKNOWN_USER = "Unknown";
 
 
     public static String prefixMsg(String msg) {
