@@ -86,16 +86,18 @@ public class FileUploadController {
     /**
      * Сохранить несколько изображений за раз
      * @param userId String
-     * @param files Mono<FilePart>
+     * @param files List<FilePart>
      * @return Mono<ResponseEntity<?>>
      */
-    @PostMapping(value = Api.API_USER_IMAGES_SOME_USER_ID)
+    @PostMapping(value = Api.API_USER_IMAGES_ALL)
     public Mono<ResponseEntity<?>> saveFiles(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
-            @RequestPart(value = Api.PARAM_FILES, required = true) Mono<List<FilePart>> files) {
+            @RequestPart(value = Api.PARAM_FILES, required = true) List<FilePart> files) {
 
         return Mono.create(sink -> {
-            sink.success(ResponseEntity.ok().build());
+            this.storageService.saveAll(userId, files).doOnSuccess(s -> {
+                sink.success(ResponseEntity.ok().build());
+            }).subscribe();
         });
     }
 }

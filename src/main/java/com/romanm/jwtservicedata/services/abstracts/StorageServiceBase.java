@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
+import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -66,11 +68,37 @@ public class StorageServiceBase {
      * @param userId String
      * @return Mono<?>
      */
-    protected Flux<?> saveAll(Flux<FilePart> files, String userId) {
-       /* files.doOnSuccess(s -> {
+    protected Mono<Boolean> saveAll(List<FilePart> files, String userId) {
+        if (!this.isDirExists(this.baseDir)) {
+            this.createWorkDir(this.baseDir);
+        }
 
-        }).subscribe();*/
-        return Flux.empty();
+        if (!this.isDirExists(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId))) {
+            this.createWorkDir(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId));
+        }
+
+        return Mono.create(monoSink -> {
+
+            if (files.size() == 0) {
+                monoSink.success(false);
+            } else {
+                for (FilePart fileItem: files) {
+                    String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileItem.filename();
+
+                    if (this.getFilesCount(userId) > 3) {
+                        break;
+                    }
+
+                    fileItem.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
+                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileItem.filename())));
+                    }).doOnError(err -> {
+                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileItem.filename(), err.getMessage())));
+                    }).delayElement(Duration.ofMillis(100)).subscribe();
+                }
+
+                monoSink.success(true);
+            }
+        });
     }
 
     /**

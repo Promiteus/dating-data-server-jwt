@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,20 +42,12 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     /**
      * Сохранить файлы (список) в каталог пользователя
      * @param userId String
-     * @param files Flux<FilePart>
+     * @param files List<FilePart>
      * @return Mono<Boolean>
      */
     @Override
-    public Mono<Boolean> saveAll(String userId, Flux<FilePart> files) {
-        return Mono.create(sink -> {
-            if (userId != null) {Optional.ofNullable(files).ifPresent(f -> {
-
-                sink.success(true);
-            });
-            } else {
-                sink.success(false);
-            }
-        });
+    public Mono<Boolean> saveAll(String userId, List<FilePart> files) {
+        return this.saveAll(files, userId);
     }
 
     /**

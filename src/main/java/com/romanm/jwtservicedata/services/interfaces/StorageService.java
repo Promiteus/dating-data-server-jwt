@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StorageService {
     Mono<Boolean> save(String userId, Mono<FilePart> filePartMono);
-    Mono<Boolean> saveAll(String userId, Flux<FilePart> files);
+    Mono<Boolean> saveAll(String userId, List<FilePart> files);
     Mono<Boolean> remove(String userId, String imageId);
     Mono<Boolean> removeAll(String userId);
 }
