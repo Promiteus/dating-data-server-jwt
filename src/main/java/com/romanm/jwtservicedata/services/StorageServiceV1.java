@@ -1,13 +1,11 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
-                this.save(file, userId).doOnSuccess(sink::success).subscribe();
+                this.save(file, userId, 3).doOnSuccess(sink::success).subscribe();
             });
             } else {
                 sink.success(false);

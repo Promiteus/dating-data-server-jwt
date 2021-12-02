@@ -114,7 +114,7 @@ public class StorageServiceBase {
      * @param userId String
      * @return Mono<Boolean>
      */
-    protected Mono<Boolean> save(Mono<FilePart> file, String userId) {
+    protected Mono<Boolean> save(Mono<FilePart> file, String userId, int maxFilesCount) {
         if (!this.isDirExists(this.baseDir)) {
             this.createWorkDir(this.baseDir);
         }
@@ -129,6 +129,7 @@ public class StorageServiceBase {
 
                 if (this.getFilesCount(userId) > 3) {
                     sink.success(false);
+                    return;
                 }
 
                 filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
