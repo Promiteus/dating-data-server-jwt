@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "dating")
+@ConfigurationProperties(prefix = "files")
 @Data
 public class FileConfig {
-    private int filesMaxCount;
+    private int maxCount;
 }
