@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class AppConfig implements CommandLineRunner {
     @Autowired
     private DataPreloader dataPreloader;
+    @Autowired
+    private FileConfig fileConfig;
 
     @Bean
     public BCryptPasswordEncoder getPasswordEncoder() {
@@ -29,5 +31,7 @@ public class AppConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
          //Заполнить начальными профилями базу
          this.dataPreloader.fillStarterData();
+
+         log.info(MessageConstants.prefixMsg("files count: "+fileConfig));
     }
 }

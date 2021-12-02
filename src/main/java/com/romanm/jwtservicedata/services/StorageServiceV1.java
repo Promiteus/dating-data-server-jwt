@@ -1,9 +1,10 @@
 package com.romanm.jwtservicedata.services;
 
-import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,8 +16,12 @@ import java.util.Optional;
 @Service
 public class StorageServiceV1 extends StorageServiceBase implements StorageService {
 
-    public StorageServiceV1() {
-        super(CommonConstants.MULTIMEDIA_FILE_DIR);
+    private final FileConfig fileConfig;
+
+    @Autowired
+    public StorageServiceV1(FileConfig fileConfig) {
+        super(fileConfig.getUploadsDir());
+        this.fileConfig = fileConfig;
     }
 
     /**
@@ -29,7 +34,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
-                this.save(file, userId, 3).doOnSuccess(sink::success).subscribe();
+                this.save(file, userId, this.fileConfig.getMaxCount()).doOnSuccess(sink::success).subscribe();
             });
             } else {
                 sink.success(false);
@@ -45,7 +50,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      */
     @Override
     public Mono<Boolean> saveAll(String userId, List<FilePart> files) {
-        return this.saveAll(files, userId, 3);
+        return this.saveAll(files, userId, this.fileConfig.getMaxCount());
     }
 
     /**
