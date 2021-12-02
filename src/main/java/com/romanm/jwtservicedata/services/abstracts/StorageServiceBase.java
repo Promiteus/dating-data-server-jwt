@@ -49,15 +49,15 @@ public class StorageServiceBase {
      * @param userId String
      * @return int
      */
-    private long getFilesCount(String userId) {
+    private boolean isFilesLimit(String userId, int maxFilesCount) {
         try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)))) {
             long filesCount = files.count();
             log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, userId, filesCount)));
-            return filesCount;
+            return filesCount > maxFilesCount-1;
         } catch (IOException e) {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
         }
-        return 0;
+        return false;
     }
 
     /**
@@ -77,8 +77,6 @@ public class StorageServiceBase {
 
         return Mono.create(monoSink -> {
 
-            //log.info(MessageConstants.prefixMsg("Input files count: "+files.size()+" files list: "+files.get(0).filename().isEmpty()));
-
             if (files.size() > maxFilesCount) {
                 monoSink.success(false);
                 return;
@@ -92,7 +90,7 @@ public class StorageServiceBase {
                 for (FilePart fileItem: files) {
                     String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileItem.filename();
 
-                    if (this.getFilesCount(userId) > maxFilesCount-1) {
+                    if (this.isFilesLimit(userId, maxFilesCount)) {
                         monoSink.success(false);
                         break;
                     }
@@ -127,7 +125,7 @@ public class StorageServiceBase {
             file.doOnSuccess(filePart -> {
                 String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
 
-                if (this.getFilesCount(userId) > 3) {
+                if (this.isFilesLimit(userId, maxFilesCount)) {
                     sink.success(false);
                     return;
                 }
