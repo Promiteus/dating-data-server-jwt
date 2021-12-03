@@ -10,4 +10,13 @@ import org.springframework.stereotype.Component;
 public class FileConfig {
     private int maxCount;
     private String uploadsDir;
+    private String permittedFormats;
+
+    /**
+     * Допустимые форматы файлов
+     * @return  String[]
+     */
+    public String[] getPermittedFormats() {
+        return permittedFormats.split("#");
+    }
 }

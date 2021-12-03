@@ -10,6 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+
+/**
+ * {
+ *     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzOTQwMDI2N30.OK2ZNiQ5znQ4fgPBLsLKsSd4CX8S64WemzT4YDVWgXNUAQJUH8RL38roy4BT3VK_6qPw0oLa2pP1o6GY1uGIcQ",
+ *     "token_expire_sec": "2021-12-13 T 22:57:47.351",
+ *     "user_id": "ff8081817ce58288017ce584265d0000"
+ * }*/
+
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class UserProfileController {
