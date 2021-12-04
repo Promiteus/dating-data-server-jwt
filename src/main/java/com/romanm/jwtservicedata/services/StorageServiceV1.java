@@ -1,6 +1,8 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
+import com.romanm.jwtservicedata.constants.MessageConstants;
+import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +33,13 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      * @return Mono<Boolean>
      */
     @Override
-    public Mono<Boolean> save(String userId, Mono<FilePart> filePartMono) {
+    public Mono<FileStatus> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
                 this.save(file, userId, this.fileConfig.getMaxCount()).doOnSuccess(sink::success).subscribe();
             });
             } else {
-                sink.success(false);
+                sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS));
             }
         });
     }

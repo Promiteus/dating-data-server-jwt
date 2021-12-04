@@ -2,9 +2,11 @@ package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
+import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,6 +62,34 @@ public class StorageServiceBase {
     }
 
     /**
+     *
+     * @param files Flux<FilePart>
+     * @param userId String
+     * @param maxFilesCount int
+     * @return Mono<Void>
+     */
+    protected Mono<Void> saveAllFlux(Flux<FilePart> files, String userId, int maxFilesCount) {
+        if (!this.isDirExists(this.baseDir)) {
+            this.createWorkDir(this.baseDir);
+        }
+
+        if (!this.isDirExists(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId))) {
+            this.createWorkDir(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId));
+        }
+
+        return files.flatMap(filePart -> {
+            String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
+            return filePart.transferTo(Paths.get(fileName).toFile())
+                    .doOnSuccess(s -> {
+                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileName)));
+                    })
+                    .doOnError(err -> {
+                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileName, err.getMessage())));
+                    });
+        }).then();
+    }
+
+    /**
      * Сохранить список файлов в каталог пользователя
      * @param files Mono<List<FilePart>>
      * @param userId String
@@ -111,7 +141,7 @@ public class StorageServiceBase {
      * @param userId String
      * @return Mono<Boolean>
      */
-    protected Mono<Boolean> save(Mono<FilePart> file, String userId, int maxFilesCount) {
+    protected Mono<FileStatus> save(Mono<FilePart> file, String userId, int maxFilesCount) {
         if (!this.isDirExists(this.baseDir)) {
             this.createWorkDir(this.baseDir);
         }
@@ -120,26 +150,30 @@ public class StorageServiceBase {
             this.createWorkDir(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId));
         }
 
+
         return Mono.create(sink -> {
             file.doOnSuccess(filePart -> {
                 String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
 
                 if (this.isFilesLimit(userId, maxFilesCount)) {
-                    sink.success(false);
+                    sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, maxFilesCount)));
                     return;
                 }
 
+
                 filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
-                    log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename())));
-                    sink.success(true);
+                    String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
+                    log.info(MessageConstants.prefixMsg(msg));
+                    sink.success(new FileStatus(true, fileName, ""));
                 }).doOnError(err -> {
-                    log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage())));
-                    sink.success(false);
+                    String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
+                    log.info(MessageConstants.prefixMsg(msg));
+                    sink.success(new FileStatus(false, fileName, msg));
                 }).subscribe();
 
             }).doOnError(err -> {
                 log.info(MessageConstants.errorPrefixMsg(err.getMessage()));
-                sink.success(false);
+                sink.success(new FileStatus(false, "", err.getMessage()));
             }).subscribe();
         });
     }

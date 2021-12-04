@@ -12,5 +12,5 @@ import java.io.Serializable;
 public class FileStatus implements Serializable {
     private boolean saved = false;
     private String fileName;
-    private String error;
+    private String error = "";
 }
