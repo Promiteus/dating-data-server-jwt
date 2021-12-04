@@ -8,7 +8,7 @@ import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
 
 public class StorageServiceBaseTest  {
-    private StorageServiceBase storageServiceBase = new StorageServiceBase("uploads_test");
+    //private StorageServiceBase storageServiceBase = new StorageServiceBase("uploads_test");
 
     @Test
     public void saveFileTest() {
