@@ -8,11 +8,21 @@ import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ZeroCopyHttpOutputMessage;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,14 +37,39 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
-     *
+     * Извлечь все файлы из каталога пользователя
      * @param userId String
-     * @return Flux<Resource>
+     * @return Flux<String>
      */
     @Override
-    public Flux<Resource> getFiles(String userId) {
-
+    public Flux<String> getFiles(String userId) {
+        this.listFiles(userId).forEach(file -> {
+            log.info(MessageConstants.prefixMsg("Got file: "+file.getName()));
+        });
         return Flux.empty();
+    }
+
+    /**
+     * Получить экземпляр файла из каталога и перевезти его в массив байт
+     * @param userId String
+     * @param fileName String
+     * @return byte[]
+     */
+    @Override
+    public byte[] getFile(String userId, String fileName) {
+        List<File> files = this.listFiles(userId)
+                .stream()
+                .filter(item -> (item.getName().equals(fileName)))
+                .collect(Collectors.toList());
+        if (files.size() > 0) {
+            File file = files.get(0);
+            try {
+                return Files.readAllBytes(file.toPath());
+            } catch (IOException e) {
+                log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
+            }
+        }
+        return new byte[]{};
     }
 
     /**

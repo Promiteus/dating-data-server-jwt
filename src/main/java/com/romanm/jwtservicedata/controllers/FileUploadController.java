@@ -4,10 +4,13 @@ import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,15 +22,20 @@ public class FileUploadController {
     private StorageService storageService;
 
     /**
-     * Получить все изображения пользователя по userId
+     * Получить файл изображения по ссылке
      * @param userId String
-     * @return Mono<ResponseEntity<Flux<Resource>>>
+     * @return  Mono<ResponseEntity<byte[]>>
      */
-    @GetMapping(value = Api.API_USER_IMAGES_USER_ID)
-    public Mono<ResponseEntity<Flux<Resource>>> getImages(@RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId) {
+    @GetMapping(value = Api.API_USER_IMAGE)
+    public Mono<ResponseEntity<byte[]>> getFile(
+            @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
+            @RequestParam(value = Api.PARAM_FILE_ID, defaultValue = "", required = true) String fileName) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", MediaType.IMAGE_JPEG_VALUE);
 
         return Mono.create(sink -> {
-            sink.success(ResponseEntity.ok().build());
+            sink.success(new ResponseEntity<>(this.storageService.getFile(userId, fileName), headers, HttpStatus.OK));
         });
     }
 
