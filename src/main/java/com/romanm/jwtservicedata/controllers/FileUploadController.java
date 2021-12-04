@@ -83,21 +83,18 @@ public class FileUploadController {
         });
     }
 
-    /**
-     * Сохранить несколько изображений за раз
-     * @param userId String
-     * @param files List<FilePart>
-     * @return Mono<ResponseEntity<?>>
-     */
-    @PostMapping(value = Api.API_USER_IMAGES_ALL)
-    public Mono<ResponseEntity<?>> saveFiles(
+
+    @PostMapping(value = Api.API_USER_IMAGES_MULTI)
+    public Mono<ResponseEntity<?>> saveFluxFiles(
             @RequestPart(value = Api.PARAM_USER_ID, required = true) String userId,
-            @RequestPart(value = Api.PARAM_FILES, required = true) List<FilePart> files) {
+            @RequestPart(value = Api.PARAM_FILES, required = true) Flux<FilePart> files) {
 
         return Mono.create(sink -> {
-            this.storageService.saveAll(userId, files).doOnSuccess(s -> {
-                sink.success(s ? ResponseEntity.ok().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
-            }).subscribe();
+            this.storageService.saveAllFlux(userId, files)
+                    .collectList()
+                    .doOnSuccess(res -> {
+                        sink.success(ResponseEntity.ok(res));
+                    }).subscribe();
         });
     }
 }

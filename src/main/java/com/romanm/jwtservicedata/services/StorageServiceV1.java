@@ -9,9 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -45,14 +44,14 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
-     * Сохранить файлы (список) в каталог пользователя
+     * Сохранение нескольких файлов одновременно
      * @param userId String
-     * @param files List<FilePart>
-     * @return Mono<Boolean>
+     * @param files  Flux<FilePart>
+     * @return Flux<FileStatus>
      */
     @Override
-    public Mono<Boolean> saveAll(String userId, List<FilePart> files) {
-        return this.saveAll(files, userId, this.fileConfig.getMaxCount());
+    public Flux<FileStatus> saveAllFlux(String userId, Flux<FilePart> files) {
+        return this.saveAllFlux(files, userId, this.fileConfig.getMaxCount());
     }
 
     /**

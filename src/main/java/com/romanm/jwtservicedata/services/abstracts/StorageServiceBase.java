@@ -68,7 +68,7 @@ public class StorageServiceBase {
      * @param maxFilesCount int
      * @return Mono<Void>
      */
-    protected Mono<Void> saveAllFlux(Flux<FilePart> files, String userId, int maxFilesCount) {
+    protected Flux<FileStatus> saveAllFlux(Flux<FilePart> files, String userId, int maxFilesCount) {
         if (!this.isDirExists(this.baseDir)) {
             this.createWorkDir(this.baseDir);
         }
@@ -79,59 +79,22 @@ public class StorageServiceBase {
 
         return files.flatMap(filePart -> {
             String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+filePart.filename();
-            return filePart.transferTo(Paths.get(fileName).toFile())
-                    .doOnSuccess(s -> {
-                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileName)));
-                    })
-                    .doOnError(err -> {
-                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileName, err.getMessage())));
-                    });
-        }).then();
-    }
-
-    /**
-     * Сохранить список файлов в каталог пользователя
-     * @param files Mono<List<FilePart>>
-     * @param userId String
-     * @return Mono<?>
-     */
-    protected Mono<Boolean> saveAll(List<FilePart> files, String userId, int maxFilesCount) {
-        if (!this.isDirExists(this.baseDir)) {
-            this.createWorkDir(this.baseDir);
-        }
-
-        if (!this.isDirExists(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId))) {
-            this.createWorkDir(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId));
-        }
-
-        return Mono.create(monoSink -> {
-
-            if (files.size() > maxFilesCount) {
-                monoSink.success(false);
-                return;
-            }
-
-            if (files.get(0).filename().isEmpty()) {
-                monoSink.success(false);
-                return;
-            }
-
-                for (FilePart fileItem: files) {
-                    String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.baseDir, userId)+"/"+fileItem.filename();
-
-                    if (this.isFilesLimit(userId, maxFilesCount)) {
-                        monoSink.success(false);
-                        break;
-                    }
-
-                    fileItem.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
-                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileItem.filename())));
-                    }).doOnError(err -> {
-                        log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileItem.filename(), err.getMessage())));
-                    }).delayElement(Duration.ofMillis(500)).subscribe();
-
+            return Mono.create(sink -> {
+                if (this.isFilesLimit(userId, maxFilesCount)) {
+                    sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, maxFilesCount)));
+                    return;
                 }
-                monoSink.success(true);
+
+                filePart.transferTo(Paths.get(fileName).toFile())
+                        .doOnSuccess(s -> {
+                            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileName)));
+                            sink.success(new FileStatus(true, fileName, ""));
+                        })
+                        .doOnError(err -> {
+                            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileName, err.getMessage())));
+                            sink.success(new FileStatus(true, fileName, err.getMessage()));
+                        }).subscribe();
+            });
         });
     }
 
