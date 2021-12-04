@@ -7,6 +7,7 @@ import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,6 +24,17 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public StorageServiceV1(FileConfig fileConfig) {
         super(fileConfig);
         this.fileConfig = fileConfig;
+    }
+
+    /**
+     *
+     * @param userId String
+     * @return Flux<Resource>
+     */
+    @Override
+    public Flux<Resource> getFiles(String userId) {
+
+        return Flux.empty();
     }
 
     /**
@@ -50,7 +62,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      * @return Flux<FileStatus>
      */
     @Override
-    public Flux<FileStatus> saveAllFlux(String userId, Flux<FilePart> files) {
+    public Flux<FileStatus> saveAll(String userId, Flux<FilePart> files) {
         return this.saveAllFlux(files, userId);
     }
 

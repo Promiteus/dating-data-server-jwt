@@ -76,7 +76,7 @@ public class StorageServiceBase {
     }
 
     /**
-     *
+     * Сохранить группу файлов в каталоге пользователя
      * @param files Flux<FilePart>
      * @param userId String
      * @return Mono<Void>

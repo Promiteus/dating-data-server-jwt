@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class FileUploadController {
@@ -90,7 +88,7 @@ public class FileUploadController {
             @RequestPart(value = Api.PARAM_FILES, required = true) Flux<FilePart> files) {
 
         return Mono.create(sink -> {
-            this.storageService.saveAllFlux(userId, files)
+            this.storageService.saveAll(userId, files)
                     .collectList()
                     .doOnSuccess(res -> {
                         sink.success(ResponseEntity.ok(res));
