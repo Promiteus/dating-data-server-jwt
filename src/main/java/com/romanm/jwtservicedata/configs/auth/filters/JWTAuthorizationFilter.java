@@ -1,8 +1,9 @@
-package com.romanm.jwtservicedata.configs.auth;
+package com.romanm.jwtservicedata.configs.auth.filters;
 
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.auth.AuthUser;
 import com.romanm.jwtservicedata.services.UserServiceV1;
@@ -27,13 +28,22 @@ public class JWTAuthorizationFilter implements WebFilter {
         this.userService = userService;
     }
 
-
+    /**
+     * Метод фильтра, где проверяется токен авторизации
+     * @param exchange ServerWebExchange
+     * @param chain WebFilterChain
+     * @return Mono<Void>
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
+
+        log.info(MessageConstants.prefixMsg("JWTAuthorizationFilter response status: "+response.getRawStatusCode()));
+
         response.setStatusCode(HttpStatus.FORBIDDEN);
 
         log.info(MessageConstants.prefixMsg(exchange.getRequest().getURI().getPath()));
+        log.info(MessageConstants.prefixMsg("Is regexp "+Api.openedUrlPaths[0]+": "+exchange.getRequest().getURI().getPath().contains(Api.openedUrlPaths[0])));
 
         if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
             String header = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
@@ -56,7 +66,11 @@ public class JWTAuthorizationFilter implements WebFilter {
     }
 
 
-
+    /**
+     * Метод, проверяющий токен авторизации на валидность
+     * @param exchange ServerWebExchange
+     * @return AuthUser
+     */
     private AuthUser getAuthentication(ServerWebExchange exchange) {
         String token = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
 

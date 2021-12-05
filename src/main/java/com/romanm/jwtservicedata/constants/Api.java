@@ -19,4 +19,6 @@ public class Api {
     public final static String API_USER_IMAGES_ALL = "/uploads/all";
     public final static String API_USER_IMAGES_MULTI = "/uploads/multi";
     public final static String API_USER_PROFILE_USER_ID = API_USER_PROFILE+"/{"+Api.PARAM_USER_ID+"}";
+
+    public final static String[] openedUrlPaths = {API_USER_IMAGE};
 }
