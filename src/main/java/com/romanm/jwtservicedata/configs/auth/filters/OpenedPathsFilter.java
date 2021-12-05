@@ -1,7 +1,6 @@
 package com.romanm.jwtservicedata.configs.auth.filters;
 
 import com.romanm.jwtservicedata.components.auth.OpenUrlChecker;
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;

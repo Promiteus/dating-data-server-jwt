@@ -12,6 +12,7 @@ public class Api {
 
     public final static String BASE_URL = "http://localhost:8090";
 
+    public final static String MAIN_ICON = "/favicon";
     public final static String API_CHAT_MESSAGES = "/chat_messages";
     public final static String API_USER_PROFILE = "/user_profile";
     public final static String API_USER_IMAGE = "/resource";
@@ -20,5 +21,5 @@ public class Api {
     public final static String API_USER_IMAGES_MULTI = "/uploads/multi";
     public final static String API_USER_PROFILE_USER_ID = API_USER_PROFILE+"/{"+Api.PARAM_USER_ID+"}";
 
-    public final static String[] openedUrlPaths = {API_USER_IMAGE};
+    public final static String[] openedUrlPaths = {API_USER_IMAGE, MAIN_ICON};
 }

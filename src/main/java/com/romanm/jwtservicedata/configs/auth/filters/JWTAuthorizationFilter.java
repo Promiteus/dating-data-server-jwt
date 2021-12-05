@@ -3,7 +3,6 @@ package com.romanm.jwtservicedata.configs.auth.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.auth.AuthUser;
 import com.romanm.jwtservicedata.services.UserServiceV1;
@@ -36,8 +35,6 @@ public class JWTAuthorizationFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
 
-        log.info(MessageConstants.prefixMsg("JWTAuthorizationFilter response status: "+response.getRawStatusCode()));
-
         if (response.getRawStatusCode() == HttpStatus.FORBIDDEN.value()) {
             if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
                 String header = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
@@ -45,7 +42,7 @@ public class JWTAuthorizationFilter implements WebFilter {
                 if (header == null || !header.startsWith(MessageConstants.TOKEN_PREFIX)) {
                     return response.setComplete();
                 }
-
+                //Здесь проверяется токен JWT
                 AuthUser authUser = getAuthentication(exchange);
                 if (authUser == null) {
                     return response.setComplete();
@@ -54,8 +51,9 @@ public class JWTAuthorizationFilter implements WebFilter {
                 MessageConstants.getDecodedUserMsg(null, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
                 return response.setComplete();
             }
+        } else {
+            MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
         }
-
 
         response.setStatusCode(HttpStatus.OK); //Если токен валидный и срок его не истек
         return chain.filter(exchange);
