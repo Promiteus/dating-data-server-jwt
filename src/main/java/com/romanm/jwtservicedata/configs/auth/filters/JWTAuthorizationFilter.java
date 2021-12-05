@@ -48,7 +48,7 @@ public class JWTAuthorizationFilter implements WebFilter {
                     return response.setComplete();
                 }
             } else {
-                MessageConstants.getDecodedUserMsg(null, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
+                MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
                 return response.setComplete();
             }
         } else {
