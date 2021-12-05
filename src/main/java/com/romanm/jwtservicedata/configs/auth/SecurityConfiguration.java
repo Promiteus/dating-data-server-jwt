@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.configs.auth;
 
+import com.romanm.jwtservicedata.components.auth.OpenUrlChecker;
 import com.romanm.jwtservicedata.configs.auth.filters.JWTAuthorizationFilter;
 import com.romanm.jwtservicedata.configs.auth.filters.OpenedPathsFilter;
 import com.romanm.jwtservicedata.services.UserServiceV1;
@@ -20,11 +21,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfiguration {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserServiceV1 userService;
+    private final OpenUrlChecker openUrlChecker;
 
     @Autowired
-    public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceV1 userService) {
+    public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceV1 userService, OpenUrlChecker openUrlChecker) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
+        this.openUrlChecker = openUrlChecker;
     }
 
     @Bean
@@ -35,7 +38,7 @@ public class SecurityConfiguration {
                .httpBasic().disable()
                .formLogin().disable()
                .logout().disable()
-               .addFilterAt(new OpenedPathsFilter(), SecurityWebFiltersOrder.FIRST)
+               .addFilterAt(new OpenedPathsFilter(this.openUrlChecker), SecurityWebFiltersOrder.FIRST)
                .addFilterAt(new JWTAuthorizationFilter(this.userService), SecurityWebFiltersOrder.AUTHENTICATION)
                .build();
     }

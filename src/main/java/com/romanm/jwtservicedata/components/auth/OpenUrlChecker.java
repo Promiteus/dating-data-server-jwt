@@ -7,7 +7,12 @@ import java.util.Arrays;
 
 @Component
 public class OpenUrlChecker {
-    public boolean ckeck(String url) {
+    /**
+     * Проверить url в наличие его в списке незакырытых токеном маршрутов
+     * @param url String
+     * @return boolean
+     */
+    public boolean check(String url) {
         return !url.isEmpty() && Arrays.stream(Api.openedUrlPaths).filter(url::contains).count() > 0;
     }
 }

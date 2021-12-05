@@ -15,8 +15,6 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-
-
 /**
  * Фильтр для идентификации токена по публичному ключу
  */
@@ -40,26 +38,24 @@ public class JWTAuthorizationFilter implements WebFilter {
 
         log.info(MessageConstants.prefixMsg("JWTAuthorizationFilter response status: "+response.getRawStatusCode()));
 
-        response.setStatusCode(HttpStatus.FORBIDDEN);
+        if (response.getRawStatusCode() == HttpStatus.FORBIDDEN.value()) {
+            if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
+                String header = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
 
-        log.info(MessageConstants.prefixMsg(exchange.getRequest().getURI().getPath()));
-        log.info(MessageConstants.prefixMsg("Is regexp "+Api.openedUrlPaths[0]+": "+exchange.getRequest().getURI().getPath().contains(Api.openedUrlPaths[0])));
+                if (header == null || !header.startsWith(MessageConstants.TOKEN_PREFIX)) {
+                    return response.setComplete();
+                }
 
-        if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
-            String header = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
-
-            if (header == null || !header.startsWith(MessageConstants.TOKEN_PREFIX)) {
+                AuthUser authUser = getAuthentication(exchange);
+                if (authUser == null) {
+                    return response.setComplete();
+                }
+            } else {
+                MessageConstants.getDecodedUserMsg(null, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
                 return response.setComplete();
             }
-
-            AuthUser authUser = getAuthentication(exchange);
-            if (authUser == null) {
-                return response.setComplete();
-            }
-        } else {
-            MessageConstants.getDecodedUserMsg(null, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
-            return response.setComplete();
         }
+
 
         response.setStatusCode(HttpStatus.OK); //Если токен валидный и срок его не истек
         return chain.filter(exchange);

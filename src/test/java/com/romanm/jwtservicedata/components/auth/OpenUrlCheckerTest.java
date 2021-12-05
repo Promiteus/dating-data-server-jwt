@@ -15,8 +15,8 @@ public class OpenUrlCheckerTest {
     @Test
     public void checkTest() {
         OpenUrlChecker openUrlChecker = new OpenUrlChecker();
-        boolean urlTestTrue = openUrlChecker.ckeck(Api.API_PREFIX+Api.API_USER_IMAGE);
-        boolean urlTestFalse = openUrlChecker.ckeck(Api.API_PREFIX+Api.API_USER_IMAGES);
+        boolean urlTestTrue = openUrlChecker.check(Api.API_PREFIX+Api.API_USER_IMAGE);
+        boolean urlTestFalse = openUrlChecker.check(Api.API_PREFIX+Api.API_USER_IMAGES);
 
         log.info(MessageConstants.prefixMsg("urlTestTrue: "+urlTestTrue));
         log.info(MessageConstants.prefixMsg("urlTestFalse: "+urlTestFalse));

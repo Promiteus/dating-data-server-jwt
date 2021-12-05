@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.configs.auth.filters;
 
+import com.romanm.jwtservicedata.components.auth.OpenUrlChecker;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,12 +14,23 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 public class OpenedPathsFilter implements WebFilter {
+    private final OpenUrlChecker openUrlChecker;
+
+    public OpenedPathsFilter(OpenUrlChecker openUrlChecker) {
+        this.openUrlChecker = openUrlChecker;
+    }
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        log.info(MessageConstants.prefixMsg("OpenedPathsFilter called! "));
 
+        if (this.openUrlChecker.check(exchange.getRequest().getURI().getPath())) {
+            //Если текущий url открыт - доступ без токена
+            exchange.getResponse().setStatusCode(HttpStatus.ACCEPTED);
+        } else {
+            //Если текущий url закрыт - доступ по токену
+            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+        }
 
-        exchange.getResponse().setStatusCode(HttpStatus.ACCEPTED);
         return chain.filter(exchange);
     }
 
