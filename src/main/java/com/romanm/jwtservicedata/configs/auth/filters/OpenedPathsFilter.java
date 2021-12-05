@@ -21,4 +21,6 @@ public class OpenedPathsFilter implements WebFilter {
         exchange.getResponse().setStatusCode(HttpStatus.ACCEPTED);
         return chain.filter(exchange);
     }
+
+
 }

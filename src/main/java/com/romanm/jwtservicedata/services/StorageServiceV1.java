@@ -80,7 +80,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                 this.save(file, userId).doOnSuccess(sink::success).subscribe();
             });
             } else {
-                sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS));
+                sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
             }
         });
     }

@@ -92,7 +92,7 @@ public class StorageServiceBase {
             String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)+"/"+filePart.filename();
             return Mono.create(sink -> {
                 if (this.isFilesLimit(userId, this.fileConfig.getMaxCount())) {
-                    sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, this.fileConfig.getMaxCount())));
+                    sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, this.fileConfig.getMaxCount()), ""));
                     return;
                 }
 

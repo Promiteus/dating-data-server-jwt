@@ -13,4 +13,12 @@ public class FileStatus implements Serializable {
     private boolean saved = false;
     private String fileName;
     private String error = "";
+    private String url = "";
+
+    public FileStatus(boolean saved, String fileName, String error) {
+        this.error = error;
+        this.fileName = fileName;
+        this.saved = saved;
+        this.url = "";
+    }
 }
