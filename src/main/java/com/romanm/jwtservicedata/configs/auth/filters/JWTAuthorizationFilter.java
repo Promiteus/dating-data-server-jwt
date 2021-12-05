@@ -34,6 +34,7 @@ public class JWTAuthorizationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
+        String host = exchange.getRequest().getRemoteAddress().getHostString();
 
         if (response.getRawStatusCode() == HttpStatus.FORBIDDEN.value()) {
             if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
@@ -48,11 +49,11 @@ public class JWTAuthorizationFilter implements WebFilter {
                     return response.setComplete();
                 }
             } else {
-                MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
+                MessageConstants.getDecodedUserMsg(host, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
                 return response.setComplete();
             }
         } else {
-            MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
+            MessageConstants.getDecodedUserMsg(host, exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
         }
 
         response.setStatusCode(HttpStatus.OK); //Если токен валидный и срок его не истек
