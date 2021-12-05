@@ -5,10 +5,7 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.FileSystemUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -185,8 +182,12 @@ public class StorageServiceBase {
         return res;
     }
 
+    /**
+     * Выдаст список файлов в каталоге пользователя
+     * @param userId String
+     * @return List<File>
+     */
     protected List<File> listFiles(String userId) {
-       // log.info("----- "+userId);
         try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)))) {
             return files.map(Path::toFile).collect(Collectors.toList());
         } catch (IOException e) {

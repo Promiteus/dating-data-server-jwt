@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.auth.AuthUser;
 import com.romanm.jwtservicedata.services.UserServiceV1;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 /**
  * Фильтр для идентификации токена по публичному ключу
  */
+@Slf4j
 public class JWTAuthorizationFilter implements WebFilter {
     private final UserServiceV1 userService;
 
@@ -30,6 +32,8 @@ public class JWTAuthorizationFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
+
+        log.info(MessageConstants.prefixMsg(exchange.getRequest().getURI().getPath()));
 
         if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
             String header = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);

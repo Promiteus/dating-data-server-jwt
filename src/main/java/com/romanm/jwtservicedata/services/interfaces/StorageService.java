@@ -1,9 +1,7 @@
 package com.romanm.jwtservicedata.services.interfaces;
 
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
-import org.springframework.core.io.Resource;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
