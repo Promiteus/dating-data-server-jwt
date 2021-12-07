@@ -1,7 +1,9 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.components.http.MediaTypeConvertor;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,14 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class FileUploadController {
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private MediaTypeConvertor mediaTypeConvertor;
 
     /**
      * Получить файл изображения по ссылке
@@ -28,10 +34,16 @@ public class FileUploadController {
             @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId,
             @RequestParam(value = Api.PARAM_FILE_ID, defaultValue = "") String fileName) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", MediaType.IMAGE_JPEG_VALUE);
-
+        //Найти файл пользователя по имени
         byte[] bytes = this.storageService.getFile(userId, fileName);
+        //Получить медиатип по названию файла
+        String mediaType = this.mediaTypeConvertor.getFileMediaType(fileName);
+        if (mediaType == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        //Присвоить медиатип заголовку ответа сервера
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", mediaType);
 
         return Mono.create(sink -> {
             sink.success(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
