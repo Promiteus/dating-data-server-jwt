@@ -26,9 +26,11 @@ public class MessageConstants {
     public static final String MSG_DELETED_FILE_SUCCESSFUL = "File '%s' was deleted successfully!";
     public static final String MSG_DELETED_FILES_SUCCESSFUL = "Files in directory '208' were deleted successfully and directory was too!";
     public static final String MSG_FILES_COUNT = "Files in directory '%s' count: %d";
+    public static final String MSG_FORMAT_FILE_INVALID = "Format file '%s' is invalid! Valid formats are: %s";
     public static final String MSG_MAX_FILES_COUNT = "Files amount for saving permitted are: %d";
 
     public static final String MSG_NOT_ALL_HTTP_PARAMS = "Not all params have been passed!";
+    public static final String MSG_UNKNOWN_MEDIA_TYPE = "It's unknown media type!";
 
     public static final String UNKNOWN_USER = "Unknown";
 

@@ -1,7 +1,8 @@
 package com.romanm.jwtservicedata.controllers;
 
-import com.romanm.jwtservicedata.components.http.MediaTypeConvertor;
+import com.romanm.jwtservicedata.components.files.MediaTypeHandler;
 import com.romanm.jwtservicedata.constants.Api;
+import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class FileUploadController {
     @Autowired
     private StorageService storageService;
     @Autowired
-    private MediaTypeConvertor mediaTypeConvertor;
+    private MediaTypeHandler mediaTypeHandler;
 
     /**
      * Получить файл изображения по ссылке
@@ -38,9 +39,9 @@ public class FileUploadController {
             //Найти файл пользователя по имени
             byte[] bytes = this.storageService.getFile(userId, fileName);
             //Получить медиатип по названию файла
-            String mediaType = this.mediaTypeConvertor.getFileMediaType(fileName);
+            String mediaType = this.mediaTypeHandler.getFileMediaType(fileName);
             if (mediaType == null) {
-                sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageConstants.MSG_UNKNOWN_MEDIA_TYPE));
                 return;
             }
             //Присвоить медиатип заголовку ответа сервера

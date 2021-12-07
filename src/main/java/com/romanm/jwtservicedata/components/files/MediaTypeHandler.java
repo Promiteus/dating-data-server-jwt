@@ -1,4 +1,4 @@
-package com.romanm.jwtservicedata.components.http;
+package com.romanm.jwtservicedata.components.files;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class MediaTypeConvertor {
+public class MediaTypeHandler {
     private final Map<String, String> imageFormatsMediaTypesMap = Map.of(
             "png", MediaType.IMAGE_PNG_VALUE,
             "jpg", MediaType.IMAGE_JPEG_VALUE,
