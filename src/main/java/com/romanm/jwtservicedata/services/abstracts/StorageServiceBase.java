@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
+import com.romanm.jwtservicedata.components.files.FileTypeHandler;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +24,10 @@ import java.util.stream.Stream;
 @Slf4j
 public class StorageServiceBase {
     private final FileConfig fileConfig;
+    private final FileTypeHandler fileTypeHandler;
 
     public StorageServiceBase(FileConfig fileConfig) {
+        this.fileTypeHandler = new FileTypeHandler(fileConfig);
         this.fileConfig = fileConfig;
     }
 
@@ -96,7 +100,7 @@ public class StorageServiceBase {
                     return;
                 }
 
-                filePart.transferTo(Paths.get(fileName).toFile())
+               /* filePart.transferTo(Paths.get(fileName).toFile())
                         .doOnSuccess(s -> {
                             log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileName)));
                             sink.success(new FileStatus(true, fileName, ""));
@@ -104,7 +108,8 @@ public class StorageServiceBase {
                         .doOnError(err -> {
                             log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileName, err.getMessage())));
                             sink.success(new FileStatus(true, fileName, err.getMessage()));
-                        }).subscribe();
+                        }).subscribe();*/
+                this.saveFileItem(sink, filePart, fileName);
             });
         });
     }
@@ -122,13 +127,14 @@ public class StorageServiceBase {
             file.doOnSuccess(filePart -> {
                 String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)+"/"+filePart.filename();
 
+
+
                 if (this.isFilesLimit(userId, this.fileConfig.getMaxCount())) {
                     sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, this.fileConfig.getMaxCount())));
                     return;
                 }
 
-
-                filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
+               /* filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
                     String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
                     log.info(MessageConstants.prefixMsg(msg));
                     sink.success(new FileStatus(true, fileName, ""));
@@ -136,7 +142,8 @@ public class StorageServiceBase {
                     String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
                     log.info(MessageConstants.prefixMsg(msg));
                     sink.success(new FileStatus(false, fileName, msg));
-                }).subscribe();
+                }).subscribe();*/
+                this.saveFileItem(sink, filePart, fileName);
 
             }).doOnError(err -> {
                 log.info(MessageConstants.errorPrefixMsg(err.getMessage()));
@@ -194,5 +201,23 @@ public class StorageServiceBase {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
         }
         return List.of();
+    }
+
+    /**
+     * Асинхронное сохранение файла с передачей синхронизатора
+     * @param sink MonoSink<FileStatus>
+     * @param filePart FilePart
+     * @param fileName String
+     */
+    private void saveFileItem(MonoSink<FileStatus> sink, FilePart filePart, String fileName) {
+        filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
+            String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
+            log.info(MessageConstants.prefixMsg(msg));
+            sink.success(new FileStatus(true, fileName, ""));
+        }).doOnError(err -> {
+            String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
+            log.info(MessageConstants.prefixMsg(msg));
+            sink.success(new FileStatus(false, fileName, msg));
+        }).subscribe();
     }
 }
