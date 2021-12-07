@@ -34,18 +34,19 @@ public class FileUploadController {
             @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId,
             @RequestParam(value = Api.PARAM_FILE_ID, defaultValue = "") String fileName) {
 
-        //Найти файл пользователя по имени
-        byte[] bytes = this.storageService.getFile(userId, fileName);
-        //Получить медиатип по названию файла
-        String mediaType = this.mediaTypeConvertor.getFileMediaType(fileName);
-        if (mediaType == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        //Присвоить медиатип заголовку ответа сервера
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", mediaType);
-
         return Mono.create(sink -> {
+            //Найти файл пользователя по имени
+            byte[] bytes = this.storageService.getFile(userId, fileName);
+            //Получить медиатип по названию файла
+            String mediaType = this.mediaTypeConvertor.getFileMediaType(fileName);
+            if (mediaType == null) {
+                sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                return;
+            }
+            //Присвоить медиатип заголовку ответа сервера
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", mediaType);
+
             sink.success(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
         });
     }
