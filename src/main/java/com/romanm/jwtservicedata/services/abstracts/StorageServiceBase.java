@@ -100,15 +100,6 @@ public class StorageServiceBase {
                     return;
                 }
 
-               /* filePart.transferTo(Paths.get(fileName).toFile())
-                        .doOnSuccess(s -> {
-                            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, fileName)));
-                            sink.success(new FileStatus(true, fileName, ""));
-                        })
-                        .doOnError(err -> {
-                            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_ERR_FILE_SAVING, fileName, err.getMessage())));
-                            sink.success(new FileStatus(true, fileName, err.getMessage()));
-                        }).subscribe();*/
                 this.saveFileItem(sink, filePart, fileName);
             });
         });
@@ -134,15 +125,6 @@ public class StorageServiceBase {
                     return;
                 }
 
-               /* filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
-                    String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
-                    log.info(MessageConstants.prefixMsg(msg));
-                    sink.success(new FileStatus(true, fileName, ""));
-                }).doOnError(err -> {
-                    String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
-                    log.info(MessageConstants.prefixMsg(msg));
-                    sink.success(new FileStatus(false, fileName, msg));
-                }).subscribe();*/
                 this.saveFileItem(sink, filePart, fileName);
 
             }).doOnError(err -> {
