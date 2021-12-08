@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
@@ -101,7 +102,7 @@ public class StorageServiceBase {
                     return;
                 }
 
-                this.saveFileItem(sink, filePart, fileName);
+                this.saveFileItem(sink, filePart, fileName, userId);
             });
         });
     }
@@ -128,7 +129,7 @@ public class StorageServiceBase {
                     return;
                 }
 
-                this.saveFileItem(sink, filePart, fileName);
+                this.saveFileItem(sink, filePart, fileName, userId);
 
             }).doOnError(err -> {
                 log.info(MessageConstants.errorPrefixMsg(err.getMessage()));
@@ -194,11 +195,14 @@ public class StorageServiceBase {
      * @param filePart FilePart
      * @param fileName String
      */
-    private void saveFileItem(MonoSink<FileStatus> sink, FilePart filePart, String fileName) {
+    private void saveFileItem(MonoSink<FileStatus> sink, FilePart filePart, String fileName, String userId) {
+        //  /api/resource?user_id=208&file_id=ford_mustang_ford_avtomobil_226678_1280x1024.jpg
+        String resourceUri = String.format(Api.API_RESOURCE_URI_TEMP, userId, filePart.filename() );
+
         filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {
             String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
             log.info(MessageConstants.prefixMsg(msg));
-            sink.success(new FileStatus(true, fileName, ""));
+            sink.success(new FileStatus(true, fileName, "", resourceUri));
         }).doOnError(err -> {
             String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
             log.info(MessageConstants.prefixMsg(msg));
