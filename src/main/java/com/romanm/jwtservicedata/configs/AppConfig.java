@@ -1,8 +1,6 @@
 package com.romanm.jwtservicedata.configs;
 
-import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.components.preload.DataPreloader;
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -20,8 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class AppConfig implements CommandLineRunner {
     @Autowired
     private DataPreloader dataPreloader;
-    @Autowired
-    private FileConfig fileConfig;
 
     @Bean
     public BCryptPasswordEncoder getPasswordEncoder() {
@@ -32,7 +28,5 @@ public class AppConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
          //Заполнить начальными профилями базу
          this.dataPreloader.fillStarterData();
-
-         log.info(MessageConstants.prefixMsg("files count: "+fileConfig));
     }
 }

@@ -1,6 +1,5 @@
 package com.romanm.jwtservicedata.constants;
 
-import com.romanm.jwtservicedata.models.Visitor;
 
 public class CommonConstants
 {
