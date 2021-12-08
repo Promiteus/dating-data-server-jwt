@@ -1,7 +1,6 @@
 package com.romanm.jwtservicedata.services.abstracts;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
-import com.romanm.jwtservicedata.components.files.FileTypeHandler;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
@@ -24,10 +23,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class StorageServiceBase {
     private final FileConfig fileConfig;
-    private final FileTypeHandler fileTypeHandler;
 
     public StorageServiceBase(FileConfig fileConfig) {
-        this.fileTypeHandler = new FileTypeHandler(fileConfig);
         this.fileConfig = fileConfig;
     }
 
@@ -100,6 +97,10 @@ public class StorageServiceBase {
                     return;
                 }
 
+                if (!this.fileConfig.isFileFormatConfirmed(sink, filePart)) {
+                    return;
+                }
+
                 this.saveFileItem(sink, filePart, fileName);
             });
         });
@@ -118,7 +119,9 @@ public class StorageServiceBase {
             file.doOnSuccess(filePart -> {
                 String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)+"/"+filePart.filename();
 
-
+                if (!this.fileConfig.isFileFormatConfirmed(sink, filePart)) {
+                    return;
+                }
 
                 if (this.isFilesLimit(userId, this.fileConfig.getMaxCount())) {
                     sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_MAX_FILES_COUNT, this.fileConfig.getMaxCount())));
