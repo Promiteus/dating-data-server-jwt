@@ -21,4 +21,17 @@ public class FileStatus implements Serializable {
         this.saved = saved;
         this.url = "";
     }
+
+    /**
+     * Вернет текущее расширение файла
+     * @return String
+     */
+    public String getCurrentFileExtension() {
+        String regexpDelimiter = "\\.";
+        String[] strParts = this.getFileName().split(regexpDelimiter);
+        if (strParts.length > 1) {
+            return strParts[strParts.length-1];
+        }
+        return "";
+    }
 }

@@ -11,10 +11,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +27,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -35,6 +41,7 @@ import java.io.File;
 @TestPropertySource("classpath:/config/filescfg-test.properties")
 public class FileUploadControllerIntegrationTest {
     private final static String MSG_SAVE_SINGLE_FILE = "Try to save file '%s'! Got status: '%s'!";
+    private final static String MSG_SAVE_MULTI_FILE = "Tried saving file '%s', got save status: %s!";
     private final static String FILE_TEST_PREFIX = "/test/";
 
     @Autowired
@@ -42,8 +49,8 @@ public class FileUploadControllerIntegrationTest {
     @Autowired
     private FileConfig fileConfig;
 
-
-
+    @Value("classpath:test/*")
+    Resource[] resourceFiles;
 
     @Before
     public void initConfig() {
@@ -64,7 +71,6 @@ public class FileUploadControllerIntegrationTest {
         builder.part(Api.PARAM_USER_ID, userId);
         builder.part("file", file.getPath().getBytes()).header("Content-Disposition", "form-data; name=file; filename="+file.getName());
         return builder.build();
-
     }
 
     /**
@@ -131,7 +137,6 @@ public class FileUploadControllerIntegrationTest {
     }
 
 
-
     @Test
     public void testSaveAndDeleteSingleFile() {
         String userId = "2002";
@@ -163,5 +168,61 @@ public class FileUploadControllerIntegrationTest {
         Assert.assertFalse(statusNotOkPdf.isSaved());
         //Повторное неудачное удаление с кодом 304
         this.removeSingleFileNotModified(fileNamePdf, userId);
+    }
+
+    /**
+     *
+     * @param resource Resource
+     * @return File
+     */
+    private File resourceToFile(Resource resource) {
+        try {
+            return resource.getFile();
+        } catch (IOException e) {
+            log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
+        }
+        return null;
+    }
+
+    /**
+     * Получить список тестовых файлов
+     * @return List<File>
+     */
+    private List<File> resourceTestFileList() {
+        log.info(MessageConstants.prefixMsg("resources count: "+resourceFiles.length));
+        return Arrays.stream(resourceFiles).map(this::resourceToFile).collect(Collectors.toList());
+    }
+
+    private MultiValueMap<String, HttpEntity<?>> fromGroupFiles(String userId) {
+        List<File> fileList = this.resourceTestFileList();
+
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part(Api.PARAM_USER_ID, userId);
+        for (File file: fileList) {
+            builder.part("files", file.getPath().getBytes()).header("Content-Disposition", "form-data; name=files; filename="+file.getName());
+        }
+        return builder.build();
+    }
+
+
+
+    @Test
+    public void deleteGroupFilesFromUserDirTest() {
+        String userId = "2003";
+
+        //Сохраняем группу файлов
+        this.webTestClient
+                .post()
+                .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
+                .body(BodyInserters.fromMultipartData(this.fromGroupFiles(userId)))
+                .exchange()
+                .returnResult(FileStatus.class)
+                .getResponseBody()
+                .collectList().block().forEach(fileStatus -> {
+                     log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
+                     log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.getCurrentFileExtension()));
+                 });
+
+
     }
 }
