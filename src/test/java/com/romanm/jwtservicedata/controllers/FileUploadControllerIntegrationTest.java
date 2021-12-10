@@ -1,5 +1,7 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.components.confs.FileConfig;
+import com.romanm.jwtservicedata.configs.TestCommonConfiguration;
 import com.romanm.jwtservicedata.configs.auth.TestSecurityConfiguration;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
@@ -10,12 +12,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.MultiValueMap;
@@ -27,7 +31,9 @@ import java.io.File;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles(value = {"test"})
-@Import(value = TestSecurityConfiguration.class)
+@Import(value = {TestSecurityConfiguration.class})
+@EnableConfigurationProperties(value = FileConfig.class)
+@TestPropertySource("classpath:/config/filescfg-test.properties")
 public class FileUploadControllerIntegrationTest {
     private final static String MSG_SAVE_SINGLE_FILE = "Saved file '%s' with status '%s'!";
     private final static String FILE_TEST_PREFIX = "/test/";
@@ -108,7 +114,7 @@ public class FileUploadControllerIntegrationTest {
     @Test
     public void testSaveAndDeleteSingleFile() {
         String fileName = "file1.png";
-        String userId = "2001";
+        String userId = "2002";
         this.saveSingleFile(fileName, userId);
         this.removeSingleFile(fileName, userId);
     }
