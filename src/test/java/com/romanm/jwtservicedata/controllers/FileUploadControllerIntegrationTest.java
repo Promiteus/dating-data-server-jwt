@@ -1,7 +1,6 @@
 package com.romanm.jwtservicedata.controllers;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
-import com.romanm.jwtservicedata.configs.TestCommonConfiguration;
 import com.romanm.jwtservicedata.configs.auth.TestSecurityConfiguration;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
@@ -35,11 +34,16 @@ import java.io.File;
 @EnableConfigurationProperties(value = FileConfig.class)
 @TestPropertySource("classpath:/config/filescfg-test.properties")
 public class FileUploadControllerIntegrationTest {
-    private final static String MSG_SAVE_SINGLE_FILE = "Saved file '%s' with status '%s'!";
+    private final static String MSG_SAVE_SINGLE_FILE = "Try to save file '%s'! Got status: '%s'!";
     private final static String FILE_TEST_PREFIX = "/test/";
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private FileConfig fileConfig;
+
+
+
 
     @Before
     public void initConfig() {
@@ -60,6 +64,7 @@ public class FileUploadControllerIntegrationTest {
         builder.part(Api.PARAM_USER_ID, userId);
         builder.part("file", file.getPath().getBytes()).header("Content-Disposition", "form-data; name=file; filename="+file.getName());
         return builder.build();
+
     }
 
     /**
@@ -67,17 +72,13 @@ public class FileUploadControllerIntegrationTest {
      * @param fileName String
      * @param userId String
      */
-    public void saveSingleFile(String fileName, String userId) {
-        this.webTestClient
+    public FileStatus saveSingleFile(String fileName, String userId) {
+        return this.webTestClient
                 .post()
                 .uri(Api.API_PREFIX+Api.API_USER_IMAGES)
                 .body(BodyInserters.fromMultipartData(this.fromSingleFile(FILE_TEST_PREFIX+fileName, userId)))
                 .exchange()
-                .expectBody(FileStatus.class)
-                .value(data -> {
-                    log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_SINGLE_FILE, data.getFileName(), data.isSaved())));
-                    Assert.assertTrue(data.isSaved());
-                });
+                .expectBody(FileStatus.class).returnResult().getResponseBody();
     }
 
     /**
@@ -94,11 +95,11 @@ public class FileUploadControllerIntegrationTest {
     }
 
     /**
-     * Метод удаления одиночного файла
+     * Метод удаления одиночного файла (успешный тест)
      * @param fileName String
      * @param userId String
      */
-    public void removeSingleFile(String fileName, String userId) {
+    private void removeSingleFileAccepted(String fileName, String userId) {
         this.webTestClient
                 .delete()
                 .uri(uriBuilder -> (
@@ -111,11 +112,56 @@ public class FileUploadControllerIntegrationTest {
                 .isAccepted();
     }
 
+    /**
+     * Метод удаления одиночного файла (неуспешный тест)
+     * @param fileName String
+     * @param userId String
+     */
+    private void removeSingleFileNotModified(String fileName, String userId) {
+        this.webTestClient
+                .delete()
+                .uri(uriBuilder -> (
+                        uriBuilder.path(Api.API_PREFIX+Api.API_USER_IMAGES)
+                                .queryParam(Api.PARAM_FILE_ID, fileName)
+                                .queryParam(Api.PARAM_USER_ID, userId)
+                                .build()))
+                .exchange()
+                .expectStatus()
+                .isNotModified();
+    }
+
+
+
     @Test
     public void testSaveAndDeleteSingleFile() {
-        String fileName = "file1.png";
         String userId = "2002";
-        this.saveSingleFile(fileName, userId);
-        this.removeSingleFile(fileName, userId);
+
+        /*Сохранит и удалит файл file1.png*/
+        String fileNamePng = "file1.png";
+        FileStatus statusOk1 = this.saveSingleFile(fileNamePng, userId);
+        log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_SINGLE_FILE, statusOk1.getFileName(), statusOk1.isSaved())));
+        Assert.assertTrue(statusOk1.isSaved());
+        //Удаление файла с кодом 202
+        this.removeSingleFileAccepted(fileNamePng, userId);
+        //Повторное неудачное удаление с кодом 304
+        this.removeSingleFileNotModified(fileNamePng, userId);
+
+        /*Сохранит и удалит файл file2.jpg*/
+        String fileNameJpg = "file2.jpg";
+        FileStatus statusOk2 = this.saveSingleFile(fileNameJpg, userId);
+        log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_SINGLE_FILE, statusOk2.getFileName(), statusOk2.isSaved())));
+        Assert.assertTrue(statusOk2.isSaved());
+        //Удаление файла с кодом 202
+        this.removeSingleFileAccepted(fileNameJpg, userId);
+        //Повторное неудачное удаление с кодом 304
+        this.removeSingleFileNotModified(fileNameJpg, userId);
+
+        /*Сохранит и удалит файл file3.pdf*/
+        String fileNamePdf = "file3.pdf";
+        FileStatus statusNotOkPdf = this.saveSingleFile(fileNamePdf, userId);
+        log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_SINGLE_FILE, statusNotOkPdf.getFileName(), statusNotOkPdf.isSaved())));
+        Assert.assertFalse(statusNotOkPdf.isSaved());
+        //Повторное неудачное удаление с кодом 304
+        this.removeSingleFileNotModified(fileNamePdf, userId);
     }
 }

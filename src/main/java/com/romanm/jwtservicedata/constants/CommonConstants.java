@@ -24,5 +24,6 @@ public class CommonConstants
 
     public static final String MULTIMEDIA_FILE_DIR = "uploads";
     public static final String MULTIMEDIA_DEST_DIR = "%s/%s";
+    public static final String MULTIMEDIA_TEST_DIR = "classpath:/test";
     public static final String TEMP_FILE_DIR = "temp";
 }
