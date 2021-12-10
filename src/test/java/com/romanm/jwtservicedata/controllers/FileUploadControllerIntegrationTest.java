@@ -205,23 +205,26 @@ public class FileUploadControllerIntegrationTest {
     }
 
 
-
-    @Test
-    public void deleteGroupFilesFromUserDirTest() {
-        String userId = "2003";
-
+    private List<FileStatus> saveGroupFiles(MultiValueMap<String, ?> multipartData) {
         //Сохраняем группу файлов
-        this.webTestClient
+        return this.webTestClient
                 .post()
                 .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
-                .body(BodyInserters.fromMultipartData(this.fromGroupFiles(userId)))
+                .body(BodyInserters.fromMultipartData(multipartData))
                 .exchange()
                 .returnResult(FileStatus.class)
                 .getResponseBody()
-                .collectList().block().forEach(fileStatus -> {
-                     log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
-                     log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.getCurrentFileExtension()));
-                 });
+                .collectList().block();
+    }
+
+    @Test
+    public void deleteGroupFilesFromUserDirTest() {
+
+        String userId = "2003";
+        this.saveGroupFiles(this.fromGroupFiles(userId)).forEach(fileStatus -> {
+            log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
+            log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.getCurrentFileExtension()));
+        });
 
 
     }
