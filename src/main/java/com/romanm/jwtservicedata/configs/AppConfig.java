@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Slf4j
 @Configuration
 @PropertySource("classpath:/config/filescfg.properties")
-@PropertySource("classpath:/config/httpfilter.properties")
 @EnableReactiveMongoRepositories(value = "com.romanm.jwtservicedata.repositories")
 public class AppConfig implements CommandLineRunner {
     @Autowired

@@ -33,8 +33,6 @@ public class UserProfileControllerIntegration {
     @Autowired
     private UserProfileService userProfileService;
 
-   // private static final String BREARER_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzNzczNjA3Mn0.H4LXCNO7NKUMrTu7DrTuYFwpk7K1MqVsoAxB74K6dMIg_bJgnIFe0YVPHjR8IjVgkwZSuKYuW0ITAhQsfW9_PQ";
-
     @Autowired
     private WebTestClient webTestClient;
 

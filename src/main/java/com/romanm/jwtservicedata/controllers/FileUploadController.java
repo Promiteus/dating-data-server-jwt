@@ -26,7 +26,7 @@ public class FileUploadController {
     private MediaTypeHandler mediaTypeHandler;
 
     /**
-     * Получить файл изображения по ссылке
+     * Получить файл изображения по ссылке. Пример: /api/resource?user_id=208&file_id=ford_mustang_ford_avtomobil_226678_1280x1024.jpg
      * @param userId String
      * @return  Mono<ResponseEntity<byte[]>>
      */
@@ -76,10 +76,10 @@ public class FileUploadController {
      * @param fileName String
      * @return Mono<ResponseEntity<?>>
      */
-    @DeleteMapping(value = Api.API_USER_IMAGES, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(value = Api.API_USER_IMAGES)
     public Mono<ResponseEntity<?>> deleteFile(
-            @RequestPart(value = Api.PARAM_USER_ID) String userId,
-            @RequestPart(value = Api.PARAM_FILE_ID) String fileName) {
+            @RequestParam(value = Api.PARAM_USER_ID) String userId,
+            @RequestParam(value = Api.PARAM_FILE_ID) String fileName) {
 
         return Mono.create(sink -> {
             this.storageService.remove(userId, fileName).doOnSuccess(res -> {
