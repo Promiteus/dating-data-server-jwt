@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -33,5 +34,15 @@ public class FileStatus implements Serializable {
             return strParts[strParts.length-1];
         }
         return "";
+    }
+
+    /**
+     * Проверить входит ли расширение в представленное множество
+     * @param extensions List<String>
+     * @param ext String
+     * @return boolean
+     */
+    public boolean isExtensionInSet(List<String> extensions, String ext) {
+        return extensions.contains(ext);
     }
 }

@@ -205,13 +205,15 @@ public class FileUploadControllerIntegrationTest {
     }
 
 
-    private List<FileStatus> saveGroupFiles(MultiValueMap<String, ?> multipartData) {
+    private List<FileStatus> saveGroupFilesOk(MultiValueMap<String, ?> multipartData) {
         //Сохраняем группу файлов
         return this.webTestClient
                 .post()
                 .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
                 .body(BodyInserters.fromMultipartData(multipartData))
                 .exchange()
+                .expectStatus()
+                .isOk()
                 .returnResult(FileStatus.class)
                 .getResponseBody()
                 .collectList().block();
@@ -221,9 +223,14 @@ public class FileUploadControllerIntegrationTest {
     public void deleteGroupFilesFromUserDirTest() {
 
         String userId = "2003";
-        this.saveGroupFiles(this.fromGroupFiles(userId)).forEach(fileStatus -> {
+        this.saveGroupFilesOk(this.fromGroupFiles(userId)).forEach(fileStatus -> {
             log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
-            log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.getCurrentFileExtension()));
+            log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.isExtensionInSet(this.fileConfig.getPermittedFormats(), fileStatus.getCurrentFileExtension())));
+            if (fileStatus.isExtensionInSet(this.fileConfig.getPermittedFormats(), fileStatus.getCurrentFileExtension())) {
+                Assert.assertTrue(fileStatus.isSaved());
+            } else {
+                Assert.assertFalse(fileStatus.isSaved());
+            }
         });
 
 
