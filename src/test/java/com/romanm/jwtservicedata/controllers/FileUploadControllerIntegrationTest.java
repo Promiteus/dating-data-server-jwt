@@ -270,7 +270,7 @@ public class FileUploadControllerIntegrationTest {
     }
 
     @Test
-    public void saveAndDeleteGroupFilesLessMaxLimitTest() {
+    public void saveAndDeleteGroupFilesLessMaxLimitAndInvalidFormatTest() {
         String userId = "2003";
         AtomicLong count = new AtomicLong();
         //Сохранить файлы из группы test1 в директроию 2003
