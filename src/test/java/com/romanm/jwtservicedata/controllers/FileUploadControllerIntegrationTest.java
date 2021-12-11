@@ -32,11 +32,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(value = {"test"})
 @Import(value = {TestSecurityConfiguration.class})
 @EnableConfigurationProperties(value = FileConfig.class)
@@ -53,6 +54,9 @@ public class FileUploadControllerIntegrationTest {
 
     @Value("classpath:test1/*")
     Resource[] resourceFilesTest1;
+
+    @Value("classpath:test2/*")
+    Resource[] resourceFilesTest2;
 
     @Before
     public void initConfig() {
@@ -197,24 +201,6 @@ public class FileUploadControllerIntegrationTest {
                 .collectList().block();
     }
 
-    /**
-     * Сохранение группы произвольного числа файлов и возврат статуса 304
-     * @param multipartData MultiValueMap<String, ?>
-     * @return List<FileStatus>
-     */
-    private List<FileStatus> saveGroupFiles304(MultiValueMap<String, ?> multipartData) {
-        //Сохраняем группу файлов
-        return this.webTestClient
-                .post()
-                .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
-                .body(BodyInserters.fromMultipartData(multipartData))
-                .exchange()
-                .expectStatus()
-                .isNotModified()
-                .returnResult(FileStatus.class)
-                .getResponseBody()
-                .collectList().block();
-    }
 
     /**
      * Удаление группвы фалов по коду пользователя
@@ -284,9 +270,9 @@ public class FileUploadControllerIntegrationTest {
     }
 
     @Test
-    public void deleteGroupFilesFromUserDirTest() {
-
+    public void saveAndDeleteGroupFilesLessMaxLimitTest() {
         String userId = "2003";
+        AtomicLong count = new AtomicLong();
         //Сохранить файлы из группы test1 в директроию 2003
         this.saveGroupFiles200(this.fromGroupFiles(userId, this.resourceFilesTest1)).forEach(fileStatus -> {
             log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
@@ -296,7 +282,27 @@ public class FileUploadControllerIntegrationTest {
             } else {
                 Assert.assertFalse(fileStatus.isSaved());
             }
+            count.addAndGet(fileStatus.isSaved() ? 1 : 0);
         });
+        //Ожидается, что будет сохранено только getMaxCount() файла
+        Assert.assertEquals(2, count.get());
+        //Удалить все файлы из директории 2003 и саму директорию тоже и получить код 202
+        this.httpStatus202(userId, this.deleteGroupFiles(userId));
+        //Попытаться удалить то, что уже удалено и получить код 304
+        this.httpStatus304(userId, this.deleteGroupFiles(userId));
+    }
+
+    @Test
+    public void saveAndDeleteGroupFilesGreaterMaxLimitTest() {
+        String userId = "2004";
+        AtomicLong count = new AtomicLong();
+        //Сохранить файлы из группы test1 в директроию 2003
+        this.saveGroupFiles200(this.fromGroupFiles(userId, this.resourceFilesTest2)).forEach(fileStatus -> {
+            log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
+            count.addAndGet(fileStatus.isSaved() ? 1 : 0);
+        });
+        //Ожидается, что будет сохранено только getMaxCount() файла
+        Assert.assertEquals(this.fileConfig.getMaxCount(), count.get());
         //Удалить все файлы из директории 2003 и саму директорию тоже и получить код 202
         this.httpStatus202(userId, this.deleteGroupFiles(userId));
         //Попытаться удалить то, что уже удалено и получить код 304
