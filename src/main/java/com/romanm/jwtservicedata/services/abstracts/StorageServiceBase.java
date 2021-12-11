@@ -51,18 +51,26 @@ public class StorageServiceBase {
     }
 
     /**
-     * Подготовить рабочую директорию для файлов
+     * Подготовить рабочие директории для файлов
      * @param fileConfig FileConfig
      * @param userId String
      */
-    private void initFilesDirectory(FileConfig fileConfig, String userId) {
+    private String initFilesDirectory(FileConfig fileConfig, String userId, boolean isThumb) {
         if (!this.isDirExists(fileConfig.getUploadsDir())) {
             this.createWorkDir(fileConfig.getUploadsDir());
         }
 
-        if (!this.isDirExists(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, fileConfig.getUploadsDir(), userId))) {
-            this.createWorkDir(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, fileConfig.getUploadsDir(), userId));
+        String userDirPath = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, fileConfig.getUploadsDir(), userId);
+        if (!this.isDirExists(userDirPath)) {
+            this.createWorkDir(userDirPath);
         }
+
+        String thumbDirPath = userDirPath+"/"+fileConfig.getThumbDir();
+        if (!this.isDirExists(thumbDirPath)) {
+            this.createWorkDir(thumbDirPath);
+        }
+
+        return isThumb ? thumbDirPath : userDirPath;
     }
 
     /**
@@ -88,7 +96,7 @@ public class StorageServiceBase {
      * @return Mono<Void>
      */
     protected Flux<FileStatus> saveAllFlux(Flux<FilePart> files, String userId) {
-        this.initFilesDirectory(this.fileConfig, userId);
+        this.initFilesDirectory(this.fileConfig, userId, false);
 
         return files.flatMap(filePart -> {
             String fileName = String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)+"/"+filePart.filename();
@@ -114,7 +122,7 @@ public class StorageServiceBase {
      * @return Mono<Boolean>
      */
     protected Mono<FileStatus> save(Mono<FilePart> file, String userId) {
-        this.initFilesDirectory(this.fileConfig, userId);
+        this.initFilesDirectory(this.fileConfig, userId, false);
 
         return Mono.create(sink -> {
             file.doOnSuccess(filePart -> {
@@ -136,6 +144,22 @@ public class StorageServiceBase {
                 sink.success(new FileStatus(false, "", err.getMessage()));
             }).subscribe();
         });
+    }
+
+    /**
+     * Сохранить изобраение в уменьшенном виде.
+     * @param fileName String
+     * @param userId String
+     * @return Mono<FileStatus>
+     */
+    protected Mono<FileStatus> saveThumb(String fileName, String userId) {
+        String thumbDir = this.initFilesDirectory(this.fileConfig, userId, true);
+
+        /*
+        * Thumbnails.of("path/to/image")
+          .size(100, 100)
+          .toFile("path/to/thumbnail");*/
+        return Mono.empty();
     }
 
     /**

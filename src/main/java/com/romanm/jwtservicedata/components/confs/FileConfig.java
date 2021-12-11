@@ -4,7 +4,6 @@ import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.MonoSink;
@@ -14,12 +13,13 @@ import java.util.List;
 @Data
 @Component
 @ConfigurationProperties(prefix = "files")
-//@Profile(value = {"dev", "prod"})
 public class FileConfig {
     private int maxCount;
     private String uploadsDir;
     private List<String> permittedFormats;
-
+    private String thumbDir;
+    private int thumbWidth;
+    private String thumbExt;
 
     /**
      * Проверить, является ли файл разрешенным
