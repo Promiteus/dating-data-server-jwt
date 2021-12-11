@@ -143,7 +143,7 @@ public class FileUploadControllerIntegrationTest {
     }
 
     /**
-     *
+     * Получить файл из ресурса и проверить на исключение
      * @param resource Resource
      * @return File
      */
