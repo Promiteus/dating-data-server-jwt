@@ -93,8 +93,8 @@ public class FileUploadController {
      * @param userId String
      * @return Mono<ResponseEntity<?>>
      */
-    @DeleteMapping(value = Api.API_USER_IMAGES_ALL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<?>> deleteFiles(@RequestPart(value = Api.PARAM_USER_ID) String userId) {
+    @DeleteMapping(value = Api.API_USER_IMAGES_ALL)
+    public Mono<ResponseEntity<?>> deleteFiles(@RequestParam(value = Api.PARAM_USER_ID) String userId) {
         return Mono.create(sink -> {
             this.storageService.removeAll(userId).doOnSuccess(res -> {
                 sink.success(res ? ResponseEntity.accepted().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());

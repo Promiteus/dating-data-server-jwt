@@ -43,7 +43,7 @@ public class MediaTypeHandlerTest {
         log.info(MessageConstants.prefixMsg(String.format(FILE_MEDIA_ASSOC, fileName2, mediaType2)));
         Assert.assertNull(mediaType2);
 
-        String fileName3 = "test";
+        String fileName3 = "test1";
         String mediaType3 = mediaTypeHandler.getFileMediaType(fileName3);
         log.info(MessageConstants.prefixMsg(String.format(FILE_MEDIA_ASSOC, fileName3, mediaType3)));
         Assert.assertNull(mediaType3);

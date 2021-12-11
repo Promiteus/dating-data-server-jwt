@@ -22,6 +22,7 @@ import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,15 +44,15 @@ import java.util.stream.Collectors;
 public class FileUploadControllerIntegrationTest {
     private final static String MSG_SAVE_SINGLE_FILE = "Try to save file '%s'! Got status: '%s'!";
     private final static String MSG_SAVE_MULTI_FILE = "Tried saving file '%s', got save status: %s!";
-    private final static String FILE_TEST_PREFIX = "/test/";
+    private final static String FILE_TEST_PREFIX = "/test1/";
 
     @Autowired
     private WebTestClient webTestClient;
     @Autowired
     private FileConfig fileConfig;
 
-    @Value("classpath:test/*")
-    Resource[] resourceFiles;
+    @Value("classpath:test1/*")
+    Resource[] resourceFilesTest1;
 
     @Before
     public void initConfig() {
@@ -136,6 +138,117 @@ public class FileUploadControllerIntegrationTest {
                 .isNotModified();
     }
 
+    /**
+     *
+     * @param resource Resource
+     * @return File
+     */
+    private File resourceToFile(Resource resource) {
+        try {
+            return resource.getFile();
+        } catch (IOException e) {
+            log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
+        }
+        return null;
+    }
+
+    /**
+     * Получить список тестовых файлов
+     * @return List<File>
+     */
+    private List<File> resourceTestFileList(Resource[] resFilesTest) {
+        log.info(MessageConstants.prefixMsg("resources count: "+resFilesTest.length));
+        return Arrays.stream(resFilesTest).map(this::resourceToFile).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    /**
+     * Сформировать параметры типа form-data для записи группы файлов, взяты из тестовой папки
+     * @param userId String
+     * @param resFilesTest Resource[]
+     * @return MultiValueMap<String, HttpEntity<?>>
+     */
+    private MultiValueMap<String, HttpEntity<?>> fromGroupFiles(String userId, Resource[] resFilesTest) {
+        List<File> fileList = this.resourceTestFileList(resFilesTest);
+
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part(Api.PARAM_USER_ID, userId);
+        for (File file: fileList) {
+            builder.part("files", file.getPath().getBytes()).header("Content-Disposition", "form-data; name=files; filename="+file.getName());
+        }
+        return builder.build();
+    }
+
+    /**
+     * Сохранение группы произвольного числа файлов и возврат статуса 200
+     * @param multipartData MultiValueMap<String, ?>
+     * @return List<FileStatus>
+     */
+    private List<FileStatus> saveGroupFiles200(MultiValueMap<String, ?> multipartData) {
+        //Сохраняем группу файлов
+        return this.webTestClient
+                .post()
+                .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
+                .body(BodyInserters.fromMultipartData(multipartData))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(FileStatus.class)
+                .getResponseBody()
+                .collectList().block();
+    }
+
+    /**
+     * Сохранение группы произвольного числа файлов и возврат статуса 304
+     * @param multipartData MultiValueMap<String, ?>
+     * @return List<FileStatus>
+     */
+    private List<FileStatus> saveGroupFiles304(MultiValueMap<String, ?> multipartData) {
+        //Сохраняем группу файлов
+        return this.webTestClient
+                .post()
+                .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
+                .body(BodyInserters.fromMultipartData(multipartData))
+                .exchange()
+                .expectStatus()
+                .isNotModified()
+                .returnResult(FileStatus.class)
+                .getResponseBody()
+                .collectList().block();
+    }
+
+    /**
+     * Удаление группвы фалов по коду пользователя
+     * @param userId String
+     */
+    private StatusAssertions deleteGroupFiles(String userId) {
+         return this.webTestClient
+                .delete()
+                .uri(uriBuilder -> (
+                        uriBuilder.path(Api.API_PREFIX+Api.API_USER_IMAGES_ALL)
+                                .queryParam(Api.PARAM_USER_ID, userId)
+                                .build()))
+                .exchange()
+                .expectStatus();
+    }
+
+    /**
+     * Http код результата 202
+     * @param userId String
+     * @param statusAssertions StatusAssertions
+     */
+    private void httpStatus202(String userId, StatusAssertions statusAssertions) {
+         statusAssertions.isAccepted();
+    }
+
+    /**
+     * Http код результата 304
+     * @param userId String
+     * @param statusAssertions StatusAssertions
+     */
+    private void httpStatus304(String userId, StatusAssertions statusAssertions) {
+        statusAssertions.isNotModified();
+    }
+
 
     @Test
     public void testSaveAndDeleteSingleFile() {
@@ -170,69 +283,23 @@ public class FileUploadControllerIntegrationTest {
         this.removeSingleFileNotModified(fileNamePdf, userId);
     }
 
-    /**
-     *
-     * @param resource Resource
-     * @return File
-     */
-    private File resourceToFile(Resource resource) {
-        try {
-            return resource.getFile();
-        } catch (IOException e) {
-            log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
-        }
-        return null;
-    }
-
-    /**
-     * Получить список тестовых файлов
-     * @return List<File>
-     */
-    private List<File> resourceTestFileList() {
-        log.info(MessageConstants.prefixMsg("resources count: "+resourceFiles.length));
-        return Arrays.stream(resourceFiles).map(this::resourceToFile).collect(Collectors.toList());
-    }
-
-    private MultiValueMap<String, HttpEntity<?>> fromGroupFiles(String userId) {
-        List<File> fileList = this.resourceTestFileList();
-
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part(Api.PARAM_USER_ID, userId);
-        for (File file: fileList) {
-            builder.part("files", file.getPath().getBytes()).header("Content-Disposition", "form-data; name=files; filename="+file.getName());
-        }
-        return builder.build();
-    }
-
-
-    private List<FileStatus> saveGroupFilesOk(MultiValueMap<String, ?> multipartData) {
-        //Сохраняем группу файлов
-        return this.webTestClient
-                .post()
-                .uri(Api.API_PREFIX+Api.API_USER_IMAGES_MULTI)
-                .body(BodyInserters.fromMultipartData(multipartData))
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .returnResult(FileStatus.class)
-                .getResponseBody()
-                .collectList().block();
-    }
-
     @Test
     public void deleteGroupFilesFromUserDirTest() {
 
         String userId = "2003";
-        this.saveGroupFilesOk(this.fromGroupFiles(userId)).forEach(fileStatus -> {
+        //Сохранить файлы из группы test1 в директроию 2003
+        this.saveGroupFiles200(this.fromGroupFiles(userId, this.resourceFilesTest1)).forEach(fileStatus -> {
             log.info(MessageConstants.prefixMsg(String.format(MSG_SAVE_MULTI_FILE, fileStatus.getFileName(), fileStatus.isSaved())));
-            log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+fileStatus.isExtensionInSet(this.fileConfig.getPermittedFormats(), fileStatus.getCurrentFileExtension())));
-            if (fileStatus.isExtensionInSet(this.fileConfig.getPermittedFormats(), fileStatus.getCurrentFileExtension())) {
+            log.info(MessageConstants.prefixMsg("Is the file extension in a valid set? - "+this.fileConfig.getPermittedFormats().contains(fileStatus.getCurrentFileExtension())));
+            if (this.fileConfig.getPermittedFormats().contains(fileStatus.getCurrentFileExtension())) {
                 Assert.assertTrue(fileStatus.isSaved());
             } else {
                 Assert.assertFalse(fileStatus.isSaved());
             }
         });
-
-
+        //Удалить все файлы из директории 2003 и саму директорию тоже и получить код 202
+        this.httpStatus202(userId, this.deleteGroupFiles(userId));
+        //Попытаться удалить то, что уже удалено и получить код 304
+        this.httpStatus304(userId, this.deleteGroupFiles(userId));
     }
 }
