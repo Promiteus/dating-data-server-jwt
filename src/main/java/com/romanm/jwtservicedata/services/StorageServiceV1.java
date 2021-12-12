@@ -95,7 +95,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<FileStatus> saveThumb(String userId, String fileName) {
         return Mono.create(sink -> {
             if ((userId != null) && (fileName != null)) {
-                this.saveThumb(userId, fileName).doOnSuccess(sink::success).subscribe();
+                this.saveFileThumb(userId, fileName).doOnSuccess(sink::success).subscribe();
             } else {
                 sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
             }

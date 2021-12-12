@@ -152,14 +152,16 @@ public class StorageServiceBase {
      * @param userId String
      * @return Mono<FileStatus>
      */
-    protected Mono<FileStatus> saveThumb(String fileName, String userId) {
+    protected Mono<FileStatus> saveFileThumb(String fileName, String userId) {
         String thumbDir = this.initFilesDirectory(this.fileConfig, userId, true);
         log.info(MessageConstants.prefixMsg("thumbDir: "+thumbDir));
         /*
         * Thumbnails.of("path/to/image")
           .size(100, 100)
           .toFile("path/to/thumbnail");*/
-        return Mono.just(new FileStatus());
+        return Mono.create(sink -> {
+            sink.success(new FileStatus(false, "", ""));
+        });
     }
 
     /**
