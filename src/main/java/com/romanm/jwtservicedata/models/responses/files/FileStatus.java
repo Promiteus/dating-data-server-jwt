@@ -1,11 +1,11 @@
 package com.romanm.jwtservicedata.models.responses.files;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,6 +27,7 @@ public class FileStatus implements Serializable {
      * Вернет текущее расширение файла
      * @return String
      */
+    @JsonIgnore
     public String getCurrentFileExtension() {
         String regexpDelimiter = "\\.";
         String[] strParts = this.getFileName().split(regexpDelimiter);

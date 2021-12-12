@@ -10,6 +10,7 @@ public interface StorageService {
     Flux<String> getFiles(String userId);
     byte[] getFile(String userId, String fileName);
     Mono<FileStatus> save(String userId, Mono<FilePart> filePartMono);
+    Mono<FileStatus> saveThumb(String userId, String fileName);
     Flux<FileStatus> saveAll(String userId, Flux<FilePart> files);
     Mono<Boolean> remove(String userId, String imageId);
     Mono<Boolean> removeAll(String userId);

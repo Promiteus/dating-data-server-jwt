@@ -71,6 +71,24 @@ public class FileUploadController {
     }
 
     /**
+     * Сохранить минатюру файла по коду пользователя и названию файда
+     * @param userId String
+     * @param file String
+     * @return Mono<ResponseEntity<?>>
+     */
+    @PostMapping(value = Api.API_USER_IMAGES, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<ResponseEntity<?>> saveFileThumb(
+            @RequestPart(value = Api.PARAM_USER_ID) String userId,
+            @RequestPart(value = Api.PARAM_FILE_ID) String file) {
+
+        return Mono.create(sink -> {
+            this.storageService.saveThumb(userId, file).doOnSuccess(res -> {
+                sink.success(ResponseEntity.ok(res));
+            }).subscribe();
+        });
+    }
+
+    /**
      * Удалить выбранный файл
      * @param userId String
      * @param fileName String

@@ -86,6 +86,23 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
+     * Сохранить превью выбранного файла.
+     * @param userId String
+     * @param fileName String
+     * @return Mono<FileStatus>
+     */
+    @Override
+    public Mono<FileStatus> saveThumb(String userId, String fileName) {
+        return Mono.create(sink -> {
+            if ((userId != null) && (fileName != null)) {
+                this.saveThumb(userId, fileName).doOnSuccess(sink::success).subscribe();
+            } else {
+                sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
+            }
+        });
+    }
+
+    /**
      * Сохранение нескольких файлов одновременно
      * @param userId String
      * @param files  Flux<FilePart>

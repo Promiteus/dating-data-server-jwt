@@ -22,5 +22,4 @@ public class CommonConstants
     public static final String USER_PROFILE_COLLECTION = "user_profiles";
     public static final String LIKES_COLLECTION = "likes";
     public static final String MULTIMEDIA_DEST_DIR = "%s/%s";
-    //public static final String MULTIMEDIA_DEST_DIR_AND_THUMB = "%s/%s/%s";
 }
