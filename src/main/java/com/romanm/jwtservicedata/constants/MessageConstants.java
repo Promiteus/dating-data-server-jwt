@@ -16,8 +16,9 @@ public class MessageConstants {
     public static final String MSG_SAVED_USER = "Saved user: %s";
     public static final String MSG_CANT_SAVE_USER = "Can't save users: %s";
     public static final String MSG_USER_PROFILE_COLLECTION_FILLED = "UserProfile collection is already filled!";
-    public static final String MSG_CHAT_MESSAGE_FROM_USER = "Сообщение от %s номер %s.";
+    public static final String MSG_CHAT_MESSAGE_FROM_USER = "Message from '%s' number '%s'.";
 
+    public static final String MSG_FILE_NOT_FOUND = "File '%s' not found! Can't create thumb icon!";
     public static final String MSG_FILE_SAVED_SUCCESSFUL = "File '%s' was saved successfully!";
     public static final String MSG_ERR_FILE_SAVING = "Can't save file '%s'! Error: %s";
     public static final String MSG_CANT_DELETE_FILE = "Can't delete file '%s' or it was deleted before!";

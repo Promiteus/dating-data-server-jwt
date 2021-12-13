@@ -161,12 +161,15 @@ public class StorageServiceBase {
                     Thumbnails.of(file.getPath())
                             .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
                             .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
+
+                    String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
+                    log.info(MessageConstants.prefixMsg(msg));
                     sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
                 } catch (IOException e) {
                     log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
                 }
             }
-            sink.success(new FileStatus(false, "", ""));
+            sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_FILE_NOT_FOUND, fileName)));
         });
     }
 
