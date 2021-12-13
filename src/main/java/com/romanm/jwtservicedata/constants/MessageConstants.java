@@ -7,10 +7,9 @@ public class MessageConstants {
     public static final String SECRET = "Java_to_Dev_Secret";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
-    public static final String CACHE_USERS_KEY = "users";
 
     public static final String MSG_PREFIX = ">> ";
-    public static final String ERROR_MSG_PREFIX = "--- [error]: ";
+    public static final String ERROR_MSG_PREFIX = " **** : ";
 
     public static final String MSG_USER_NOT_FOUND = "User '%s' not found!";
     public static final String MSG_USER_BLOCKED = "User '%s' was blocked!";

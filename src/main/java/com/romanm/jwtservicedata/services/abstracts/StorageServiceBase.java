@@ -153,17 +153,18 @@ public class StorageServiceBase {
      */
     protected Mono<FileStatus> saveFileThumb(String userId, String fileName) {
         String thumbDir = this.initFilesDirectory(this.fileConfig, userId, true);
+
         return Mono.create(sink -> {
-            File file = this.fileConfig.findFile(fileName, userId);
-            if (file != null) {
+            File file;
+            if ((file = this.fileConfig.findFile(fileName, userId)) != null) {
                 try {
                     Thumbnails.of(file.getPath())
-                            .size(250, 250)
-                            .toFile(thumbDir+"/"+fileName);
+                            .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
+                            .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
+                    sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
                 } catch (IOException e) {
                     log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
                 }
-                log.info(MessageConstants.prefixMsg(file.getPath()+" to dir "+thumbDir));
             }
             sink.success(new FileStatus(false, "", ""));
         });

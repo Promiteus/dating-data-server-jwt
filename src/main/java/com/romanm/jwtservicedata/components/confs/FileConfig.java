@@ -57,7 +57,7 @@ public class FileConfig {
     }
 
     /**
-     *
+     * Проверяет файл на предмет его разрешенности
      * @param sink MonoSink<FileStatus>
      * @param filePart FilePart
      * @return boolean
@@ -115,5 +115,13 @@ public class FileConfig {
      */
     public File findFile(String fileName, String userId) {
         return this.listFiles(userId).stream().filter(f -> (f.getName().equals(fileName))).findFirst().orElse(null);
+    }
+
+    /**
+     * Выдаст имя файла миниатюры
+     * @return String
+     */
+    public String getThumbFileName() {
+        return String.format("thumb_%dx%d.%s", this.getThumbWidth(), this.getThumbWidth(), this.getThumbExt());
     }
 }
