@@ -114,6 +114,6 @@ public class FileConfig {
      * @return File
      */
     public File findFile(String fileName, String userId) {
-        return this.listFiles(userId).stream().filter(f -> (f.getName().equals(fileName))).findFirst().get();
+        return this.listFiles(userId).stream().filter(f -> (f.getName().equals(fileName))).findFirst().orElse(null);
     }
 }

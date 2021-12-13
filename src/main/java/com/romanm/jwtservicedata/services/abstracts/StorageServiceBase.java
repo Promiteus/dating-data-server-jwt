@@ -6,12 +6,14 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.util.FileSystemUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -150,13 +152,19 @@ public class StorageServiceBase {
      * @return Mono<FileStatus>
      */
     protected Mono<FileStatus> saveFileThumb(String userId, String fileName) {
-        String thumbDir = this.initFilesDirectory(this.fileConfig, userId, false);
-        log.info(MessageConstants.prefixMsg("thumbDir: "+thumbDir));
-        /*
-        * Thumbnails.of("path/to/image")
-          .size(100, 100)
-          .toFile("path/to/thumbnail");*/
+        String thumbDir = this.initFilesDirectory(this.fileConfig, userId, true);
         return Mono.create(sink -> {
+            File file = this.fileConfig.findFile(fileName, userId);
+            if (file != null) {
+                try {
+                    Thumbnails.of(file.getPath())
+                            .size(250, 250)
+                            .toFile(thumbDir+"/"+fileName);
+                } catch (IOException e) {
+                    log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
+                }
+                log.info(MessageConstants.prefixMsg(file.getPath()+" to dir "+thumbDir));
+            }
             sink.success(new FileStatus(false, "", ""));
         });
     }
