@@ -12,13 +12,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -80,8 +77,8 @@ public class StorageServiceBase {
      */
     private boolean isFilesLimit(String userId, int maxFilesCount) {
         try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)))) {
-            long filesCount = files.count();
-            log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, userId, filesCount)));
+            long filesCount = files.filter(f -> (f.toFile().isFile())).count();
+           // log.info(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FILES_COUNT, userId, filesCount)));
             return filesCount > maxFilesCount-1;
         } catch (IOException e) {
             log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
@@ -147,13 +144,13 @@ public class StorageServiceBase {
     }
 
     /**
-     * Сохранить изобраение в уменьшенном виде.
+     * Сохранить изображение в уменьшенном виде.
      * @param fileName String
      * @param userId String
      * @return Mono<FileStatus>
      */
-    protected Mono<FileStatus> saveFileThumb(String fileName, String userId) {
-        String thumbDir = this.initFilesDirectory(this.fileConfig, userId, true);
+    protected Mono<FileStatus> saveFileThumb(String userId, String fileName) {
+        String thumbDir = this.initFilesDirectory(this.fileConfig, userId, false);
         log.info(MessageConstants.prefixMsg("thumbDir: "+thumbDir));
         /*
         * Thumbnails.of("path/to/image")
@@ -201,19 +198,7 @@ public class StorageServiceBase {
         return res;
     }
 
-    /**
-     * Выдаст список файлов в каталоге пользователя
-     * @param userId String
-     * @return List<File>
-     */
-    protected List<File> listFiles(String userId) {
-        try (Stream<Path> files = Files.list(Paths.get(String.format(CommonConstants.MULTIMEDIA_DEST_DIR, this.fileConfig.getUploadsDir(), userId)))) {
-            return files.map(Path::toFile).collect(Collectors.toList());
-        } catch (IOException e) {
-            log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
-        }
-        return List.of();
-    }
+
 
     /**
      * Асинхронное сохранение файла с передачей синхронизатора
@@ -222,7 +207,6 @@ public class StorageServiceBase {
      * @param fileName String
      */
     private void saveFileItem(MonoSink<FileStatus> sink, FilePart filePart, String fileName, String userId) {
-        //  /api/resource?user_id=208&file_id=ford_mustang_ford_avtomobil_226678_1280x1024.jpg
         String resourceUri = String.format(Api.API_RESOURCE_URI_TEMP, userId, filePart.filename() );
 
         filePart.transferTo(Paths.get(fileName).toFile()).doOnSuccess(t -> {

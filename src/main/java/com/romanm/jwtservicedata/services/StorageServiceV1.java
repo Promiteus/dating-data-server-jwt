@@ -38,7 +38,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      */
     @Override
     public Flux<String> getFiles(String userId) {
-        this.listFiles(userId).forEach(file -> {
+        this.fileConfig.listFiles(userId).forEach(file -> {
             log.info(MessageConstants.prefixMsg("Got file: "+file.getName()));
         });
         return Flux.empty();
@@ -52,7 +52,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      */
     @Override
     public byte[] getFile(String userId, String fileName) {
-        List<File> files = this.listFiles(userId)
+        List<File> files = this.fileConfig.listFiles(userId)
                 .stream()
                 .filter(item -> (item.getName().equals(fileName)))
                 .collect(Collectors.toList());
