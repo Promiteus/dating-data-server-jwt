@@ -68,6 +68,29 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
+     * Получить миниатюру файла из каталога пользователя
+     * @param userId String
+     * @return byte[]
+     */
+    @Override
+    public byte[] getFileThumb(String userId) {
+        List<File> files = this.fileConfig
+                .listFiles(userId+"/"+this.fileConfig.getThumbDir())
+                .stream()
+                .filter(File::isFile)
+                .collect(Collectors.toList());
+        if (files.size() > 0) {
+            try {
+                return Files.readAllBytes(files.get(0).toPath());
+            } catch (IOException e) {
+                log.error(MessageConstants.errorPrefixMsg(e.getMessage()));
+            }
+        }
+
+        return new byte[0];
+    }
+
+    /**
      * Сохранить файл в каталог пользователя
      * @param userId String
      * @param filePartMono Mono<FilePart>

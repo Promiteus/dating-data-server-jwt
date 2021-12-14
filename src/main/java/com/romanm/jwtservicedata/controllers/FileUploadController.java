@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.components.files.MediaTypeHandler;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
@@ -24,6 +25,8 @@ public class FileUploadController {
     private StorageService storageService;
     @Autowired
     private MediaTypeHandler mediaTypeHandler;
+    @Autowired
+    private FileConfig fileConfig;
 
     /**
      * Получить файл изображения по ссылке. Пример: /api/resource?user_id=208&file_id=ford_mustang_ford_avtomobil_226678_1280x1024.jpg
@@ -41,6 +44,32 @@ public class FileUploadController {
             //Получить медиатип по названию файла
             String mediaType = this.mediaTypeHandler.getFileMediaType(fileName);
             if (mediaType == null) {
+                sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageConstants.MSG_UNKNOWN_MEDIA_TYPE));
+                return;
+            }
+            //Присвоить медиатип заголовку ответа сервера
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", mediaType);
+
+            sink.success(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
+        });
+    }
+
+    /**
+     * Получить файл изображения по ссылке. Пример: /api/resource/thumb?user_id=208
+     * @param userId String
+     * @return  Mono<ResponseEntity<byte[]>>
+     */
+    @GetMapping(value = Api.API_USER_RESOURCE_THUMB)
+    public Mono<ResponseEntity<byte[]>> getFileThumb(
+            @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId) {
+
+        return Mono.create(sink -> {
+            //Найти файл пользователя по имени
+            byte[] bytes = this.storageService.getFileThumb(userId);
+            //Получить медиатип по названию файла
+            String mediaType;
+            if ((mediaType = this.mediaTypeHandler.getFileMediaType("_."+this.fileConfig.getThumbExt())) == null) {
                 sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageConstants.MSG_UNKNOWN_MEDIA_TYPE));
                 return;
             }

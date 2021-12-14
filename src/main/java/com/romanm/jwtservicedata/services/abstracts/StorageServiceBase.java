@@ -162,9 +162,12 @@ public class StorageServiceBase {
                             .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
                             .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
 
-                    String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
-                    log.info(MessageConstants.prefixMsg(msg));
-                    sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
+                    int filesCount = this.fileConfig.listFiles(userId+"/"+this.fileConfig.getThumbDir()).size();
+                    if (filesCount == 1) {
+                        String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
+                        log.info(MessageConstants.prefixMsg(msg));
+                        sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
+                    }
                 } catch (IOException e) {
                     log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
                 }
