@@ -162,7 +162,7 @@ public class StorageServiceBase {
                             .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
                             .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
 
-                    int filesCount = this.fileConfig.listFiles(userId+"/"+this.fileConfig.getThumbDir()).size();
+                    int filesCount = this.getFilesThumbCount(userId);
                     if (filesCount == 1) {
                         String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
                         log.info(MessageConstants.prefixMsg(msg));
@@ -174,6 +174,15 @@ public class StorageServiceBase {
             }
             sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_FILE_NOT_FOUND, fileName)));
         });
+    }
+
+    /**
+     * Получить число сохраненных миниатюр для пользователя
+     * @param userId String
+     * @return int
+     */
+    private int getFilesThumbCount(String userId) {
+        return this.fileConfig.listFiles(userId+"/"+this.fileConfig.getThumbDir()).size();
     }
 
     /**
