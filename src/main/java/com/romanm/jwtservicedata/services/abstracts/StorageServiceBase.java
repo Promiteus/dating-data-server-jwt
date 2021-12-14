@@ -146,7 +146,7 @@ public class StorageServiceBase {
     }
 
     /**
-     * Сохранить изображение в уменьшенном виде.
+     * Сохранить изображение в уменьшенном виде и передать Mono<FileStatus>.
      * @param fileName String
      * @param userId String
      * @return Mono<FileStatus>
@@ -157,19 +157,10 @@ public class StorageServiceBase {
         return Mono.create(sink -> {
             File file;
             if ((file = this.fileConfig.findFile(fileName, userId)) != null) {
-                try {
-                    Thumbnails.of(file.getPath())
-                            .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
-                            .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
-
-                    int filesCount = this.getFilesThumbCount(userId);
-                    if (filesCount == 1) {
-                        String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
-                        log.info(MessageConstants.prefixMsg(msg));
-                        sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
-                    }
-                } catch (IOException e) {
-                    log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
+                if (this.saveThumb(file, thumbDir, userId)) {
+                    String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
+                    log.info(MessageConstants.prefixMsg(msg));
+                    sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
                 }
             }
             sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_FILE_NOT_FOUND, fileName)));
@@ -183,6 +174,29 @@ public class StorageServiceBase {
      */
     private int getFilesThumbCount(String userId) {
         return this.fileConfig.listFiles(userId+"/"+this.fileConfig.getThumbDir()).size();
+    }
+
+    /**
+     * Сохранить изображение в уменьшенном виде.
+     * @param file File
+     * @param thumbDir String
+     * @param userId String
+     * @return boolean
+     */
+    private boolean saveThumb(File file, String thumbDir, String userId) {
+        int filesCount = 0;
+        try {
+            Thumbnails.of(file.getPath())
+                    .size(this.fileConfig.getThumbWidth(), this.fileConfig.getThumbWidth())
+                    .toFile(thumbDir+"/"+this.fileConfig.getThumbFileName());
+
+            filesCount = this.getFilesThumbCount(userId);
+
+        } catch (IOException e) {
+            log.info(MessageConstants.errorPrefixMsg(e.getMessage()));
+        }
+
+        return filesCount > 0;
     }
 
     /**
@@ -237,6 +251,10 @@ public class StorageServiceBase {
             String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
             log.info(MessageConstants.prefixMsg(msg));
             sink.success(new FileStatus(true, fileName, "", resourceUri));
+
+           /* if (this.getFilesThumbCount(userId) == 0) {
+                this.saveThumb(Paths.get(fileName).toFile(), "", userId);
+            }*/
         }).doOnError(err -> {
             String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
             log.info(MessageConstants.prefixMsg(msg));
