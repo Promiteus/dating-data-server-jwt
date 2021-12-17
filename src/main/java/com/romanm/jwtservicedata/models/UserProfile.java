@@ -19,7 +19,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-//@Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Document(collection = CommonConstants.USER_PROFILE_COLLECTION)
 public class UserProfile implements Serializable {
     @Id
@@ -40,8 +39,10 @@ public class UserProfile implements Serializable {
     private int kids = 0; //Количество детей
     private CommonConstants.FamilyStatus familyStatus = CommonConstants.FamilyStatus.SINGLE; //Семейное положение
     private long rank = 1000; //Ранг по позиции анкеты
-   // @Indexed(useGeneratedName = true)
+    @Indexed(useGeneratedName = true)
     private CommonConstants.SexOrientation sexOrientation = CommonConstants.SexOrientation.HETERO; //Суксуальная ориентация
+    @Indexed(useGeneratedName = true)
+    private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL; //Предпочитаю знакомиться
     //@Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
 }

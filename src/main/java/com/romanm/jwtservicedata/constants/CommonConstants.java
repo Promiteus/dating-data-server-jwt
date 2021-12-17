@@ -15,6 +15,10 @@ public class CommonConstants
         HETERO, HOMO, SKIPED
     }
 
+    public static enum MeetPreferences {
+        MAN, WOMAN, ALL
+    }
+
     public static final String MONGO_DB = "chat";
     public static final String COMMENT_COLLECTION = "comments";
     public static final String VISITOR_COLLECTION = "visitors";
