@@ -34,25 +34,22 @@ public class FileUploadController {
      * @return  Mono<ResponseEntity<byte[]>>
      */
     @GetMapping(value = Api.API_USER_IMAGE)
-    public Mono<ResponseEntity<byte[]>> getFile(
+    public ResponseEntity<Mono<byte[]>> getFile(
             @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId,
             @RequestParam(value = Api.PARAM_FILE_ID, defaultValue = "") String fileName) {
 
-        return Mono.create(sink -> {
-            //Найти файл пользователя по имени
-            byte[] bytes = this.storageService.getFile(userId, fileName);
-            //Получить медиатип по названию файла
-            String mediaType = this.mediaTypeHandler.getFileMediaType(fileName);
-            if (mediaType == null) {
-                sink.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageConstants.MSG_UNKNOWN_MEDIA_TYPE));
-                return;
-            }
-            //Присвоить медиатип заголовку ответа сервера
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", mediaType);
-
-            sink.success(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
-        });
+        //Найти файл пользователя по имени
+        byte[] bytes = this.storageService.getFile(userId, fileName);
+        //Получить медиатип по названию файла
+        String mediaType = this.mediaTypeHandler.getFileMediaType(fileName);
+        if (mediaType == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        //Присвоить медиатип заголовку ответа сервера
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", mediaType);
+        //return Mono.just(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
+        return bytes.length > 0 ? new ResponseEntity<>(Mono.just(bytes), headers, HttpStatus.OK): ResponseEntity.notFound().build();
     }
 
     /**
@@ -76,7 +73,6 @@ public class FileUploadController {
             //Присвоить медиатип заголовку ответа сервера
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", mediaType);
-
             sink.success(bytes.length > 0 ? new ResponseEntity<>(bytes, headers, HttpStatus.OK): ResponseEntity.notFound().build());
         });
     }
