@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
  *     "token_expire_sec": "2021-12-13 T 22:57:47.351",
  *     "user_id": "ff8081817ce58288017ce584265d0000"
  * }*/
-
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class UserProfileController {

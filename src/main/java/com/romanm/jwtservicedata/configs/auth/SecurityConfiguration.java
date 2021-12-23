@@ -13,9 +13,18 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
+
+import java.util.Arrays;
 
 
 @Configuration
+@EnableWebFlux
 @EnableReactiveMethodSecurity
 @Profile(value = {"dev"})
 public class SecurityConfiguration {
@@ -33,8 +42,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
        return http
+               //.cors().disable()
                .csrf().disable()
-               .cors().disable()
                .httpBasic().disable()
                .formLogin().disable()
                .logout().disable()
@@ -42,5 +51,6 @@ public class SecurityConfiguration {
                .addFilterAt(new JWTAuthorizationFilter(this.userService), SecurityWebFiltersOrder.AUTHENTICATION)
                .build();
     }
+
 
 }
