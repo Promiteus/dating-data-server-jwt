@@ -14,9 +14,18 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+/**
+ * Класс-фильтр конфигурации cors безопасности
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements WebFilter {
+    /**
+     * Фильтр с настройкми cors
+     * @param exchange ServerWebExchange
+     * @param chain WebFilterChain
+     * @return Mono<Void>
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();

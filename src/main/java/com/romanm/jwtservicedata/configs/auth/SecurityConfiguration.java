@@ -42,7 +42,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
        return http
-               //.cors().disable()
                .csrf().disable()
                .httpBasic().disable()
                .formLogin().disable()
@@ -51,6 +50,4 @@ public class SecurityConfiguration {
                .addFilterAt(new JWTAuthorizationFilter(this.userService), SecurityWebFiltersOrder.AUTHENTICATION)
                .build();
     }
-
-
 }
