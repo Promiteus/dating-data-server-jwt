@@ -7,6 +7,7 @@ import com.romanm.jwtservicedata.services.interfaces.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -27,15 +28,17 @@ public class ChatMessageController {
     }
 
     @GetMapping(value = Api.API_CHAT_MESSAGES)
-    public Mono<ResponseEntity<ResponseData<ChatMessage>>> getChatMessages(@RequestParam(value = Api.PARAM_PAGE, defaultValue = "0", required = false) int page,
+    public ResponseEntity<Mono<ResponseData<ChatMessage>>> getChatMessages(@RequestParam(value = Api.PARAM_PAGE, defaultValue = "0", required = false) int page,
                                                                            @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "10", required = false) int pageSize,
                                                                            @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
                                                                            @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId) {
-        return Mono.create(sink -> {
-           this.chatService.findMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC).collectList().subscribe(item -> {
-                sink.success(ResponseEntity.ok(new ResponseData<>(page, pageSize, item)));
-           });
-        });
+
+        return ResponseEntity.ok(this.chatService
+                .findMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC)
+                .collectList()
+                .map(data -> {
+                      return new ResponseData<>(page, pageSize, data);
+                }));
     }
 
 
