@@ -31,19 +31,10 @@ public class ChatMessageController {
                                                                            @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "10", required = false) int pageSize,
                                                                            @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
                                                                            @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId) {
-
-        Flux<ChatMessage> chatMessages = this.chatService.findMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC);
-
         return Mono.create(sink -> {
-            List<ChatMessage> msgList = new ArrayList<>();
-            if (chatMessages != null) {
-                chatMessages.collectList().subscribe(item -> {
-                    msgList.addAll(item);
-                    sink.success(ResponseEntity.ok(new ResponseData<>(0, 10, msgList)));
-                });
-            } else {
-                sink.success(ResponseEntity.ok(new ResponseData<>(0, 10, msgList)));
-            }
+           this.chatService.findMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC).collectList().subscribe(item -> {
+                sink.success(ResponseEntity.ok(new ResponseData<>(page, pageSize, item)));
+           });
         });
     }
 
