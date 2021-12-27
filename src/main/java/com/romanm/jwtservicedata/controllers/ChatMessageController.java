@@ -40,6 +40,4 @@ public class ChatMessageController {
                       return new ResponseData<>(page, pageSize, data);
                 }));
     }
-
-
 }
