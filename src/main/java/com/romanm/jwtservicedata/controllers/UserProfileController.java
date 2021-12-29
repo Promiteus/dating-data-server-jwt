@@ -45,7 +45,7 @@ public class UserProfileController {
                 if  (userProfile.getUserProfile() != null) {
                     sink.success(ResponseEntity.ok().body(userProfile));
                 } else {
-                    sink.success(ResponseEntity.noContent().build());
+                    sink.success(ResponseEntity.notFound().build());
                 }
             });
         });

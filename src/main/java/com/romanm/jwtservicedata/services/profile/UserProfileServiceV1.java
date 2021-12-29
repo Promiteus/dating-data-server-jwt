@@ -52,7 +52,6 @@ public class UserProfileServiceV1 implements UserProfileService {
             if ((visitors != null) && (visitors.size() > 0)) {
                 List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
                 this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
-                    log.info(MessageConstants.prefixMsg("UserProfiles visitors: "+userProfiles));
                     responseUserProfile.getLastVisitors().addAll(userProfiles);
                     //Профиль пользователя с визитерами
                     sink.success(responseUserProfile);
