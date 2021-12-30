@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -37,12 +38,12 @@ public class ChatMessage implements Serializable {
     private String message;
     @Indexed(name = "timestamp")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public ChatMessage(String userId, String fromUserId, String message) {
         this.message = message;
         this.userId = userId;
         this.fromUserId = fromUserId;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = new Date();
     }
 }

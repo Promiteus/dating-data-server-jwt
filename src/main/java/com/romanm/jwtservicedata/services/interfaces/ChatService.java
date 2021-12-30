@@ -10,4 +10,5 @@ import reactor.core.publisher.Mono;
 public interface ChatService {
     public Mono<ChatMessage> saveMessage(ChatMessage chatMessage);
     public Flux<ChatMessage> findMessages(String userId, String fromUserId, int page, int size, Sort.Direction direction);
+    public Flux<ChatMessage> findUsersMessages(String userId1, String userId2, int page, int size, Sort.Direction direction);
 }

@@ -37,6 +37,9 @@ public class ChatMessageControllerIntegrationTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    private final static String TEST_USER_ID = "209";
+    private final static String TEST_FROM_USER_ID = "209";
+
     @Test
     public void getLastPageMessagesTest() {
         int pageSize = 10;
@@ -45,7 +48,7 @@ public class ChatMessageControllerIntegrationTest {
         List<ChatMessage> chatMessageList = new ArrayList<>();
 
         for (int i = 0; i < pageSize; i++) {
-            ChatMessage chatMessage = new ChatMessage("200", "201", String.format(messageContent, i));
+            ChatMessage chatMessage = new ChatMessage(TEST_USER_ID, TEST_FROM_USER_ID, String.format(messageContent, i));
             chatMessageList.add(chatMessage);
             this.chatMessagePageRepository.save(chatMessage).delayElement(Duration.ofMillis(800)).block();
         }
@@ -56,8 +59,8 @@ public class ChatMessageControllerIntegrationTest {
                         uriBuilder.path(Api.API_PREFIX+Api.API_CHAT_MESSAGES)
                                 .queryParam(Api.PARAM_PAGE, 0)
                                 .queryParam(Api.PARAM_PAGE_SIZE, pageSize)
-                                .queryParam(Api.PARAM_USER_ID, 200)
-                                .queryParam(Api.PARAM_FROM_USER_ID, 201)
+                                .queryParam(Api.PARAM_USER_ID, TEST_USER_ID)
+                                .queryParam(Api.PARAM_FROM_USER_ID, TEST_FROM_USER_ID)
                                 .build()))
                 .exchange()
                 .expectStatus()
