@@ -46,4 +46,11 @@ public class ChatMessage implements Serializable {
         this.fromUserId = fromUserId;
         this.timestamp = new Date();
     }
+
+    public ChatMessage(String userId, String fromUserId, String message, Date currentDate) {
+        this.message = message;
+        this.userId = userId;
+        this.fromUserId = fromUserId;
+        this.timestamp = currentDate;
+    }
 }
