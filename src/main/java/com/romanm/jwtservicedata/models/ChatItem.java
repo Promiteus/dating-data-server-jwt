@@ -22,7 +22,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = CommonConstants.CHAT_MESSAGE_COLLECTION)
-public class ChatMessage implements Serializable {
+public class ChatItem implements Serializable {
     @Id
     @NotNull
     private String id;
@@ -40,14 +40,14 @@ public class ChatMessage implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date timestamp;
 
-    public ChatMessage(String userId, String fromUserId, String message) {
+    public ChatItem(String userId, String fromUserId, String message) {
         this.message = message;
         this.userId = userId;
         this.fromUserId = fromUserId;
         this.timestamp = new Date();
     }
 
-    public ChatMessage(String userId, String fromUserId, String message, Date currentDate) {
+    public ChatItem(String userId, String fromUserId, String message, Date currentDate) {
         this.message = message;
         this.userId = userId;
         this.fromUserId = fromUserId;

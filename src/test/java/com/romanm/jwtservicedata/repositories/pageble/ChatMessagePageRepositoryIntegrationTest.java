@@ -1,7 +1,7 @@
 package com.romanm.jwtservicedata.repositories.pageble;
 
 import com.romanm.jwtservicedata.constants.MessageConstants;
-import com.romanm.jwtservicedata.models.ChatMessage;
+import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -27,7 +27,7 @@ public class ChatMessagePageRepositoryIntegrationTest {
 
     @Test
     public void chatMessagePageTest() {
-       List<ChatMessage> chatMessageList = new ArrayList<>();
+       List<ChatItem> chatMessageList = new ArrayList<>();
 
        int controlPageSize = 20;
        chatMessageList = this.chatMessagePageRepository.findChatMessageByUserIdAndFromUserIdOrderByTimestampDesc("200", "201", PageRequest.of(0, controlPageSize)).collectList().block();

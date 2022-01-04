@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.romanm.jwtservicedata.configs.auth.TestSecurityConfiguration;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
-import com.romanm.jwtservicedata.models.ChatMessage;
+import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.responses.ResponseData;
 import com.romanm.jwtservicedata.repositories.pageble.ChatMessagePageRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +45,10 @@ public class ChatMessageControllerIntegrationTest {
         int pageSize = 10;
         String messageContent = "Message %d";
 
-        List<ChatMessage> chatMessageList = new ArrayList<>();
+        List<ChatItem> chatMessageList = new ArrayList<>();
 
         for (int i = 0; i < pageSize; i++) {
-            ChatMessage chatMessage = new ChatMessage(TEST_USER_ID, TEST_FROM_USER_ID, String.format(messageContent, i));
+            ChatItem chatMessage = new ChatItem(TEST_USER_ID, TEST_FROM_USER_ID, String.format(messageContent, i));
             chatMessageList.add(chatMessage);
             this.chatMessagePageRepository.save(chatMessage).delayElement(Duration.ofMillis(800)).block();
         }
