@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.services;
 import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
+import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
 import com.romanm.jwtservicedata.services.interfaces.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
 public class StorageServiceV1 extends StorageServiceBase implements StorageService {
 
     private final FileConfig fileConfig;
+    private final UserProfileRepository userProfileRepository;
 
     @Autowired
-    public StorageServiceV1(FileConfig fileConfig) {
+    public StorageServiceV1(FileConfig fileConfig, UserProfileRepository userProfileRepository) {
         super(fileConfig);
         this.fileConfig = fileConfig;
+        this.userProfileRepository = userProfileRepository;
     }
 
     /**
@@ -100,7 +103,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<FileStatus> save(String userId, Mono<FilePart> filePartMono) {
         return Mono.create(sink -> {
             if (userId != null) {Optional.ofNullable(filePartMono).ifPresent(file -> {
-                this.save(file, userId).doOnSuccess(sink::success).subscribe();
+                this.save(file, userId).map(fileStatus -> (this.updateImgUrlsOfUserProfile(fileStatus, userId))).doOnSuccess(sink::success).subscribe();
             });
             } else {
                 sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
@@ -169,5 +172,22 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         });
     }
 
+    /**
+     * Дописать в профиль пользователя нужные ссылки на изображения
+     * @param fileStatus FileStatus
+     * @param userId String
+     * @return FileStatus
+     */
+    private FileStatus updateImgUrlsOfUserProfile(FileStatus fileStatus, String userId) {
+        this.userProfileRepository
+                    .findUserProfileById(userId)
+                    .doOnSuccess(userProfile -> {
+                        if (userProfile.getImgUrls().size() < fileConfig.getMaxCount()) {
+                            userProfile.getImgUrls().add(fileStatus.getUrl());
+                            this.userProfileRepository.save(userProfile).subscribe();
+                        }
+                     }).subscribe();
 
+        return fileStatus;
+    }
 }

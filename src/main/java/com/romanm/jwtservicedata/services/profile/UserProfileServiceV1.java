@@ -25,23 +25,19 @@ public class UserProfileServiceV1 implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final VisitorRepository visitorRepository;
-    private final MongoOperations mongoVisitorOperations;
     private final MongoOperations mongoOperations;
 
     /**
      * @param userProfileRepository UserProfileRepository
      * @param visitorRepository VisitorRepository
-     * @param mongoVisitorOperations MongoVisitorOperations
      * @param mongoOperations MongoOperations
      */
     @Autowired
     public UserProfileServiceV1(UserProfileRepository userProfileRepository,
                                 VisitorRepository visitorRepository,
-                                MongoOperations mongoVisitorOperations,
                                 MongoOperations mongoOperations) {
         this.userProfileRepository = userProfileRepository;
         this.visitorRepository = visitorRepository;
-        this.mongoVisitorOperations = mongoVisitorOperations;
         this.mongoOperations = mongoOperations;
     }
 
@@ -85,7 +81,7 @@ public class UserProfileServiceV1 implements UserProfileService {
         //Получить данные профиля текущего пользователя
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
         //Запросить первые 30 посетителей, начиная с текущей даты, для текущего пользователя
-        Flux<Visitor> visitorFlux = this.mongoVisitorOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30);//this.visitorRepository.findVisitorByUserId(userId);
+        Flux<Visitor> visitorFlux = this.mongoOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30);//this.visitorRepository.findVisitorByUserId(userId);
 
         return Mono.create(sink -> {
              userProfile.doOnSuccess(profile -> {
