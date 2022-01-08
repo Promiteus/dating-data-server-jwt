@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services.mongodb;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
-public class MongoVisitorOperations {
+public class MongoOperations {
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
 
@@ -31,5 +32,17 @@ public class MongoVisitorOperations {
         return reactiveMongoTemplate.find(query, Visitor.class).distinct(Visitor::getVisitorUserId);//.limitRate(pageSize);
     }
 
+    /**
+     * Получить список профилей постарнично, кроме профиля с notUserId
+     * @param page int
+     * @param pageSize int
+     * @return Flux<UserProfile>
+     */
+    public Flux<UserProfile> findAllUserProfilesByPage(int page, int pageSize, String notUserId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").ne(notUserId));
+        query.with(PageRequest.of(page, pageSize));
+        return reactiveMongoTemplate.find(query, UserProfile.class);
+    }
 
 }

@@ -16,6 +16,7 @@ public class ResponseData<T> implements Serializable {
     private List<T> data;
     private int page;
     private int size;
+    private int total;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
@@ -23,6 +24,15 @@ public class ResponseData<T> implements Serializable {
         this.page = page;
         this.size = size;
         this.data = data;
+        this.total = 0;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ResponseData(int page, int size, List<T> data, int total) {
+        this.page = page;
+        this.size = size;
+        this.data = data;
+        this.total = total;
         this.timestamp = LocalDateTime.now();
     }
 }

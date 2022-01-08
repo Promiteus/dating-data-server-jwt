@@ -6,8 +6,10 @@ import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -87,5 +89,20 @@ public class UserProfileController {
                 }
             });
         });
+    }
+
+    /**
+     * Получить постраничный список профилей пользователей, кроме указанного userId
+     * @param page int
+     * @return ResponseEntity<Flux<UserProfile>>
+     */
+    @GetMapping(value = Api.API_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public ResponseEntity<Flux<UserProfile>> findAllPageble(
+            @RequestParam(value = Api.PARAM_PAGE, defaultValue = "0") int page,
+            @RequestParam(value = Api.PARAM_NOT_USER_ID, defaultValue = "") String userId) {
+
+        // Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(20, page, userId);
+
+         return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(20, page, userId));
     }
 }

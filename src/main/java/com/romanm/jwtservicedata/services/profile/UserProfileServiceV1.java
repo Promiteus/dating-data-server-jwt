@@ -1,15 +1,15 @@
 package com.romanm.jwtservicedata.services.profile;
 
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
-import com.romanm.jwtservicedata.services.mongodb.MongoVisitorOperations;
+import com.romanm.jwtservicedata.services.mongodb.MongoOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,18 +25,24 @@ public class UserProfileServiceV1 implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final VisitorRepository visitorRepository;
-    private final MongoVisitorOperations mongoVisitorOperations;
+    private final MongoOperations mongoVisitorOperations;
+    private final MongoOperations mongoOperations;
 
     /**
      * @param userProfileRepository UserProfileRepository
      * @param visitorRepository VisitorRepository
      * @param mongoVisitorOperations MongoVisitorOperations
+     * @param mongoOperations MongoOperations
      */
     @Autowired
-    public UserProfileServiceV1(UserProfileRepository userProfileRepository, VisitorRepository visitorRepository, MongoVisitorOperations mongoVisitorOperations) {
+    public UserProfileServiceV1(UserProfileRepository userProfileRepository,
+                                VisitorRepository visitorRepository,
+                                MongoOperations mongoVisitorOperations,
+                                MongoOperations mongoOperations) {
         this.userProfileRepository = userProfileRepository;
         this.visitorRepository = visitorRepository;
         this.mongoVisitorOperations = mongoVisitorOperations;
+        this.mongoOperations = mongoOperations;
     }
 
     /**
@@ -123,6 +129,11 @@ public class UserProfileServiceV1 implements UserProfileService {
                 sink.success(cons != null);
             }).subscribe();
         });
+    }
+
+    @Override
+    public Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId) {
+        return this.mongoOperations.findAllUserProfilesByPage(page, pageSize, notUserId);
     }
 
 }

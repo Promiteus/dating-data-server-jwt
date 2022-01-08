@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,4 +45,6 @@ public class UserProfile implements Serializable {
     private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL; //Предпочитаю знакомиться
     //@Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
+    private Set<String> imgUrls = new HashSet<>(); //Список url изображений
+    private String thumbUrl = ""; //Url привью профиля пользователя
 }
