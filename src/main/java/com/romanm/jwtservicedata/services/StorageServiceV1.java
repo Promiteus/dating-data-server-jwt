@@ -112,7 +112,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
-     * Сохранить превью выбранного файла.
+     * Сохранить миниатюру выбранного файла.
      * @param userId String
      * @param fileName String
      * @return Mono<FileStatus>
@@ -121,7 +121,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<FileStatus> saveThumb(String userId, String fileName) {
         return Mono.create(sink -> {
             if ((userId != null) && (fileName != null)) {
-                this.saveFileThumb(userId, fileName).doOnSuccess(sink::success).subscribe();
+                this.saveFileThumb(userId, fileName).map(fileStatus -> (this.updateImgThumbUrlOfUserProfile(fileStatus, userId))).doOnSuccess(sink::success).subscribe();
             } else {
                 sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
             }
@@ -173,7 +173,26 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
-     * Дописать в профиль пользователя нужные ссылки на изображения
+     * Сохранить миниатюру главного изображения
+     * @param fileStatus FileStatus
+     * @param userId String
+     * @return FileStatus
+     */
+    private FileStatus updateImgThumbUrlOfUserProfile(FileStatus fileStatus, String userId) {
+        this.userProfileRepository
+                .findUserProfileById(userId)
+                .doOnSuccess(userProfile -> {
+                    if (fileStatus.isSaved()) {
+                        userProfile.setThumbUrl(fileStatus.getUrl());
+                        this.userProfileRepository.save(userProfile).subscribe();
+                    }
+                }).subscribe();
+
+        return fileStatus;
+    }
+
+    /**
+     * Дописать в профиль пользователя ссылки на сохраненные изображения
      * @param fileStatus FileStatus
      * @param userId String
      * @return FileStatus
@@ -182,7 +201,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         this.userProfileRepository
                     .findUserProfileById(userId)
                     .doOnSuccess(userProfile -> {
-                        if (userProfile.getImgUrls().size() < fileConfig.getMaxCount()) {
+                        if (fileStatus.isSaved()) {
                             userProfile.getImgUrls().add(fileStatus.getUrl());
                             this.userProfileRepository.save(userProfile).subscribe();
                         }

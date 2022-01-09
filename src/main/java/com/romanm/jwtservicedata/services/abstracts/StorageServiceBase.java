@@ -160,7 +160,7 @@ public class StorageServiceBase {
                 if (this.saveThumb(file, thumbDir, userId)) {
                     String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, this.fileConfig.getThumbFileName());
                     log.info(MessageConstants.prefixMsg(msg));
-                    sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), ""));
+                    sink.success(new FileStatus(true, this.fileConfig.getThumbFileName(), "", String.format(Api.API_RESOURCE_URI_THUMB, userId)));
                 }
             }
             sink.success(new FileStatus(false, fileName, String.format(MessageConstants.MSG_FILE_NOT_FOUND, fileName)));
@@ -251,10 +251,6 @@ public class StorageServiceBase {
             String msg = String.format(MessageConstants.MSG_FILE_SAVED_SUCCESSFUL, filePart.filename());
             log.info(MessageConstants.prefixMsg(msg));
             sink.success(new FileStatus(true, fileName, "", resourceUri));
-
-           /* if (this.getFilesThumbCount(userId) == 0) {
-                this.saveThumb(Paths.get(fileName).toFile(), "", userId);
-            }*/
         }).doOnError(err -> {
             String msg = String.format(MessageConstants.MSG_ERR_FILE_SAVING, filePart.filename(), err.getMessage());
             log.info(MessageConstants.prefixMsg(msg));
