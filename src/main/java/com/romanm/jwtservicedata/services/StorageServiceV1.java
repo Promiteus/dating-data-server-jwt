@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.components.confs.FileConfig;
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
@@ -121,7 +122,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<FileStatus> saveThumb(String userId, String fileName) {
         return Mono.create(sink -> {
             if ((userId != null) && (fileName != null)) {
-                this.saveFileThumb(userId, fileName).map(fileStatus -> (this.updateImgThumbUrlOfUserProfile(fileStatus, userId))).doOnSuccess(sink::success).subscribe();
+                this.saveFileThumb(userId, fileName).map(fileStatus -> (this.updateImgUrlsOfUserProfile(fileStatus, userId))).doOnSuccess(sink::success).subscribe();
             } else {
                 sink.success(new FileStatus(false, "", MessageConstants.MSG_NOT_ALL_HTTP_PARAMS, ""));
             }
@@ -149,7 +150,11 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<Boolean> remove(String userId, String fileName) {
         return Mono.create(sink -> {
             if ((userId != null) && (fileName != null)) {
-                sink.success(this.deleteUserFile(fileName, userId));
+                boolean isDeleted = this.deleteUserFile(fileName, userId);
+                if (isDeleted) {
+                    this.updateImgUrlsOfUserProfile(null, userId);
+                }
+                sink.success(isDeleted);
             } else {
                 sink.success(false);
             }
@@ -165,30 +170,15 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     public Mono<Boolean> removeAll(String userId) {
         return Mono.create(sink -> {
            if (userId != null) {
-               sink.success(this.deleteAll(userId));
+               boolean isDeletedAll = this.deleteAll(userId);
+               if (isDeletedAll) {
+                   this.updateImgUrlsOfUserProfile(null, userId);
+               }
+               sink.success();
            } else {
                sink.success(false);
            }
         });
-    }
-
-    /**
-     * Сохранить миниатюру главного изображения
-     * @param fileStatus FileStatus
-     * @param userId String
-     * @return FileStatus
-     */
-    private FileStatus updateImgThumbUrlOfUserProfile(FileStatus fileStatus, String userId) {
-        this.userProfileRepository
-                .findUserProfileById(userId)
-                .doOnSuccess(userProfile -> {
-                    if (fileStatus.isSaved()) {
-                        userProfile.setThumbUrl(fileStatus.getUrl());
-                        this.userProfileRepository.save(userProfile).subscribe();
-                    }
-                }).subscribe();
-
-        return fileStatus;
     }
 
     /**
@@ -201,10 +191,23 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         this.userProfileRepository
                     .findUserProfileById(userId)
                     .doOnSuccess(userProfile -> {
-                        if (fileStatus.isSaved()) {
-                            userProfile.getImgUrls().add(fileStatus.getUrl());
+                            List<String> fileThumbUrls = this.fileConfig
+                                .listFiles(userId+"/"+this.fileConfig.getThumbDir())
+                                .stream()
+                                .map(file -> (String.format(Api.API_RESOURCE_URI_THUMB, userId)))
+                                .collect(Collectors.toList());
+
+                            List<String> fileUrls = this.fileConfig
+                                    .listFiles(userId)
+                                    .stream()
+                                    .map(file -> (String.format(Api.API_RESOURCE_URI_TEMP, userId, file.getName())))
+                                    .collect(Collectors.toList());
+
+                            userProfile.setThumbUrl(fileThumbUrls.size() > 0 ? fileThumbUrls.get(0): "");
+                            userProfile.getImgUrls().clear();
+                            userProfile.getImgUrls().addAll(fileUrls);
                             this.userProfileRepository.save(userProfile).subscribe();
-                        }
+
                      }).subscribe();
 
         return fileStatus;
