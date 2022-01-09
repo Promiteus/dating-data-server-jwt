@@ -137,7 +137,9 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
      */
     @Override
     public Flux<FileStatus> saveAll(String userId, Flux<FilePart> files) {
-        return this.saveAllFlux(files, userId);
+        return this.saveAllFlux(files, userId).doOnComplete(() -> {
+            this.updateImgUrlsOfUserProfile(null, userId);
+        });
     }
 
     /**
@@ -174,7 +176,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                if (isDeletedAll) {
                    this.updateImgUrlsOfUserProfile(null, userId);
                }
-               sink.success();
+               sink.success(isDeletedAll);
            } else {
                sink.success(false);
            }
@@ -182,7 +184,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
-     * Дописать в профиль пользователя ссылки на сохраненные изображения
+     * Дописать/удалить/изменить в профиль пользователя ссылки на сохраненные изображения
      * @param fileStatus FileStatus
      * @param userId String
      * @return FileStatus
