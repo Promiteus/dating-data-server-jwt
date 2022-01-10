@@ -1,4 +1,4 @@
-package com.romanm.jwtservicedata.repositories;
+package com.romanm.jwtservicedata.repositories.pageble;
 
 import com.romanm.jwtservicedata.models.Visitor;
 import org.springframework.data.domain.Pageable;

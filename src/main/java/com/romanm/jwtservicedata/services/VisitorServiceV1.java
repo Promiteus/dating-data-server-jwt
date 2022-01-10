@@ -1,7 +1,7 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.models.Visitor;
-import com.romanm.jwtservicedata.repositories.VisitorPagebleRepository;
+import com.romanm.jwtservicedata.repositories.pageble.VisitorPagebleRepository;
 import com.romanm.jwtservicedata.services.interfaces.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

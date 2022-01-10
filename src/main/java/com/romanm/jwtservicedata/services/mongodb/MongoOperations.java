@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services.mongodb;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,20 @@ public class MongoOperations {
         query.addCriteria(Criteria.where("id").ne(notUserId));
         query.with(PageRequest.of(page, pageSize));
         return reactiveMongoTemplate.find(query, UserProfile.class);
+    }
+
+    /**
+     *
+     * @param fromUserId String
+     * @param page int
+     * @param pageSize int
+     * @return Flux<ChatItem>
+     */
+    public Flux<ChatItem> findDistinctProfileIdOfChat(String fromUserId, int page, int pageSize) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("fromUserId").is(fromUserId));
+        query.with(PageRequest.of(page, pageSize));
+        return reactiveMongoTemplate.find(query, ChatItem.class).distinct(ChatItem::getFromUserId);
     }
 
 }

@@ -6,6 +6,7 @@ import com.romanm.jwtservicedata.models.responses.ResponseData;
 import com.romanm.jwtservicedata.services.interfaces.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class ChatMessageController {
+    @Qualifier(value = "chatServiceV1")
     private final ChatService chatService;
 
     @Autowired

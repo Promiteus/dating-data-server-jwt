@@ -2,7 +2,7 @@ package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.Visitor;
-import com.romanm.jwtservicedata.repositories.VisitorPagebleRepository;
+import com.romanm.jwtservicedata.repositories.pageble.VisitorPagebleRepository;
 import com.romanm.jwtservicedata.services.mongodb.MongoOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
