@@ -15,12 +15,14 @@ import java.util.List;
 public class ResponseUserProfile {
     private UserProfile userProfile; //Профиль пользователя
     private List<UserProfile> lastVisitors; //Список последних 10 посетителей
+    private List<UserProfile> lastChats = new ArrayList<>(); //Те, с кем в последний раз переписывался
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
-    public ResponseUserProfile(UserProfile userProfile, List<UserProfile> lastVisitors) {
+    public ResponseUserProfile(UserProfile userProfile, List<UserProfile> lastVisitors, List<UserProfile> lastChats) {
         this.userProfile = userProfile;
         this.lastVisitors = lastVisitors;
+        this.lastChats = lastChats;
 
         this.timestamp = LocalDateTime.now();
     }
@@ -28,6 +30,7 @@ public class ResponseUserProfile {
     public ResponseUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
         this.lastVisitors = new ArrayList<>();
+        this.lastChats = new ArrayList<>();
 
         this.timestamp = LocalDateTime.now();
     }

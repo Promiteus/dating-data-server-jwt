@@ -9,12 +9,12 @@ import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import com.romanm.jwtservicedata.services.mongodb.MongoOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
+import java.util.Collections;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -82,6 +82,13 @@ public class UserProfileServiceV1 implements UserProfileService {
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
         //Запросить первые 30 посетителей, начиная с текущей даты, для текущего пользователя
         Flux<Visitor> visitorFlux = this.mongoOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30);//this.visitorRepository.findVisitorByUserId(userId);
+        Mono<List<UserProfile>> lastVisitors = this.findVisitorsIfProfile(userId);
+        Mono<List<UserProfile>> lastChats = this.findChatUserProfilesByPage(userId, 20, 0);
+
+
+
+        //visitorFlux.collectList().then()
+
 
         return Mono.create(sink -> {
              userProfile.doOnSuccess(profile -> {
@@ -89,6 +96,8 @@ public class UserProfileServiceV1 implements UserProfileService {
              }).subscribe();
          });
     }
+
+
 
     /**
      * Сохранить новый профиль или изменить текущий
@@ -152,6 +161,22 @@ public class UserProfileServiceV1 implements UserProfileService {
                 .findDistinctProfileIdOfChat(userId, page, pageSize)
                 .collectList()
                 .flatMap(s -> this.userProfileRepository.findUserProfilesByIdIn(s).collectList());
+    }
+
+    /**
+     *
+     * @param userId String
+     * @return Mono<List<UserProfile>>
+     */
+    @Override
+    public Mono<List<UserProfile>> findVisitorsIfProfile(String userId) {
+       return this.mongoOperations
+               .findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30)
+               .collectList()
+               .flatMap(s -> {
+                   List<String> visitorsIds = s.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
+                   return this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList();
+               });
     }
 
 }

@@ -67,9 +67,9 @@ public class UserProfileControllerTest {
 
         UserProfile userProfileTest = this.getUserProfile();
         //200
-        Mockito.when(this.userProfileService.getUserProfile("100")).thenReturn(Mono.just(new ResponseUserProfile(userProfileTest, new ArrayList<>())));
+        Mockito.when(this.userProfileService.getUserProfile("100")).thenReturn(Mono.just(new ResponseUserProfile(userProfileTest, new ArrayList<>(), new ArrayList<>())));
         //NOT FOUND 404
-        Mockito.when(this.userProfileService.getUserProfile("20")).thenReturn(Mono.just(new ResponseUserProfile(null, new ArrayList<>())));
+        Mockito.when(this.userProfileService.getUserProfile("20")).thenReturn(Mono.just(new ResponseUserProfile(null, new ArrayList<>(), new ArrayList<>())));
 
         //ResponseUserProfile responseUserProfile = this.userProfileService.getUserProfile("100").block();
         log.info(MessageConstants.prefixMsg(this.userProfileService.getUserProfile("100").block().toString()));
