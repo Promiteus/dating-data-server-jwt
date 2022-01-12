@@ -47,11 +47,8 @@ public class UserProfileServiceV1 implements UserProfileService {
      */
     @Override
     public Mono<ResponseUserProfile> getUserProfile(String userId) {
-
         if (userId == null) {
-            return Mono.create(sink -> {
-                sink.success(null);
-            });
+            return Mono.just(new ResponseUserProfile());
         }
         //Получить данные профиля текущего пользователя
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
@@ -76,9 +73,7 @@ public class UserProfileServiceV1 implements UserProfileService {
     @Override
     public Mono<UserProfile> saveOrUpdateUserProfile(UserProfile userProfile) {
         if (userProfile == null) {
-            return Mono.create(sink -> {
-                sink.success(new UserProfile());
-            });
+            return Mono.empty();
         }
 
         return this.userProfileRepository.save(userProfile);
