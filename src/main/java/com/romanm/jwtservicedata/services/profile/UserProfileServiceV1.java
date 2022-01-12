@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
 
-import java.util.Collections;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -41,29 +39,6 @@ public class UserProfileServiceV1 implements UserProfileService {
         this.mongoOperations = mongoOperations;
     }
 
-    /**
-     * Преобразователь рекактивных данных в формат ResponseUserProfile
-     * @param sink MonoSink<ResponseUserProfile>
-     * @param profile UserProfile
-     * @param visitorFlux Flux<Visitor>
-     */
-    private void toResponseDataFormat(MonoSink<ResponseUserProfile> sink, UserProfile profile, Flux<Visitor> visitorFlux) {
-        ResponseUserProfile responseUserProfile = new ResponseUserProfile(profile);
-
-        visitorFlux.collectList().subscribe(visitors -> {
-            if ((visitors != null) && (visitors.size() > 0)) {
-                List<String> visitorsIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
-                this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList().subscribe(userProfiles -> {
-                    responseUserProfile.getLastVisitors().addAll(userProfiles);
-                    //Профиль пользователя с визитерами
-                    sink.success(responseUserProfile);
-                });
-            } else {
-                //Профиль пользователя без визитеров
-                sink.success(responseUserProfile);
-            }
-        });
-    }
 
     /**
      * Получить составную сущность профиля пользовтаеля по идентификатору пользователя - ResponseUserProfile
@@ -80,21 +55,15 @@ public class UserProfileServiceV1 implements UserProfileService {
         }
         //Получить данные профиля текущего пользователя
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
-        //Запросить первые 30 посетителей, начиная с текущей даты, для текущего пользователя
-        Flux<Visitor> visitorFlux = this.mongoOperations.findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30);//this.visitorRepository.findVisitorByUserId(userId);
         Mono<List<UserProfile>> lastVisitors = this.findVisitorsIfProfile(userId);
         Mono<List<UserProfile>> lastChats = this.findChatUserProfilesByPage(userId, 20, 0);
 
-
-
-        //visitorFlux.collectList().then()
-
-
-        return Mono.create(sink -> {
-             userProfile.doOnSuccess(profile -> {
-                this.toResponseDataFormat(sink, profile, visitorFlux);
-             }).subscribe();
-         });
+        return Mono.from(Flux.zip(lastVisitors, lastChats, userProfile.map(ResponseUserProfile::new)).map((data) -> {
+            ResponseUserProfile responseUserProfile = data.getT3();
+            responseUserProfile.getLastVisitors().addAll(data.getT1());
+            responseUserProfile.getLastChats().addAll(data.getT2());
+            return responseUserProfile;
+        }));
     }
 
 
