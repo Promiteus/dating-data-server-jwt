@@ -63,7 +63,7 @@ public class UserProfileServiceV1 implements UserProfileService {
             responseUserProfile.getLastVisitors().addAll(data.getT1());
             responseUserProfile.getLastChats().addAll(data.getT2());
             return responseUserProfile;
-        }));
+        })).switchIfEmpty(Mono.just(new ResponseUserProfile()));
     }
 
 
