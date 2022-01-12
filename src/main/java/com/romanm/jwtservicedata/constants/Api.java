@@ -18,6 +18,7 @@ public class Api {
     public final static String API_CHAT_USERS_MESSAGES = "/chat_users_messages";
     public final static String API_USER_PROFILE = "/user_profile";
     public final static String API_USER_PROFILES = "/user_profiles";
+    public final static String API_CHAT_USER_PROFILES = "/chat_user_profiles";
     public final static String API_USER_IMAGE = "/resource";
     public final static String API_USER_IMAGES = "/uploads";
     public final static String API_USER_RESOURCE_THUMB = "/resource/thumb";

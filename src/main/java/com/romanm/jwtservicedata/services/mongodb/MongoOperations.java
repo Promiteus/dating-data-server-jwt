@@ -4,6 +4,7 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+@Slf4j
 @Service
 public class MongoOperations {
     @Autowired
@@ -47,17 +49,16 @@ public class MongoOperations {
     }
 
     /**
-     *
-     * @param fromUserId String
+     * Получить уникальные чаты по полю fromUserId. Вернет [201,202,203]
+     * @param userId String
      * @param page int
      * @param pageSize int
      * @return Flux<ChatItem>
      */
-    public Flux<ChatItem> findDistinctProfileIdOfChat(String fromUserId, int page, int pageSize) {
+    public Flux<String> findDistinctProfileIdOfChat(String userId, int page, int pageSize) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("fromUserId").is(fromUserId));
-        query.with(PageRequest.of(page, pageSize));
-        return reactiveMongoTemplate.find(query, ChatItem.class).distinct(ChatItem::getFromUserId);
+        query.addCriteria(Criteria.where("userId").is(userId));
+        return reactiveMongoTemplate.findDistinct(query, "fromUserId", ChatItem.class, String.class);
     }
 
 }

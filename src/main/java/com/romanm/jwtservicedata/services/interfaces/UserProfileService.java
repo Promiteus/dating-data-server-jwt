@@ -12,4 +12,5 @@ public interface UserProfileService {
      Mono<UserProfile> saveOrUpdateUserProfile(UserProfile userProfile);
      Mono<Boolean> removeUserProfile(String userId, boolean soft);
      Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId);
+     Mono<List<UserProfile>> findChatUserProfilesByPage(String userId, int pageSize, int page);
 }

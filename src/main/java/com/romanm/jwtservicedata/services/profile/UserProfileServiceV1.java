@@ -127,9 +127,31 @@ public class UserProfileServiceV1 implements UserProfileService {
         });
     }
 
+    /**
+     *
+     * @param pageSize int
+     * @param page int
+     * @param notUserId String
+     * @return Flux<UserProfile>
+     */
     @Override
     public Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId) {
         return this.mongoOperations.findAllUserProfilesByPage(page, pageSize, notUserId);
+    }
+
+    /**
+     * Найти рофили пользователей по переписке для данного пользователя
+     * @param userId String
+     * @param pageSize int
+     * @param page int
+     * @return Flux<UserProfile>
+     */
+    @Override
+    public Mono<List<UserProfile>> findChatUserProfilesByPage(String userId, int pageSize, int page) {
+        return this.mongoOperations
+                .findDistinctProfileIdOfChat(userId, page, pageSize)
+                .collectList()
+                .flatMap(s -> this.userProfileRepository.findUserProfilesByIdIn(s).collectList());
     }
 
 }

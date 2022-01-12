@@ -4,6 +4,7 @@ import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 
 /**
  * {
@@ -19,6 +22,7 @@ import reactor.core.publisher.Mono;
  *     "token_expire_sec": "2021-12-13 T 22:57:47.351",
  *     "user_id": "ff8081817ce58288017ce584265d0000"
  * }*/
+@Slf4j
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
 public class UserProfileController {
@@ -104,5 +108,20 @@ public class UserProfileController {
         // Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(20, page, userId);
 
          return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(20, page, userId));
+    }
+
+    /**
+     * Найти рофили пользователей по переписке для данного пользователя
+     * @param page int
+     * @param userId String
+     * @return ResponseEntity<Flux<UserProfile>>
+     */
+    @GetMapping(value = Api.API_CHAT_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public ResponseEntity<Mono<List<UserProfile>>> findChatUserProfilesByPage(
+           @RequestParam(value = Api.PARAM_PAGE, defaultValue = "0") int page,
+           @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "20") int pageSize,
+           @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId) {
+
+        return ResponseEntity.ok(this.userProfileService.findChatUserProfilesByPage(userId, pageSize, page));
     }
 }
