@@ -28,6 +28,8 @@ public class MessageConstants {
     public static final String MSG_FILES_COUNT = "Files in directory '%s' count: %d";
     public static final String MSG_FORMAT_FILE_INVALID = "Format file '%s' is invalid! Valid formats are: %s";
     public static final String MSG_MAX_FILES_COUNT = "Files amount for saving permitted are: %d";
+    public static final String MSG_DELETE_THUMB_SUCCESSFULLY = "Thumb was deleted successfully!";
+    public static final String MSG_DELETE_THUMB_FAILED = "Can't delete thumb!";
 
     public static final String MSG_NOT_ALL_HTTP_PARAMS = "Not all params have been passed!";
     public static final String MSG_UNKNOWN_MEDIA_TYPE = "It's unknown media type!";

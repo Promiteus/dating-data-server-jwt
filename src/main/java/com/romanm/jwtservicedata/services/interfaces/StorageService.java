@@ -15,4 +15,5 @@ public interface StorageService {
     Flux<FileStatus> saveAll(String userId, Flux<FilePart> files);
     Mono<Boolean> remove(String userId, String imageId);
     Mono<Boolean> removeAll(String userId);
+    Mono<Boolean> removeThumb(String userId);
 }

@@ -131,6 +131,23 @@ public class FileUploadController {
     }
 
     /**
+     * Удалить миниатюру изображения
+     * @param userId String
+     * @return Mono<ResponseEntity<?>>
+     */
+    @DeleteMapping(value = Api.API_IMAGE_THUMB)
+    public Mono<ResponseEntity<?>> deleteThumb(
+            @RequestParam(value = Api.PARAM_USER_ID) String userId
+    ) {
+
+        return Mono.create(sink -> {
+            this.storageService.removeThumb(userId).doOnSuccess(res -> {
+                sink.success(res ? ResponseEntity.accepted().build(): ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
+            }).subscribe();
+        });
+    }
+
+    /**
      * Удалить все файлы (изображения) каталога пользователя
      * @param userId String
      * @return Mono<ResponseEntity<?>>

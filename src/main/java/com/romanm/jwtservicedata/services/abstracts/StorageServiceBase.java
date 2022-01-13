@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -197,6 +198,25 @@ public class StorageServiceBase {
         }
 
         return filesCount > 0;
+    }
+
+    /**
+     * Удалить миниатюру изображения
+     * @param userId String
+     * @return boolean
+     */
+    protected boolean deleteThumb(String userId) {
+        List<File> files = this.fileConfig.listFiles(userId+"/"+this.fileConfig.getThumbDir());
+        if (files.size() > 0)  {
+            boolean res =files.get(0).delete();
+            if (res) {
+                log.info(MessageConstants.prefixMsg(MessageConstants.MSG_DELETE_THUMB_SUCCESSFULLY));
+            } else {
+                log.info(MessageConstants.prefixMsg(MessageConstants.MSG_DELETE_THUMB_FAILED));
+            }
+            return res;
+        }
+        return false;
     }
 
     /**

@@ -184,6 +184,20 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
     }
 
     /**
+     * Удалит миниатюру изображения и обновит данные выбранного профиля
+     * @param userId String
+     * @return Mono<Boolean>
+     */
+    @Override
+    public Mono<Boolean> removeThumb(String userId) {
+        boolean isDeleted = this.deleteThumb(userId);
+        if (isDeleted) {
+            this.updateImgUrlsOfUserProfile(null, userId);
+        }
+        return Mono.just(isDeleted);
+    }
+
+    /**
      * Дописать/удалить/изменить в профиль пользователя ссылки на сохраненные изображения
      * @param fileStatus FileStatus
      * @param userId String
