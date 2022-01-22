@@ -12,7 +12,7 @@ public class CommonConstants
     }
 
     public static enum SexOrientation {
-        HETERO, HOMO, SKIPED
+        HETERO, HOMO, BI
     }
 
     public static enum MeetPreferences {

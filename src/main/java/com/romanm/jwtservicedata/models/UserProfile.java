@@ -29,9 +29,7 @@ public class UserProfile implements Serializable {
     private String lastName; //Фамилия
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthDate; //Год рождения
-    @Indexed(name = "height")
     private int height; //Рост
-    @Indexed(name = "weight")
     private int weight; //Масса тела
     @Size(max = 1000)
     private String aboutMe; //О себе
@@ -43,7 +41,7 @@ public class UserProfile implements Serializable {
     private CommonConstants.SexOrientation sexOrientation = CommonConstants.SexOrientation.HETERO; //Суксуальная ориентация
     @Indexed(useGeneratedName = true)
     private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL; //Предпочитаю знакомиться
-    //@Indexed(useGeneratedName = true)
+    @Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
     private Set<String> imgUrls = new HashSet<>(); //Список url изображений
     private String thumbUrl = ""; //Url привью профиля пользователя
