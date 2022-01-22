@@ -221,6 +221,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                     .collect(Collectors.toList());
 
 
+                            log.info(MessageConstants.prefixMsg(fileStatus.getFileName()));
                             userProfile.setThumbUrl(fileThumbUrls.size() > 0 ? new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()) : new ImageRef());
                             userProfile.getImgUrls().clear();
                             userProfile.getImgUrls().addAll(imgRefs);

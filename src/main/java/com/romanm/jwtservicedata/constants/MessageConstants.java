@@ -20,6 +20,7 @@ public class MessageConstants {
 
     public static final String MSG_FILE_NOT_FOUND = "File '%s' not found! Can't create thumb icon!";
     public static final String MSG_FILE_SAVED_SUCCESSFUL = "File '%s' was saved successfully!";
+    public static final String MSG_THUMB_FILE_SAVED_SUCCESSFUL = "Thumb file '%s' was saved successfully!";
     public static final String MSG_ERR_FILE_SAVING = "Can't save file '%s'! Error: %s";
     public static final String MSG_CANT_DELETE_FILE = "Can't delete file '%s' or it was deleted before!";
     public static final String MSG_CANT_DELETE_FILES = "Can't delete files of directory '%s' or its were deleted before!";

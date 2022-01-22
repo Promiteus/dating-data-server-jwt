@@ -1,21 +1,34 @@
 package com.romanm.jwtservicedata.components.preload;
 
 import com.romanm.jwtservicedata.components.preload.interfaces.SingleSaver;
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.builders.UserProfileBuilder;
+import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -25,6 +38,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class DataPreloader {
+    private int userId = 200;
+
+    private static final String SAVED_SINGLE_FILE = "Saved single image '%s'!";
+    private static final String CANT_SAVE_SINGLE_FILE = "Can't save single image '%s'!";
+    private static final String SAVED_SINGLE_THUMB_FILE = "Saved thumb image '%s'!";
+    private static final String CANT_SAVE_THUMB_FILE = "Can't save thumb image '%s'!";
 
     @Autowired
     private UserProfileRepository userProfileRepository;
@@ -32,6 +51,10 @@ public class DataPreloader {
     private ChatMessageRepository chatMessageRepository;
     @Autowired
     private VisitorRepository visitorRepository;
+
+    @Value("classpath:test3/*")
+    Resource[] resourceFilesTest3;
+
 
     /**
      * Заполнить коллекцию тестовыми профилями
