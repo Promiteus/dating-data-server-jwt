@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.models.images.ImageRef;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,6 @@ public class UserProfile implements Serializable {
     private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL; //Предпочитаю знакомиться
     @Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
-    private Set<String> imgUrls = new HashSet<>(); //Список url изображений
-    private String thumbUrl = ""; //Url привью профиля пользователя
+    private Set<ImageRef> imgUrls = new HashSet<>(); //Список url изображений
+    private ImageRef thumbUrl = new ImageRef(); //Url привью профиля пользователя
 }

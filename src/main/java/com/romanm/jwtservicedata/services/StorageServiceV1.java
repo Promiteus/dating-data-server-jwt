@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.services;
 import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
+import com.romanm.jwtservicedata.models.images.ImageRef;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.services.abstracts.StorageServiceBase;
@@ -213,15 +214,16 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                 .map(file -> (String.format(Api.API_RESOURCE_URI_THUMB, userId)))
                                 .collect(Collectors.toList());
 
-                            List<String> fileUrls = this.fileConfig
+                            List<ImageRef> imgRefs = this.fileConfig
                                     .listFiles(userId)
                                     .stream()
-                                    .map(file -> (String.format(Api.API_RESOURCE_URI_TEMP, userId, file.getName())))
+                                    .map(file -> (new ImageRef(String.format(Api.API_RESOURCE_URI_TEMP, userId, file.getName()), file.getName())))
                                     .collect(Collectors.toList());
 
-                            userProfile.setThumbUrl(fileThumbUrls.size() > 0 ? fileThumbUrls.get(0): "");
+
+                            userProfile.setThumbUrl(fileThumbUrls.size() > 0 ? new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()) : new ImageRef());
                             userProfile.getImgUrls().clear();
-                            userProfile.getImgUrls().addAll(fileUrls);
+                            userProfile.getImgUrls().addAll(imgRefs);
                             this.userProfileRepository.save(userProfile).subscribe();
 
                      }).subscribe();
