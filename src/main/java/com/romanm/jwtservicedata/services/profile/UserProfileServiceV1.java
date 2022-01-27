@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.services.profile;
 
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
+import com.romanm.jwtservicedata.models.requests.SearchBody;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
 import com.romanm.jwtservicedata.repositories.VisitorRepository;
@@ -110,6 +111,19 @@ public class UserProfileServiceV1 implements UserProfileService {
     @Override
     public Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId) {
         return this.mongoOperations.findAllUserProfilesByPage(page, pageSize, notUserId);
+    }
+
+    /**
+     * Получить список профилей пользователей по заданным параметрам поиска searchBody
+     * @param pageSize int
+     * @param page int
+     * @param notUserId String
+     * @param searchBody SearchBody
+     * @return Flux<UserProfile>
+     */
+    @Override
+    public Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId, SearchBody searchBody) {
+        return null;
     }
 
     /**

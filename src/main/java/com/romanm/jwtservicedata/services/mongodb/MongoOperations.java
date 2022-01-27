@@ -4,6 +4,7 @@ import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
+import com.romanm.jwtservicedata.models.requests.SearchBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +45,22 @@ public class MongoOperations {
     public Flux<UserProfile> findAllUserProfilesByPage(int page, int pageSize, String notUserId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").ne(notUserId));
+        query.with(PageRequest.of(page, pageSize));
+        return reactiveMongoTemplate.find(query, UserProfile.class);
+    }
+
+    /**
+     * Получить список профилей постарнично c учетом параметров SearchBody, кроме профиля с notUserId
+     * @param page int
+     * @param pageSize int
+     * @return Flux<UserProfile>
+     */
+    public Flux<UserProfile> findAllUserProfilesByPage(int page, int pageSize, String notUserId, SearchBody searchBody) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").ne(notUserId));
+
+
+
         query.with(PageRequest.of(page, pageSize));
         return reactiveMongoTemplate.find(query, UserProfile.class);
     }

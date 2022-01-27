@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.controllers;
 
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.UserProfile;
+import com.romanm.jwtservicedata.models.requests.SearchBody;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
@@ -105,9 +106,23 @@ public class UserProfileController {
             @RequestParam(value = Api.PARAM_PAGE, defaultValue = "0") int page,
             @RequestParam(value = Api.PARAM_NOT_USER_ID, defaultValue = "") String userId) {
 
-        // Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(20, page, userId);
+         return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId));
+    }
 
-         return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(20, page, userId));
+    /**
+     * Получить список профилей пользователей по заданным параметрам поиска searchBody
+     * @param page int
+     * @param userId String
+     * @param searchBody SearchBody
+     * @return ResponseEntity<Flux<UserProfile>>
+     */
+    @PostMapping(value = Api.API_POST_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithParams(
+            @PathVariable(value = Api.PARAM_PAGE) int page,
+            @PathVariable(value = Api.PARAM_NOT_USER_ID) String userId,
+            @RequestBody SearchBody searchBody) {
+
+        return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId));
     }
 
     /**

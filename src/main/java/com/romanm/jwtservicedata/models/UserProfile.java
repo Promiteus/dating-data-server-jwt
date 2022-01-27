@@ -30,12 +30,14 @@ public class UserProfile implements Serializable {
     private String lastName; //Фамилия
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthDate; //Год рождения
+    @Indexed(useGeneratedName = true)
+    private int age;
     private int height; //Рост
     private int weight; //Масса тела
     @Size(max = 1000)
     private String aboutMe; //О себе
     private String hobby; //Увлечения
-   // @Indexed(useGeneratedName = true)
+    @Indexed(useGeneratedName = true)
     private int kids = 0; //Количество детей
     private CommonConstants.FamilyStatus familyStatus = CommonConstants.FamilyStatus.SINGLE; //Семейное положение
     private long rank = 1000; //Ранг по позиции анкеты
