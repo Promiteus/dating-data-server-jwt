@@ -52,9 +52,9 @@ public class UserProfile implements Serializable {
     private ImageRef thumbUrl = new ImageRef(); //Url привью профиля пользователя
 
     @Indexed(useGeneratedName = true)
-    private String country = "Россия";
+    private String country = "Россия"; //Страна
     @Indexed(useGeneratedName = true)
-    private String region = "";
+    private String region = ""; //Регион
     @Indexed(useGeneratedName = true)
-    private String locality = "";
+    private String locality = ""; //Нас. пункт
 }

@@ -75,6 +75,15 @@ public class MongoOperations {
         Optional.ofNullable(searchBody.getSex()).ifPresent(sex -> {
             query.addCriteria(Criteria.where("sex").is(sex));
         });
+        Optional.ofNullable(searchBody.getCountry()).ifPresent(country -> {
+            query.addCriteria(Criteria.where("country").is(country));
+        });
+        Optional.ofNullable(searchBody.getRegion()).ifPresent(region -> {
+            query.addCriteria(Criteria.where("region").is(region));
+        });
+        Optional.ofNullable(searchBody.getLocality()).ifPresent(locality -> {
+            query.addCriteria(Criteria.where("locality").is(locality));
+        });
 
         query.with(PageRequest.of(page, pageSize));
         return reactiveMongoTemplate.find(query, UserProfile.class);

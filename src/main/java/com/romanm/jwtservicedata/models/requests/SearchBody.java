@@ -17,4 +17,7 @@ public class SearchBody implements Serializable {
     private CommonConstants.MeetPreferences meetPreferences;
     private CommonConstants.Sex sex;
     private CommonConstants.FamilyStatus familyStatus;
+    private String country = "Россия"; //Страна
+    private String region = ""; //Регион
+    private String locality = ""; //Нас. пункт
 }
