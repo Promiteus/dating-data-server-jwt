@@ -117,12 +117,12 @@ public class UserProfileController {
      * @return ResponseEntity<Flux<UserProfile>>
      */
     @PostMapping(value = Api.API_POST_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
-    public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithParams(
+    public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithSearchBody(
             @PathVariable(value = Api.PARAM_PAGE) int page,
             @PathVariable(value = Api.PARAM_NOT_USER_ID) String userId,
             @RequestBody SearchBody searchBody) {
 
-        return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId));
+        return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId, searchBody));
     }
 
     /**

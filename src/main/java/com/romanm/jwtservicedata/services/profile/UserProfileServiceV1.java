@@ -102,7 +102,7 @@ public class UserProfileServiceV1 implements UserProfileService {
     }
 
     /**
-     *
+     * Получить список профилей пользователей за исключением пользователя с userId
      * @param pageSize int
      * @param page int
      * @param notUserId String
@@ -114,7 +114,7 @@ public class UserProfileServiceV1 implements UserProfileService {
     }
 
     /**
-     * Получить список профилей пользователей по заданным параметрам поиска searchBody
+     * Получить список профилей пользователей за исключением пользователя с userId, по заданным параметрам поиска searchBody
      * @param pageSize int
      * @param page int
      * @param notUserId String
@@ -123,7 +123,7 @@ public class UserProfileServiceV1 implements UserProfileService {
      */
     @Override
     public Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId, SearchBody searchBody) {
-        return null;
+        return this.mongoOperations.findAllUserProfilesByPage(page, pageSize, notUserId, searchBody);
     }
 
     /**

@@ -13,10 +13,10 @@ import java.io.Serializable;
 public class SearchBody implements Serializable {
     private int kids = 0;
     private int age = 18;
-    private CommonConstants.SexOrientation sexOrientation;
-    private CommonConstants.MeetPreferences meetPreferences;
-    private CommonConstants.Sex sex;
-    private CommonConstants.FamilyStatus familyStatus;
+    private CommonConstants.SexOrientation sexOrientation = CommonConstants.SexOrientation.HETERO;
+    private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL;
+    private CommonConstants.Sex sex = CommonConstants.Sex.MAN;
+    private CommonConstants.FamilyStatus familyStatus = CommonConstants.FamilyStatus.SINGLE;
     private String country = "Россия"; //Страна
     private String region = ""; //Регион
     private String locality = ""; //Нас. пункт
