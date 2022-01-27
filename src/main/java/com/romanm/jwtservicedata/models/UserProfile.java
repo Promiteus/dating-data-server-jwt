@@ -31,7 +31,7 @@ public class UserProfile implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthDate; //Год рождения
     @Indexed(useGeneratedName = true)
-    private int age;
+    private int age = 18;
     private int height; //Рост
     private int weight; //Масса тела
     @Size(max = 1000)
@@ -47,6 +47,14 @@ public class UserProfile implements Serializable {
     private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL; //Предпочитаю знакомиться
     @Indexed(useGeneratedName = true)
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN; //Пол
+
     private Set<ImageRef> imgUrls = new HashSet<>(); //Список url изображений
     private ImageRef thumbUrl = new ImageRef(); //Url привью профиля пользователя
+
+    @Indexed(useGeneratedName = true)
+    private String country = "Россия";
+    @Indexed(useGeneratedName = true)
+    private String region = "";
+    @Indexed(useGeneratedName = true)
+    private String locality = "";
 }
