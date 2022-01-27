@@ -15,6 +15,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class MongoOperations {
@@ -58,8 +60,21 @@ public class MongoOperations {
     public Flux<UserProfile> findAllUserProfilesByPage(int page, int pageSize, String notUserId, SearchBody searchBody) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").ne(notUserId));
+        query.addCriteria(Criteria.where("age").is(searchBody.getAge()));
+        query.addCriteria(Criteria.where("kids").is(searchBody.getKids()));
 
-
+        Optional.ofNullable(searchBody.getFamilyStatus()).ifPresent(familyStatus -> {
+            query.addCriteria(Criteria.where("familyStatus").is(familyStatus));
+        });
+        Optional.ofNullable(searchBody.getMeetPreferences()).ifPresent(meetPreferences -> {
+            query.addCriteria(Criteria.where("meetPreferences").is(meetPreferences));
+        });
+        Optional.ofNullable(searchBody.getSexOrientation()).ifPresent(sexOrientation -> {
+            query.addCriteria(Criteria.where("sexOrientation").is(sexOrientation));
+        });
+        Optional.ofNullable(searchBody.getSex()).ifPresent(sex -> {
+            query.addCriteria(Criteria.where("sex").is(sex));
+        });
 
         query.with(PageRequest.of(page, pageSize));
         return reactiveMongoTemplate.find(query, UserProfile.class);

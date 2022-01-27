@@ -11,8 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchBody implements Serializable {
-    private int kids;
-    private int age;
+    private int kids = 0;
+    private int age = 18;
     private CommonConstants.SexOrientation sexOrientation;
     private CommonConstants.MeetPreferences meetPreferences;
     private CommonConstants.Sex sex;
