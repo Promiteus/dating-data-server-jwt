@@ -34,6 +34,7 @@ public class UserProfile implements Serializable {
     private int weight; //Масса тела
     @Size(max = 1000)
     private String aboutMe; //О себе
+    private String hobby; //Увлечения
    // @Indexed(useGeneratedName = true)
     private int kids = 0; //Количество детей
     private CommonConstants.FamilyStatus familyStatus = CommonConstants.FamilyStatus.SINGLE; //Семейное положение
