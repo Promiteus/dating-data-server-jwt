@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.services.mongodb;
 
 import com.romanm.jwtservicedata.constants.CommonConstants;
+import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
@@ -60,8 +61,13 @@ public class MongoOperations {
     public Flux<UserProfile> findAllUserProfilesByPage(int page, int pageSize, String notUserId, SearchBody searchBody) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").ne(notUserId));
-        query.addCriteria(Criteria.where("age").is(searchBody.getAge()));
-        query.addCriteria(Criteria.where("kids").is(searchBody.getKids()));
+
+        if (searchBody.getKids() >= 0) {
+            query.addCriteria(Criteria.where("kids").is(searchBody.getKids()));
+        }
+        if (searchBody.getAgeFrom() < searchBody.getAgeTo()) {
+            query.addCriteria(Criteria.where("age").gte(searchBody.getAgeFrom()).lte(searchBody.getAgeTo()));
+        }
 
         Optional.ofNullable(searchBody.getFamilyStatus()).ifPresent(familyStatus -> {
             query.addCriteria(Criteria.where("familyStatus").is(familyStatus));

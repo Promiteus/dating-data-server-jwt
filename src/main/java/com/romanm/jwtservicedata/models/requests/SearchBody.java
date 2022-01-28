@@ -12,7 +12,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SearchBody implements Serializable {
     private int kids = 0;
-    private int age = 18;
+    private int ageFrom = 18;
+    private int ageTo = 50;
     private CommonConstants.SexOrientation sexOrientation = CommonConstants.SexOrientation.HETERO;
     private CommonConstants.MeetPreferences meetPreferences = CommonConstants.MeetPreferences.ALL;
     private CommonConstants.Sex sex = CommonConstants.Sex.MAN;
