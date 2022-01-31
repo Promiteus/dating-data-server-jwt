@@ -116,7 +116,7 @@ public class UserProfileController {
      * @param searchBody SearchBody
      * @return ResponseEntity<Flux<UserProfile>>
      */
-    @PostMapping(value = Api.API_POST_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    @PostMapping(value = Api.API_POST_USER_PROFILES)
     public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithSearchBody(
             @PathVariable(value = Api.PARAM_PAGE) int page,
             @PathVariable(value = Api.PARAM_NOT_USER_ID) String userId,
