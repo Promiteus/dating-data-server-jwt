@@ -55,6 +55,41 @@ public class DataPreloader {
     @Value("classpath:test3/*")
     Resource[] resourceFilesTest3;
 
+    /**
+     * Заполнить коллекцию тестовыми обезличенными профилями
+     * @return Flux<UserProfile>
+     */
+    private Flux<UserProfile> fillUserProfileCollectionByStartDataDef() {
+        Calendar c = Calendar.getInstance();
+        List<UserProfile> userProfiles = new ArrayList<>();
+
+        int yearStep = 2005;
+        CommonConstants.Sex sex = CommonConstants.Sex.MAN;
+        int kids = 0;
+        for (int i = 0; i < 60; i++) {
+            yearStep += ((i % 10) == 0) ? 1: 0; //Прибавлять год рождения на каждом 10-м пользователя
+            c.set(yearStep , Calendar.FEBRUARY, 2, 0, 0);
+
+            kids = ((i % 2) == 0) ? 1: 0; //Высавлять флага ребенка на каждом втором пользователе
+            sex = ((i % 2) == 0) ? CommonConstants.Sex.MAN: CommonConstants.Sex.WOMAN; //Высавлять по мужчины на каждом втором пользователе
+
+            UserProfile roman = UserProfileBuilder.create("2000"+i)
+                    .setFirstName("Имя "+i)
+                    .setLastName("Фамилия "+i)
+                    .setBirthDate(c.getTime())
+                    .setKids(kids)
+                    .setWeight(68)
+                    .setHeight(170)
+                    .setAboutMe("О пользователе "+i)
+                    .setFamilyStatus(CommonConstants.FamilyStatus.SINGLE)
+                    .setSex(sex)
+                    .setSexOrientation(CommonConstants.SexOrientation.HETERO)
+                    .setRank(2000).build();
+            userProfiles.add(roman);
+        }
+
+        return this.saveUserProfiles(userProfiles);
+    }
 
     /**
      * Заполнить коллекцию тестовыми профилями
@@ -132,6 +167,8 @@ public class DataPreloader {
         if (this.userProfileRepository.count().block() == 0) {
             //Заполнить коллекцию начальными профилями
             this.fillUserProfileCollectionByStartData().collectList().block();
+            //Заполнить коллекцию тестовыми обезличенными профилями
+            this.fillUserProfileCollectionByStartDataDef().collectList().block();
             //Заполнить коллекцию чат-переписки начальными данными
             this.fillCollectionByUserPairsStartData(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
             //Заполнить коллекцию посетителей начальными данными
