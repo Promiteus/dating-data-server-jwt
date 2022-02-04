@@ -53,8 +53,8 @@ public class UserProfileServiceV1 implements UserProfileService {
         }
         //Получить данные профиля текущего пользователя
         Mono<UserProfile> userProfile = this.userProfileRepository.findUserProfileById(userId);
-        Mono<List<UserProfile>> lastVisitors = this.findVisitorsIfProfile(userId);
-        Mono<List<UserProfile>> lastChats = this.findChatUserProfilesByPage(userId, 20, 0);
+        Mono<List<UserProfile>> lastVisitors = this.findVisitorsIfProfile(userId, 10, 0);
+        Mono<List<UserProfile>> lastChats = this.findChatUserProfilesByPage(userId, 10, 0);
 
         return Mono.from(Flux.zip(lastVisitors, lastChats, userProfile.map(ResponseUserProfile::new)).map((data) -> {
             ResponseUserProfile responseUserProfile = data.getT3();
@@ -138,7 +138,10 @@ public class UserProfileServiceV1 implements UserProfileService {
         return this.mongoOperations
                 .findDistinctProfileIdOfChat(userId, page, pageSize)
                 .collectList()
-                .flatMap(s -> this.userProfileRepository.findUserProfilesByIdIn(s).collectList());
+                .flatMap(s -> {
+                    log.info("list chats: "+s.toString()+" pageSize: "+pageSize);
+                    return this.userProfileRepository.findUserProfilesByIdIn(s).collectList();
+                });
     }
 
     /**
@@ -147,9 +150,9 @@ public class UserProfileServiceV1 implements UserProfileService {
      * @return Mono<List<UserProfile>>
      */
     @Override
-    public Mono<List<UserProfile>> findVisitorsIfProfile(String userId) {
+    public Mono<List<UserProfile>> findVisitorsIfProfile(String userId, int pageSize, int page) {
        return this.mongoOperations
-               .findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, 0, 30)
+               .findVisitorByUserIdDistinctVisitorUserIdOrderByTimestampDesc(userId, page, pageSize)
                .collectList()
                .flatMap(s -> {
                    List<String> visitorsIds = s.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());

@@ -165,10 +165,10 @@ public class DataPreloader {
 
     public void fillStarterData() {
         if (this.userProfileRepository.count().block() == 0) {
-            //Заполнить коллекцию начальными профилями
-            this.fillUserProfileCollectionByStartData().collectList().block();
             //Заполнить коллекцию тестовыми обезличенными профилями
             this.fillUserProfileCollectionByStartDataDef().collectList().block();
+            //Заполнить коллекцию начальными профилями
+            this.fillUserProfileCollectionByStartData().collectList().block();
             //Заполнить коллекцию чат-переписки начальными данными
             this.fillCollectionByUserPairsStartData(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
             //Заполнить коллекцию посетителей начальными данными

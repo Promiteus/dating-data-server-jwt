@@ -15,5 +15,5 @@ public interface UserProfileService {
      Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId);
      Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId, SearchBody searchBody);
      Mono<List<UserProfile>> findChatUserProfilesByPage(String userId, int pageSize, int page);
-     Mono<List<UserProfile>> findVisitorsIfProfile(String userId);
+     Mono<List<UserProfile>> findVisitorsIfProfile(String userId, int pageSize, int page);
 }
