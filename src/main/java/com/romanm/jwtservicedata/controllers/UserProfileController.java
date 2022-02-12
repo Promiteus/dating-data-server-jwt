@@ -126,12 +126,12 @@ public class UserProfileController {
     }
 
     /**
-     * Найти рофили пользователей по переписке для данного пользователя
+     * Найти все чаты профиля пользователя по userId
      * @param page int
      * @param userId String
      * @return ResponseEntity<Flux<UserProfile>>
      */
-    @GetMapping(value = Api.API_CHAT_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    @GetMapping(value = Api.API_CHAT_USER_PROFILES)
     public ResponseEntity<Mono<List<UserProfile>>> findChatUserProfilesByPage(
            @RequestParam(value = Api.PARAM_PAGE, defaultValue = "0") int page,
            @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "20") int pageSize,

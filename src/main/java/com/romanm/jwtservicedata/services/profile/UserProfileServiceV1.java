@@ -139,7 +139,7 @@ public class UserProfileServiceV1 implements UserProfileService {
                 .findDistinctProfileIdOfChat(userId, page, pageSize)
                 .collectList()
                 .flatMap(s -> {
-                    log.info("list chats: "+s.toString()+" pageSize: "+pageSize);
+                    //log.info("list chats: "+s.toString()+" pageSize: "+pageSize);
                     return this.userProfileRepository.findUserProfilesByIdIn(s).collectList();
                 });
     }
