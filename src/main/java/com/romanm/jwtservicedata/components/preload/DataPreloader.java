@@ -65,7 +65,7 @@ public class DataPreloader {
         CommonConstants.Sex sex = CommonConstants.Sex.MAN;
         int kids = 0;
         for (int i = 0; i < 60; i++) {
-            yearStep += ((i % 10) == 0) ? 1: 0; //Прибавлять год рождения на каждом 10-м пользователя
+            yearStep -= ((i % 10) == 0) ? 1: 0; //Прибавлять возраст на каждом 10-м пользователя
             c.set(yearStep , Calendar.FEBRUARY, 2, 0, 0);
 
             kids = ((i % 2) == 0) ? 1: 0; //Высавлять флага ребенка на каждом втором пользователе
@@ -100,10 +100,12 @@ public class DataPreloader {
             List<UserProfile> userProfiles = new ArrayList<>();
 
             c.set(1987, Calendar.MAY, 23, 0, 0);
+
             UserProfile roman = UserProfileBuilder.create("200")
                     .setFirstName("Roman")
                     .setLastName("Matveev")
                     .setBirthDate(c.getTime())
+                    .setAge(LocalDateTime.now().getYear() - c.get(Calendar.YEAR))
                     .setKids(0)
                     .setWeight(68)
                     .setHeight(170)
@@ -119,6 +121,7 @@ public class DataPreloader {
                     .setFirstName("Egor")
                     .setLastName("Privalov")
                     .setBirthDate(c.getTime())
+                    .setAge(LocalDateTime.now().getYear() - c.get(Calendar.YEAR))
                     .setKids(2)
                     .setWeight(62)
                     .setHeight(178)
@@ -134,6 +137,7 @@ public class DataPreloader {
                     .setFirstName("Artem")
                     .setLastName("Mhitorian")
                     .setBirthDate(c.getTime())
+                    .setAge(LocalDateTime.now().getYear() - c.get(Calendar.YEAR))
                     .setKids(0)
                     .setWeight(62)
                     .setHeight(178)
@@ -149,6 +153,7 @@ public class DataPreloader {
                     .setFirstName("Konstantin")
                     .setLastName("Matveev")
                     .setBirthDate(c.getTime())
+                    .setAge(LocalDateTime.now().getYear() - c.get(Calendar.YEAR))
                     .setKids(0)
                     .setWeight(64)
                     .setHeight(175)
