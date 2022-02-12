@@ -25,6 +25,11 @@ public class UserProfileBuilder {
         return userProfileBuilder;
     }
 
+    public UserProfileBuilder setAge(int age) {
+        userProfile.setAge(age);
+        return userProfileBuilder;
+    }
+
     public UserProfileBuilder setLastName(String lastName) {
         userProfile.setLastName(lastName);
         return userProfileBuilder;

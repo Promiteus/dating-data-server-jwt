@@ -27,10 +27,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Класс для загрузки стартовых коллекций для mongodb
@@ -79,6 +77,7 @@ public class DataPreloader {
                     .setBirthDate(c.getTime())
                     .setKids(kids)
                     .setWeight(68)
+                    .setAge(LocalDateTime.now().getYear() - yearStep)
                     .setHeight(170)
                     .setAboutMe("О пользователе "+i)
                     .setFamilyStatus(CommonConstants.FamilyStatus.SINGLE)
