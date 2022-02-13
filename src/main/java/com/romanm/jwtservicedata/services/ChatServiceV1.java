@@ -23,11 +23,25 @@ public class ChatServiceV1 implements ChatService {
         this.chatMessagePageRepository = chatMessagePageRepository;
     }
 
+    /**
+     * Метод добавления сообщения объекту
+     * @param chatMessage ChatItem
+     * @return Mono<ChatItem>
+     */
     @Override
     public Mono<ChatItem> saveMessage(ChatItem chatMessage) {
         return this.chatMessageRepository.save(chatMessage);
     }
 
+    /**
+     * Найти сообщения по конкретным параметрам
+     * @param userId String
+     * @param fromUserId String
+     * @param page int
+     * @param size int
+     * @param direction Sort.Direction
+     * @return Flux<ChatItem>
+     */
     @Override
     public Flux<ChatItem> findMessages(String userId, String fromUserId, int page, int size, Sort.Direction direction) {
         return this.chatMessagePageRepository.findChatMessageByUserIdAndFromUserIdOrderByTimestampDesc(userId, fromUserId, PageRequest.of(page, size));
@@ -40,6 +54,18 @@ public class ChatServiceV1 implements ChatService {
                 .sort((s1, s2) -> {
                     return s1.getTimestamp().compareTo(s2.getTimestamp());
                 });
+    }
+
+    /**
+     * Метод добавления сообщения в чат по параметрам
+     * @param toUserId String
+     * @param fromUserId String
+     * @param message String
+     * @return Mono<ChatItem>
+     */
+    @Override
+    public Mono<ChatItem> addMessage(String toUserId, String fromUserId, String message) {
+        return this.chatMessageRepository.save(new ChatItem(toUserId, fromUserId, message));
     }
 
 

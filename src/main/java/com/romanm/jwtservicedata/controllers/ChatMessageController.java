@@ -51,4 +51,11 @@ public class ChatMessageController {
                     return new ResponseData<>(page, pageSize, data);
                 }));
     }
+
+    @PostMapping(value = Api.API_CHAT_ADD_ITEM)
+    public ResponseEntity<Mono<ChatItem>> storeChatItem(@RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
+                                                        @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId,
+                                                        @RequestParam(value = Api.PARAM_CHAT_MESSAGE) String message) {
+        return ResponseEntity.ok(this.chatService.addMessage(userId, fromUserId, message));
+    }
 }
