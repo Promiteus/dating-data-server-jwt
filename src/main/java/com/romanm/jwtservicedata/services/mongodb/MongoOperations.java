@@ -104,9 +104,10 @@ public class MongoOperations {
      */
     public Flux<String> findDistinctProfileIdOfChat(String userId, int page, int pageSize) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId));
+        log.info("findDistinctProfileIdOfChat userId: "+userId);
+        query.addCriteria(Criteria.where("fromUserId").is(userId));
         query.with(Sort.by("timestamp").descending());
-        return reactiveMongoTemplate.findDistinct(query, "fromUserId", ChatItem.class, String.class).skip(page*pageSize).take(pageSize);
+        return reactiveMongoTemplate.findDistinct(query, "userId", ChatItem.class, String.class).skip(page*pageSize).take(pageSize);
     }
 
 }
