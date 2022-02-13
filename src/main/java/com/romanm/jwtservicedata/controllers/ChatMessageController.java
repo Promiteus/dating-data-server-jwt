@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 @Slf4j
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
@@ -53,9 +55,10 @@ public class ChatMessageController {
     }
 
     @PostMapping(value = Api.API_CHAT_ADD_ITEM)
-    public ResponseEntity<Mono<ChatItem>> storeChatItem(@RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
-                                                        @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId,
-                                                        @RequestParam(value = Api.PARAM_CHAT_MESSAGE) String message) {
-        return ResponseEntity.ok(this.chatService.addMessage(userId, fromUserId, message));
+    public ResponseEntity<Mono<ChatItem>> storeChatItem(@RequestBody ChatItem chatItem) {
+        if (chatItem.getTimestamp() == null) {
+            chatItem.setTimestamp(new Date());
+        }
+        return ResponseEntity.ok(this.chatService.saveMessage(chatItem));
     }
 }
