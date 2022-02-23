@@ -1,11 +1,11 @@
 package com.romanm.jwtservicedata.services.profile;
 
+import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.models.requests.SearchBody;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.repositories.UserProfileRepository;
-import com.romanm.jwtservicedata.repositories.VisitorRepository;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import com.romanm.jwtservicedata.services.mongodb.MongoOperations;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -23,20 +24,16 @@ import java.util.stream.Collectors;
 public class UserProfileServiceV1 implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
-    private final VisitorRepository visitorRepository;
     private final MongoOperations mongoOperations;
 
     /**
      * @param userProfileRepository UserProfileRepository
-     * @param visitorRepository VisitorRepository
      * @param mongoOperations MongoOperations
      */
     @Autowired
     public UserProfileServiceV1(UserProfileRepository userProfileRepository,
-                                VisitorRepository visitorRepository,
                                 MongoOperations mongoOperations) {
         this.userProfileRepository = userProfileRepository;
-        this.visitorRepository = visitorRepository;
         this.mongoOperations = mongoOperations;
     }
 
@@ -135,14 +132,20 @@ public class UserProfileServiceV1 implements UserProfileService {
      */
     @Override
     public Mono<List<UserProfile>> findChatUserProfilesByPage(String userId, int pageSize, int page) {
+
         return this.mongoOperations
-                .findDistinctProfileIdOfChat(userId, page, pageSize)
+                .findDistinctProfileIdOfChats(userId, page, pageSize)
                 .collectList()
                 .flatMap(s -> {
-                    //log.info("list chats: "+s.toString()+" pageSize: "+pageSize);
-                    return this.userProfileRepository.findUserProfilesByIdIn(s).collectList();
+                    List<String> userIds = s.stream().map(ChatItem::getUserId).collect(Collectors.toList());
+                    return this.userProfileRepository
+                            .findUserProfilesByIdIn(userIds)
+                            .sort(Comparator.comparing(v->userIds.indexOf(v.getId())))
+                            .collectList();
                 });
     }
+
+
 
     /**
      *

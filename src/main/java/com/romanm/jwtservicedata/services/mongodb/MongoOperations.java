@@ -102,12 +102,26 @@ public class MongoOperations {
      * @param pageSize int
      * @return Flux<ChatItem>
      */
-    public Flux<String> findDistinctProfileIdOfChat(String userId, int page, int pageSize) {
+    public Flux<String> findDistinctProfileIdOfChat(String userId, long page, long pageSize) {
         Query query = new Query();
         //log.info("findDistinctProfileIdOfChat userId: "+userId);
         query.addCriteria(Criteria.where("fromUserId").is(userId));
         query.with(Sort.by("timestamp").descending());
         return reactiveMongoTemplate.findDistinct(query, "userId", ChatItem.class, String.class).skip(page*pageSize).take(pageSize);
+    }
+
+    /**
+     * Получить уникальные чаты по полю fromUserId. Вернет [201,202,203]
+     * @param userId String
+     * @param page int
+     * @param pageSize int
+     * @return Flux<ChatItem>
+     */
+    public Flux<ChatItem> findDistinctProfileIdOfChats(String userId, long page, long pageSize) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("fromUserId").is(userId));
+        query.with(Sort.by("timestamp").descending());
+        return reactiveMongoTemplate.find(query, ChatItem.class).distinct(ChatItem::getUserId).skip(page*pageSize).take(pageSize);
     }
 
 }
