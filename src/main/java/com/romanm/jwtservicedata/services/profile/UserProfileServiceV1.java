@@ -132,7 +132,6 @@ public class UserProfileServiceV1 implements UserProfileService {
      */
     @Override
     public Mono<List<UserProfile>> findChatUserProfilesByPage(String userId, int pageSize, int page) {
-
         return this.mongoOperations
                 .findDistinctProfileIdOfChats(userId, page, pageSize)
                 .collectList()
