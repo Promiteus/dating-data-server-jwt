@@ -124,4 +124,21 @@ public class MongoOperations {
         return reactiveMongoTemplate.find(query, ChatItem.class).distinct(ChatItem::getUserId).skip(page*pageSize).take(pageSize);
     }
 
+    /**
+     *
+     * @param userId1 String
+     * @param userId2 String
+     * @param page int
+     * @param size int
+     * @param direction int
+     * @return Flux<ChatItem>
+     */
+    public Flux<ChatItem> getCurrentProfileChatCorrespondence(String userId1, String userId2, int page, int size, Sort.Direction direction) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId1));
+        query.addCriteria(Criteria.where("fromUserId").is(userId2));
+        query.with(Sort.by("timestamp").descending());
+        query.with(PageRequest.of(page, size));
+        return reactiveMongoTemplate.find(query, ChatItem.class);
+    }
 }

@@ -10,5 +10,6 @@ public interface ChatService {
     Mono<ChatItem> saveMessage(ChatItem chatMessage);
     Flux<ChatItem> findMessages(String userId, String fromUserId, int page, int size, Sort.Direction direction);
     Flux<ChatItem> findUsersMessages(String userId1, String userId2, int page, int size, Sort.Direction direction);
+    Flux<ChatItem> findUsersMessagesMerged(String userId1, String userId2, int page, int size, Sort.Direction direction);
     Mono<ChatItem> addMessage(String toUserId, String fromUserId, String message);
 }

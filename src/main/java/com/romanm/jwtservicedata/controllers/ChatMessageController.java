@@ -47,7 +47,7 @@ public class ChatMessageController {
                                                                              @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId) {
 
         return ResponseEntity.ok(this.chatService
-                .findUsersMessages(userId, fromUserId, page, pageSize, Sort.Direction.ASC)
+                .findUsersMessagesMerged(userId, fromUserId, page, pageSize, Sort.Direction.DESC)
                 .collectList()
                 .map(data -> {
                     return new ResponseData<>(page, pageSize, data);
