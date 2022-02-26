@@ -126,19 +126,20 @@ public class MongoOperations {
 
     /**
      *
-     * @param userId1 String
-     * @param userId2 String
-     * @param page int
-     * @param size int
+     * @param userId String
+     * @param fromUserId String
+     * @param page long
+     * @param size long
      * @param direction int
      * @return Flux<ChatItem>
      */
-    public Flux<ChatItem> getCurrentProfileChatCorrespondence(String userId1, String userId2, int page, int size, Sort.Direction direction) {
+    public Flux<ChatItem> getCurrentProfileChatCorrespondence(String userId, String fromUserId, long page, long size, Sort.Direction direction) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId1));
-        query.addCriteria(Criteria.where("fromUserId").is(userId2));
+        query.addCriteria(Criteria.where("userId").is(userId));
+        query.addCriteria(Criteria.where("fromUserId").is(fromUserId));
+        query.addCriteria(Criteria.where("message").ne(""));
         query.with(Sort.by("timestamp").descending());
-        query.with(PageRequest.of(page, size));
-        return reactiveMongoTemplate.find(query, ChatItem.class);
+        //query.with(PageRequest.of(page, size));
+        return reactiveMongoTemplate.find(query, ChatItem.class).skip(page*size).take(size);
     }
 }
