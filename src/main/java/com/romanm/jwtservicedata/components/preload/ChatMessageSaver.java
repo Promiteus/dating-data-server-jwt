@@ -31,7 +31,7 @@ public class ChatMessageSaver implements SingleSaver<List<ChatItem>, ReactiveCru
             calendar.add(Calendar.SECOND, 30);
             chatMessageList.add(
                     new ChatItem(
-                            args[0], args[1], String.format(MessageConstants.MSG_CHAT_MESSAGE_FROM_USER, args[2], i), calendar.getTime()
+                            args[0], args[1], String.format(MessageConstants.MSG_CHAT_MESSAGE_FROM_USER, args[2], i), calendar.getTime(), 0
                     )
             );
         }

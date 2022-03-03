@@ -2,10 +2,7 @@ package com.romanm.jwtservicedata.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.romanm.jwtservicedata.constants.CommonConstants;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.annotation.Id;
@@ -41,6 +38,9 @@ public class ChatItem implements Serializable {
     @Indexed(name = "timestamp")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date timestamp;
+    private long group = 0;
+    private boolean isEmailed = false;
+    private boolean isRead = true;
 
     public ChatItem(String userId, String fromUserId, String message) {
         this.message = message;
@@ -49,10 +49,26 @@ public class ChatItem implements Serializable {
         this.timestamp = new Date();
     }
 
+    public ChatItem(String userId, String fromUserId, String message, long group) {
+        this.message = message;
+        this.userId = userId;
+        this.fromUserId = fromUserId;
+        this.group = group;
+        this.timestamp = new Date();
+    }
+
     public ChatItem(String userId, String fromUserId, String message, Date currentDate) {
         this.message = message;
         this.userId = userId;
         this.fromUserId = fromUserId;
         this.timestamp = currentDate;
+    }
+
+    public ChatItem(String userId, String fromUserId, String message, Date currentDate, long group) {
+        this.message = message;
+        this.userId = userId;
+        this.fromUserId = fromUserId;
+        this.timestamp = currentDate;
+        this.group = group;
     }
 }
