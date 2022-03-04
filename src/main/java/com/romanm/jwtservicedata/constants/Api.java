@@ -30,6 +30,7 @@ public class Api {
     public final static String API_USER_IMAGES_MULTI = "/uploads/multi";
     public final static String API_USER_PROFILE_USER_ID = API_USER_PROFILE+"/{"+Api.PARAM_USER_ID+"}";
     public final static String API_CHAT_ADD_ITEM = "/chat/add";
+    public final static String API_CHAT_MESSAGE_APPLY = "/chat/apply/messages";
 
     public final static String API_RESOURCE_URI_TEMP = API_PREFIX+API_USER_IMAGE+"?user_id=%s&file_id=%s";
     public final static String API_RESOURCE_URI_THUMB = API_PREFIX+API_USER_IMAGE+"/thumb?user_id=%s";

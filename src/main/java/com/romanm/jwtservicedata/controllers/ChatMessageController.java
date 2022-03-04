@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -40,12 +42,19 @@ public class ChatMessageController {
                 }));
     }
 
+    /**
+     * Получить переписку двух пользователей
+     * @param page int
+     * @param pageSize int
+     * @param userId String
+     * @param fromUserId String
+     * @return ResponseEntity<Mono<ResponseData<ChatItem>>>
+     */
     @GetMapping(value = Api.API_CHAT_USERS_MESSAGES)
     public ResponseEntity<Mono<ResponseData<ChatItem>>> getUsersChatMessages(@RequestParam(value = Api.PARAM_PAGE, defaultValue = "0", required = false) int page,
                                                                              @RequestParam(value = Api.PARAM_PAGE_SIZE, defaultValue = "10", required = false) int pageSize,
                                                                              @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "", required = true) String userId,
                                                                              @RequestParam(value = Api.PARAM_FROM_USER_ID, defaultValue = "", required = true) String fromUserId) {
-
         return ResponseEntity.ok(this.chatService
                 .findUsersMessages(userId, fromUserId, page, pageSize, Sort.Direction.DESC)
                 .collectList()
@@ -54,11 +63,29 @@ public class ChatMessageController {
                 }));
     }
 
+    /**
+     * Добавить сообщение в чат
+     * @param chatItem ChatItem
+     * @return ResponseEntity<Mono<ChatItem>>
+     */
     @PostMapping(value = Api.API_CHAT_ADD_ITEM)
     public ResponseEntity<Mono<ChatItem>> storeChatItem(@RequestBody ChatItem chatItem) {
         if (chatItem.getTimestamp() == null) {
             chatItem.setTimestamp(new Date());
         }
         return ResponseEntity.ok(this.chatService.saveMessage(chatItem));
+    }
+
+    /**
+     * Отметить сообщения как прочитанные
+     * @param messageIds List<String>
+     * @return Mono<ResponseEntity<?>>
+     */
+    @PostMapping(value = Api.API_CHAT_MESSAGE_APPLY)
+    public Mono<ResponseEntity<?>> applyMessages(@RequestBody List<String> messageIds) {
+        if (messageIds.size() > 0) {
+            return Mono.just(ResponseEntity.ok(new ArrayList()));
+        }
+        return Mono.just(ResponseEntity.ok().build());
     }
 }
