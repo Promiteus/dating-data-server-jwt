@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -78,14 +79,14 @@ public class ChatMessageController {
 
     /**
      * Отметить сообщения как прочитанные
-     * @param messageIds List<String>
-     * @return Mono<ResponseEntity<?>>
+     * @param messages List<ChatItem>
+     * @return ResponseEntity<Flux<ChatItem>>
      */
     @PostMapping(value = Api.API_CHAT_MESSAGE_APPLY)
-    public Mono<ResponseEntity<?>> applyMessages(@RequestBody List<String> messageIds) {
-        if (messageIds.size() > 0) {
-            return Mono.just(ResponseEntity.ok(new ArrayList()));
+    public ResponseEntity<Flux<ChatItem>> applyMessages(@RequestBody List<ChatItem> messages) {
+        if (messages.size() > 0) {
+            return ResponseEntity.ok(this.chatService.saveMessages(messages));
         }
-        return Mono.just(ResponseEntity.ok().build());
+        return ResponseEntity.ok(Flux.empty());
     }
 }

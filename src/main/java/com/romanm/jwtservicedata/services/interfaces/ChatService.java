@@ -5,6 +5,8 @@ import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 
 public interface ChatService {
     Mono<ChatItem> saveMessage(ChatItem chatMessage);
@@ -12,4 +14,5 @@ public interface ChatService {
     Flux<ChatItem> findUsersMessages(String userId1, String userId2, int page, int size, Sort.Direction direction);
     Flux<ChatItem> findUsersMessagesMerged(String userId1, String userId2, int page, int size, Sort.Direction direction);
     Mono<ChatItem> addMessage(String toUserId, String fromUserId, String message);
+    Flux<ChatItem> saveMessages(List<ChatItem> chatMessages);
 }

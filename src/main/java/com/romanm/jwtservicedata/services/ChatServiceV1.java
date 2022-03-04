@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
+import java.util.List;
 
 
 @Service("chatServiceV1")
@@ -39,6 +40,16 @@ public class ChatServiceV1 implements ChatService {
     @Override
     public Mono<ChatItem> saveMessage(ChatItem chatMessage) {
         return this.chatMessageRepository.save(chatMessage);
+    }
+
+    /**
+     * Сохранение группы сообщений
+     * @param chatMessages List<ChatItem>
+     * @return  Flux<ChatItem>
+     */
+    @Override
+    public Flux<ChatItem> saveMessages(List<ChatItem> chatMessages) {
+        return this.chatMessageRepository.saveAll(chatMessages);
     }
 
     /**
