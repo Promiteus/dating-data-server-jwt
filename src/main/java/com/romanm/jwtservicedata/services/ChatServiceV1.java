@@ -53,6 +53,19 @@ public class ChatServiceV1 implements ChatService {
     }
 
     /**
+     * Получить статусы о прочтении указанных списком id сообщений
+     * @param messageIds List<String>
+     * @return Flux<ChatItem>
+     */
+    @Override
+    public Flux<ChatItem> findMessagesByIds(List<String> messageIds) {
+        if (messageIds.size() > 0) {
+            return this.chatMessageRepository.findChatItemsByIdIn(messageIds);
+        }
+        return Flux.empty();
+    }
+
+    /**
      * Найти сообщения по конкретным параметрам
      * @param userId String
      * @param fromUserId String

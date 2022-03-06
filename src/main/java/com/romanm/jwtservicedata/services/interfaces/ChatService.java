@@ -15,4 +15,5 @@ public interface ChatService {
     Flux<ChatItem> findUsersMessagesMerged(String userId1, String userId2, int page, int size, Sort.Direction direction);
     Mono<ChatItem> addMessage(String toUserId, String fromUserId, String message);
     Flux<ChatItem> saveMessages(List<ChatItem> chatMessages);
+    Flux<ChatItem> findMessagesByIds(List<String> messageIds);
 }

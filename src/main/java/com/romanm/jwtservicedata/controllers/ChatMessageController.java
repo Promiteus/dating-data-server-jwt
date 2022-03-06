@@ -89,4 +89,14 @@ public class ChatMessageController {
         }
         return ResponseEntity.ok(Flux.empty());
     }
+
+    /**
+     * Получить сообщения
+     * @param messageIds List<String>
+     * @return ResponseEntity<Flux<ChatItem>>
+     */
+    @GetMapping(value = Api.API_CHAT_MESSAGES_STATUS)
+    public ResponseEntity<Flux<ChatItem>> findMessagesByIds(@RequestBody List<String> messageIds) {
+        return ResponseEntity.ok(this.chatService.findMessagesByIds(messageIds));
+    }
 }
