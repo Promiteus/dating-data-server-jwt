@@ -2,6 +2,8 @@ package com.romanm.jwtservicedata.controllers;
 
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.ChatItem;
+import com.romanm.jwtservicedata.models.requests.MessageApplier;
+import com.romanm.jwtservicedata.models.responses.MessageApplierResponse;
 import com.romanm.jwtservicedata.models.responses.ResponseData;
 import com.romanm.jwtservicedata.services.interfaces.ChatService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -79,15 +80,12 @@ public class ChatMessageController {
 
     /**
      * Отметить сообщения как прочитанные
-     * @param messages List<ChatItem>
+     * @param messageApplier List<ChatItem>
      * @return ResponseEntity<Flux<ChatItem>>
      */
     @PostMapping(value = Api.API_CHAT_MESSAGE_APPLY)
-    public ResponseEntity<Flux<ChatItem>> applyMessages(@RequestBody List<ChatItem> messages) {
-        if (messages.size() > 0) {
-            return ResponseEntity.ok(this.chatService.saveMessages(messages));
-        }
-        return ResponseEntity.ok(Flux.empty());
+    public ResponseEntity<Mono<MessageApplierResponse>> applyMessages(@RequestBody MessageApplier messageApplier) {
+        return ResponseEntity.ok(this.chatService.appliedMessages(messageApplier));
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.romanm.jwtservicedata.services;
 
 import com.romanm.jwtservicedata.models.ChatItem;
+import com.romanm.jwtservicedata.models.requests.MessageApplier;
+import com.romanm.jwtservicedata.models.responses.MessageApplierResponse;
 import com.romanm.jwtservicedata.repositories.ChatMessageRepository;
 import com.romanm.jwtservicedata.repositories.pageble.ChatMessagePageRepository;
 import com.romanm.jwtservicedata.services.interfaces.ChatService;
@@ -63,6 +65,24 @@ public class ChatServiceV1 implements ChatService {
             return this.chatMessageRepository.findChatItemsByIdIn(messageIds);
         }
         return Flux.empty();
+    }
+
+    /**
+     * Получить и передать статус непрочитанных сообщений
+     * @param messageApplier MessageApplier
+     * @return Mono<MessageApplier>
+     */
+    @Override
+    public Mono<MessageApplierResponse> appliedMessages(MessageApplier messageApplier) {
+        Mono<List<ChatItem>> readMessagesMono = this.chatMessageRepository.findChatItemsByIdIn(messageApplier.getReadMessagesIds()).collectList();
+        Mono<List<ChatItem>> writeMessagesMono = this.chatMessageRepository.saveAll(messageApplier.getWriteMessagesIds()).collectList();
+
+        return Mono.from(Flux.zip(readMessagesMono, writeMessagesMono)).map(data -> {
+            MessageApplierResponse messageApplierResponse = new MessageApplierResponse();
+            messageApplierResponse.getReadMessages().addAll(data.getT1());
+            messageApplierResponse.getWriteMessages().addAll(data.getT2());
+            return messageApplierResponse;
+        });
     }
 
     /**
