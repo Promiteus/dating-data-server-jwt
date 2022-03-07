@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -75,7 +76,15 @@ public class ChatServiceV1 implements ChatService {
     @Override
     public Mono<MessageApplierResponse> appliedMessages(MessageApplier messageApplier) {
         Mono<List<ChatItem>> readMessagesMono = this.chatMessageRepository.findChatItemsByIdIn(messageApplier.getReadMessagesIds()).collectList();
-        Mono<List<ChatItem>> writeMessagesMono = this.chatMessageRepository.saveAll(messageApplier.getWriteMessagesIds()).collectList();
+
+        Mono<List<ChatItem>> writeMessagesMono = this.findMessagesByIds(messageApplier.getWriteMessagesIds()).map(chatItem -> {
+            chatItem.setRead(true);
+            return chatItem;
+        }).collectList().flatMap(chatItems -> {
+            return this.chatMessageRepository.saveAll(chatItems).collectList();
+        });//this.chatMessageRepository.saveAll(messageApplier.getWriteMessagesIds()).collectList();
+
+
 
         return Mono.from(Flux.zip(readMessagesMono, writeMessagesMono)).map(data -> {
             MessageApplierResponse messageApplierResponse = new MessageApplierResponse();

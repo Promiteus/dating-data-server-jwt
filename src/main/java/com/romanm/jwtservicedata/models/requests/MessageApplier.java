@@ -13,5 +13,5 @@ import java.util.List;
 @Data
 public class MessageApplier implements Serializable {
     private List<String> readMessagesIds;
-    private List<ChatItem> writeMessagesIds;
+    private List<String> writeMessagesIds;
 }
