@@ -110,15 +110,10 @@ public class ChatServiceV1 implements ChatService {
 
     @Override
     public Flux<ChatItem> findUsersMessages(String userId1, String userId2, int page, int size, Sort.Direction direction) {
-        return Flux.concat(this.mongoOperations.getCurrentProfileChatCorrespondence(userId1, userId2, page, size, direction), mongoOperations.getCurrentProfileChatCorrespondence(userId2, userId1, page, size, direction)).sort((s1, s2) -> {
-            return s1.getTimestamp().compareTo(s2.getTimestamp());
-        });
-
-        /*return this.mongoOperations.getCurrentProfileChatCorrespondence(userId1, userId2, page, size, direction)
-                .concatWith(mongoOperations.getCurrentProfileChatCorrespondence(userId2, userId1, page, size, direction))
-                .sort((s1, s2) -> {
-                    return s1.getTimestamp().compareTo(s2.getTimestamp());
-                });*/
+        return Flux.concat(
+                      this.mongoOperations.getCurrentProfileChatCorrespondence(userId1, userId2, page, size, direction),
+                      this.mongoOperations.getCurrentProfileChatCorrespondence(userId2, userId1, page, size, direction)
+        ).sort((s1, s2) -> s1.getTimestamp().compareTo(s2.getTimestamp()));
     }
 
     /**
