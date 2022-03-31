@@ -113,7 +113,7 @@ public class ChatServiceV1 implements ChatService {
         return Flux.concat(
                       this.mongoOperations.getCurrentProfileChatCorrespondence(userId1, userId2, page, size, direction),
                       this.mongoOperations.getCurrentProfileChatCorrespondence(userId2, userId1, page, size, direction)
-        ).sort((s1, s2) -> s1.getTimestamp().compareTo(s2.getTimestamp()));
+        ).sort(Comparator.comparing(ChatItem::getTimestamp));
     }
 
     /**
