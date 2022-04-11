@@ -6,10 +6,17 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Класс сохранения посетителей
+ */
 @SuppressWarnings("rawtypes")
 public class VisitorSaver implements SingleSaver<Visitor, ReactiveCrudRepository> {
     private ReactiveCrudRepository r;
 
+    /**
+     * Конструктор класса VisitorSaver
+     * @param r ReactiveCrudRepository
+     */
     public VisitorSaver(ReactiveCrudRepository r) {
         this.r = r;
     }

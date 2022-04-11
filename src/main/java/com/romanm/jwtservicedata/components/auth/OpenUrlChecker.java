@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Component
 public class OpenUrlChecker {
     /**
-     * Проверить url в наличие его в списке незакырытых токеном маршрутов
+     * Проверить наличие url в списке незакрытых токеном маршрутов
      * @param url String
      * @return boolean
      */

@@ -10,7 +10,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 @Configuration
 public class WebConfig implements WebFluxConfigurer {
 
-    //Выствить максимальный размер буфера для параметров заголовка
+    //Выставить максимальный размер буфера для параметров заголовка
     @Override
     public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
         DefaultPartHttpMessageReader partReader = new DefaultPartHttpMessageReader();

@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 
+/**
+ * Класс-конфигурация для инициализации клиента для работы с mongodb
+ */
 @Configuration
 public class ReactiveMongoConfig {
     @Autowired

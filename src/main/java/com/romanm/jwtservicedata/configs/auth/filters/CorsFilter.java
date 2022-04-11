@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements WebFilter {
     /**
-     * Фильтр с настройкми cors
+     * Фильтр с настройками cors
      * @param exchange ServerWebExchange
      * @param chain WebFilterChain
      * @return Mono<Void>

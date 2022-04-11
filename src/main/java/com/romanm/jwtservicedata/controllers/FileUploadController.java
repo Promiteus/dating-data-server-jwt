@@ -96,7 +96,7 @@ public class FileUploadController {
     }
 
     /**
-     * Сохранить минатюру файла по коду пользователя и названию файда
+     * Сохранить миниатюру файла по коду пользователя и названию файла
      * @param userId String
      * @param file String
      * @return Mono<ResponseEntity<?>>

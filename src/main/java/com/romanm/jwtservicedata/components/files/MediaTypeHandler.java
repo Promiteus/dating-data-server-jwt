@@ -14,6 +14,11 @@ public class MediaTypeHandler {
             "gif", MediaType.IMAGE_GIF_VALUE
     );
 
+    /**
+     * Получить медиатип по имени файла
+     * @param fileName String
+     * @return String
+     */
     public final String getFileMediaType(String fileName) {
         if ((fileName == null) || (fileName.isEmpty())) {
            return null;

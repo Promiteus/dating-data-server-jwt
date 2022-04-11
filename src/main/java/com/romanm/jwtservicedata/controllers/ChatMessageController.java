@@ -25,6 +25,10 @@ public class ChatMessageController {
     @Qualifier(value = "chatServiceV1")
     private final ChatService chatService;
 
+    /**
+     * Конструктор класса ChatMessageController
+     * @param chatService ChatService
+     */
     @Autowired
     public ChatMessageController(ChatService chatService) {
         this.chatService = chatService;

@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+/**
+ * Класс-конфигурация настроек безопасности для тестирования конечных точек без JWT
+ */
 @TestConfiguration
 @EnableReactiveMethodSecurity
 @Profile(value = {"test"})

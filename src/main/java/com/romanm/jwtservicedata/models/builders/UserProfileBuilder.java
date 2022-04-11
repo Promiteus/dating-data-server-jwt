@@ -5,11 +5,17 @@ import com.romanm.jwtservicedata.models.UserProfile;
 
 import java.util.Date;
 
+/**
+ * Класс builder для модели UserProfile
+ */
 public class UserProfileBuilder {
 
     private static UserProfile userProfile;
     private static UserProfileBuilder userProfileBuilder;
 
+    /**
+     * Конструктор класса UserProfileBuilder
+     */
     private UserProfileBuilder() {
         userProfile = new UserProfile();
     }

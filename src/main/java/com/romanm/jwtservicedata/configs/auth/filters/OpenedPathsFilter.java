@@ -15,6 +15,10 @@ import reactor.core.publisher.Mono;
 public class OpenedPathsFilter implements WebFilter {
     private final OpenUrlChecker openUrlChecker;
 
+    /**
+     * Конструктор класса OpenedPathsFilter
+     * @param openUrlChecker OpenUrlChecker
+     */
     public OpenedPathsFilter(OpenUrlChecker openUrlChecker) {
         this.openUrlChecker = openUrlChecker;
     }

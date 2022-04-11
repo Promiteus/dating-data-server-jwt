@@ -15,12 +15,22 @@ public class UserServiceV1 {
     private final RedisRepository redisRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    /**
+     * Конструктор класса UserServiceV1
+     * @param redisRepository RedisRepository
+     * @param passwordEncoder BCryptPasswordEncoder
+     */
     @Autowired
     public UserServiceV1(RedisRepository redisRepository, BCryptPasswordEncoder passwordEncoder) {
         this.redisRepository = redisRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Получить объект параметров пользователя по имени пользователя
+     * @param username String
+     * @return AuthUser
+     */
     public AuthUser readUserByUsername (String username) {
         Object res = this.redisRepository.find(username);
         AuthUser authUser = null;

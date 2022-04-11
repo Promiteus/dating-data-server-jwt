@@ -16,10 +16,19 @@ public class ChatMessageSaver implements SingleSaver<List<ChatItem>, ReactiveCru
 
     private ReactiveCrudRepository r;
 
+    /**
+     * Конструктор класса ChatMessageSaver
+     * @param r ReactiveCrudRepository
+     */
     public ChatMessageSaver(ReactiveCrudRepository r) {
         this.r = r;
     }
 
+    /**
+     * Сохранение группы сообщений
+     * @param args String[]
+     * @return Mono<List<ChatItem>>
+     */
     @Override
     public Mono<List<ChatItem>> save(String[] args) {
 

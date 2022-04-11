@@ -4,10 +4,13 @@ import com.romanm.jwtservicedata.components.confs.FileConfig;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.responses.files.FileStatus;
 
-
 public class FileTypeHandler {
     private final FileConfig fileConfig;
 
+    /**
+     * Конструктор класса FileTypeHandler
+     * @param fileConfig FileConfig
+     */
     public FileTypeHandler(FileConfig fileConfig) {
         this.fileConfig = fileConfig;
     }

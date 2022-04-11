@@ -22,7 +22,9 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 import java.util.Arrays;
 
-
+/**
+ * Класс-конфигурация настроек безопасности с поддержкой проверки JWT
+ */
 @Configuration
 @EnableWebFlux
 @EnableReactiveMethodSecurity
@@ -32,6 +34,12 @@ public class SecurityConfiguration {
     private final UserServiceV1 userService;
     private final OpenUrlChecker openUrlChecker;
 
+    /**
+     * Конструктор класса SecurityConfiguration
+     * @param bCryptPasswordEncoder BCryptPasswordEncoder
+     * @param userService UserServiceV1
+     * @param openUrlChecker OpenUrlChecker
+     */
     @Autowired
     public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceV1 userService, OpenUrlChecker openUrlChecker) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;

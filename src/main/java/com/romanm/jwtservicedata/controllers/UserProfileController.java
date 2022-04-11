@@ -31,7 +31,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     /**
-     * Конструктор UserProfileController
+     * Конструктор класса UserProfileController
      * @param userProfileService IUserProfileService
      */
     @Autowired
