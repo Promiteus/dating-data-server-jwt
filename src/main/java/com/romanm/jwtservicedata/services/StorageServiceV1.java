@@ -220,9 +220,6 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                     .map(file -> (new ImageRef(String.format(Api.API_RESOURCE_URI_TEMP, userId, file.getName()), file.getName())))
                                     .collect(Collectors.toList());
 
-                            //log.warn(MessageConstants.prefixMsg(imgRefs.toString()));
-
-                            //log.info(MessageConstants.prefixMsg(fileStatus.getFileName()));
                             userProfile.setThumbUrl(((fileThumbUrls.size() > 0) && (fileStatus != null)) ? new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()) : new ImageRef());
                             userProfile.getImgUrls().clear();
                             userProfile.getImgUrls().addAll(imgRefs);
