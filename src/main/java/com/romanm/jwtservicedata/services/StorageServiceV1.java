@@ -220,7 +220,40 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                     .map(file -> (new ImageRef(String.format(Api.API_RESOURCE_URI_TEMP, userId, file.getName()), file.getName())))
                                     .collect(Collectors.toList());
 
-                            userProfile.setThumbUrl(((fileThumbUrls.size() > 0) && (fileStatus != null)) ? new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()) : new ImageRef());
+
+                            /*if ((fileThumbUrls.size() > 0) && (fileStatus == null)) {
+                               //Проверить, является ли удаленный файл главным изображением (миниатюрой)
+                               if (imgRefs.stream().filter(item -> (item.getAlt() == userProfile.getThumbUrl().getAlt())).count() == 0) {
+                                   //Если такой файл не найден после удаления, то удаляем миниатюру из БД
+                                   userProfile.setThumbUrl(new ImageRef());
+                               }
+                            } else if ((imgRefs.size() > 0) && (fileThumbUrls.size() > 0) && (fileStatus != null)) {
+                                userProfile.setThumbUrl(new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()));
+                            } else if ((imgRefs.size() == 0) && (fileStatus == null)) {
+                                userProfile.setThumbUrl(new ImageRef());
+                                this.deleteThumb(userId);
+
+                                log.info("Ok");
+                            }*/
+
+                            if ((fileStatus == null) && ((imgRefs.size() == 0) || (fileThumbUrls.size() == 0))) {
+                                userProfile.setThumbUrl(new ImageRef());
+                                this.deleteThumb(userId);
+                                log.info("Ok 1 Deletes thumb");
+                            } else if ((fileStatus != null) && (imgRefs.size() > 0) && (fileThumbUrls.size() > 0)) {
+                               // log.info("Ok 2 fileStatus.getFileName().split "+fileStatus.getFileName().split("/").length);
+                                if (!fileStatus.getFileName().contains("/")) {
+                                    userProfile.setThumbUrl(new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()));
+                                }
+                                log.info("Ok 2 Add/Update thumb "+fileStatus.getFileName());
+                            } else if ((fileStatus == null) && (imgRefs.size() > 0) && (fileThumbUrls.size() > 0)) {
+                                if (imgRefs.stream().filter(item -> (item.getAlt().equals(userProfile.getThumbUrl().getAlt()))).count() == 0) {
+                                    //Если такой файл не найден после удаления, то удаляем миниатюру из БД
+                                    userProfile.setThumbUrl(new ImageRef());
+                                }
+                            }
+
+                            //userProfile.setThumbUrl(((fileThumbUrls.size() > 0) && (fileStatus != null)) ? new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()) : new ImageRef());
                             userProfile.getImgUrls().clear();
                             userProfile.getImgUrls().addAll(imgRefs);
                             this.userProfileRepository.save(userProfile).subscribe();

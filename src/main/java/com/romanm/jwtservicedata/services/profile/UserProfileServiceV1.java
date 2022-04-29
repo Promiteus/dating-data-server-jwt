@@ -86,9 +86,7 @@ public class UserProfileServiceV1 implements UserProfileService {
     @Override
     public Mono<Boolean> removeUserProfile(String userId, boolean soft) {
         if (userId == null) {
-            return Mono.create(sink -> {
-                sink.success(false);
-            });
+            return Mono.just(false);
         }
 
         return Mono.create(sink -> {
