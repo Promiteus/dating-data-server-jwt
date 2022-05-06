@@ -221,20 +221,6 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                     .collect(Collectors.toList());
 
 
-                            /*if ((fileThumbUrls.size() > 0) && (fileStatus == null)) {
-                               //Проверить, является ли удаленный файл главным изображением (миниатюрой)
-                               if (imgRefs.stream().filter(item -> (item.getAlt() == userProfile.getThumbUrl().getAlt())).count() == 0) {
-                                   //Если такой файл не найден после удаления, то удаляем миниатюру из БД
-                                   userProfile.setThumbUrl(new ImageRef());
-                               }
-                            } else if ((imgRefs.size() > 0) && (fileThumbUrls.size() > 0) && (fileStatus != null)) {
-                                userProfile.setThumbUrl(new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()));
-                            } else if ((imgRefs.size() == 0) && (fileStatus == null)) {
-                                userProfile.setThumbUrl(new ImageRef());
-                                this.deleteThumb(userId);
-
-                                log.info("Ok");
-                            }*/
 
                             if ((fileStatus == null) && ((imgRefs.size() == 0) || (fileThumbUrls.size() == 0))) {
                                 userProfile.setThumbUrl(new ImageRef());

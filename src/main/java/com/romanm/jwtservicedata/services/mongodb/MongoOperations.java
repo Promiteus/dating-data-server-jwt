@@ -1,7 +1,5 @@
 package com.romanm.jwtservicedata.services.mongodb;
 
-import com.romanm.jwtservicedata.constants.CommonConstants;
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.ChatItem;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.Visitor;

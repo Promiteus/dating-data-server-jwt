@@ -80,9 +80,7 @@ public class ChatServiceV1 implements ChatService {
         Mono<List<ChatItem>> writeMessagesMono = this.findMessagesByIds(messageApplier.getWriteMessagesIds()).map(chatItem -> {
             chatItem.setRead(true);
             return chatItem;
-        }).collectList().flatMap(chatItems -> {
-            return this.chatMessageRepository.saveAll(chatItems).collectList();
-        });//this.chatMessageRepository.saveAll(messageApplier.getWriteMessagesIds()).collectList();
+        }).collectList().flatMap(chatItems -> this.chatMessageRepository.saveAll(chatItems).collectList());
 
 
 
