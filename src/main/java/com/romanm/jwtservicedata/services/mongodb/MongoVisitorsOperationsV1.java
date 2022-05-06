@@ -26,8 +26,12 @@ public class MongoVisitorsOperationsV1 implements MongoVisitorOperations {
         Mono<Visitor> visitorMono = this.reactiveMongoTemplate.findOne(query, Visitor.class);
 
         return visitorMono.flatMap(visitor -> {
-            visitor.setTimestamp(LocalDateTime.now());
-            return this.reactiveMongoTemplate.save(visitor);
+            Visitor refreshedVisitor = visitor;
+            if (visitor == null) {
+                refreshedVisitor = new Visitor(userId, visitorUserId);
+            }
+            refreshedVisitor.setTimestamp(LocalDateTime.now());
+            return this.reactiveMongoTemplate.save(refreshedVisitor);
         });
     }
 }
