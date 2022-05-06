@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.services.mongodb;
 
 import com.romanm.jwtservicedata.models.Visitor;
 import com.romanm.jwtservicedata.services.interfaces.MongoVisitorOperations;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 public class MongoVisitorsOperationsV1 implements MongoVisitorOperations {
     @Autowired
@@ -31,13 +33,12 @@ public class MongoVisitorsOperationsV1 implements MongoVisitorOperations {
         query.with(Sort.by(Visitor.getVisitorTimestampFieldName()).descending());
         Mono<Visitor> visitorMono = this.reactiveMongoTemplate.findOne(query, Visitor.class);
 
+        Visitor refreshedVisitor = new Visitor(userId, visitorUserId);;
+        //log.info("--- has vivitor: "+(visitor != null));
+
         return visitorMono.flatMap(visitor -> {
-            Visitor refreshedVisitor = visitor;
-            if (visitor == null) {
-                refreshedVisitor = new Visitor(userId, visitorUserId);
-            }
-            refreshedVisitor.setTimestamp(LocalDateTime.now());
-            return this.reactiveMongoTemplate.save(refreshedVisitor);
-        });
+            visitor.setTimestamp(LocalDateTime.now());
+            return this.reactiveMongoTemplate.save(visitor);
+        }).switchIfEmpty(this.reactiveMongoTemplate.save(refreshedVisitor));
     }
 }
