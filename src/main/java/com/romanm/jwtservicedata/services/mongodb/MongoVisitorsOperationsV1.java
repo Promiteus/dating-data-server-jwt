@@ -17,6 +17,12 @@ public class MongoVisitorsOperationsV1 implements MongoVisitorOperations {
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
 
+    /**
+     * Обновит дату посещения или создаст новую запись посетителя, если его нет
+     * @param userId String
+     * @param visitorUserId String
+     * @return Mono<Visitor>
+     */
     @Override
     public Mono<Visitor> refreshVisitDate(String userId, String visitorUserId) {
         Query query = new Query();

@@ -32,7 +32,7 @@ public class UserProfileController {
 
     /**
      * Конструктор класса UserProfileController
-     * @param userProfileService IUserProfileService
+     * @param userProfileService UserProfileService
      */
     @Autowired
     public UserProfileController(UserProfileService userProfileService) {
