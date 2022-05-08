@@ -33,11 +33,11 @@ public class MongoVisitorsOperationsV1 implements MongoVisitorOperations {
         query.with(Sort.by(Visitor.getVisitorTimestampFieldName()).descending());
         Mono<Visitor> visitorMono = this.reactiveMongoTemplate.findOne(query, Visitor.class);
 
-        Visitor refreshedVisitor = new Visitor(userId, visitorUserId);;
+        Visitor newVisitor = new Visitor(userId, visitorUserId);;
 
         return visitorMono.flatMap(visitor -> {
             visitor.setTimestamp(LocalDateTime.now());
             return this.reactiveMongoTemplate.save(visitor);
-        }).switchIfEmpty(this.reactiveMongoTemplate.save(refreshedVisitor));
+        }).switchIfEmpty(this.reactiveMongoTemplate.save(newVisitor));
     }
 }
