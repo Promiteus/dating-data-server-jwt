@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.configs.auth.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.auth.AuthUser;
 import com.romanm.jwtservicedata.services.UserServiceV1;
@@ -12,6 +13,8 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * Фильтр для идентификации токена по публичному ключу
@@ -33,7 +36,7 @@ public class JWTAuthorizationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
-        ;
+
 
         if (response.getRawStatusCode() == HttpStatus.FORBIDDEN.value()) {
             if (exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING) != null) {
@@ -44,8 +47,11 @@ public class JWTAuthorizationFilter implements WebFilter {
                 }
                 //Здесь проверяется токен JWT
                 AuthUser authUser = getAuthentication(exchange);
+
                 if (authUser == null) {
                     return response.setComplete();
+                } else {
+                    response.getHeaders().add(MessageConstants.X_CONFIRMED_UID, authUser.getId());
                 }
             } else {
                 MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());
@@ -67,6 +73,7 @@ public class JWTAuthorizationFilter implements WebFilter {
      */
     private AuthUser getAuthentication(ServerWebExchange exchange) {
         String token = exchange.getRequest().getHeaders().get(MessageConstants.HEADER_STRING).get(0);
+
 
         if (token != null) {
             String userName = null;

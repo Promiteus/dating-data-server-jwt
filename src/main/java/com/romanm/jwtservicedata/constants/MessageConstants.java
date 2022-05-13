@@ -8,6 +8,9 @@ public class MessageConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
+    public static final String X_API_UID = "X-API-UID";
+    public static final String X_CONFIRMED_UID = "X-CONFIRMED-UID";
+
     public static final String MSG_PREFIX = ">> ";
     public static final String ERROR_MSG_PREFIX = " **** : ";
 
