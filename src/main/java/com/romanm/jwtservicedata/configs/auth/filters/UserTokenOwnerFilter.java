@@ -60,6 +60,7 @@ public class UserTokenOwnerFilter implements WebFilter {
 
         response.setStatusCode(HttpStatus.FORBIDDEN);*/
 
+        //log.warn("path variable owner filter: "+exchange.getRequest().getPath().);
 
         return chain.filter(exchange).doFinally(sink -> {
             List<String> X_APIS = exchange.getResponse().getHeaders().get("X-API-USER-ID");
