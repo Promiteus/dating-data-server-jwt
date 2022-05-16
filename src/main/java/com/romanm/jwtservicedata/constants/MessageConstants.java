@@ -37,6 +37,7 @@ public class MessageConstants {
 
     public static final String MSG_NOT_ALL_HTTP_PARAMS = "Not all params have been passed!";
     public static final String MSG_UNKNOWN_MEDIA_TYPE = "It's unknown media type!";
+    public static final String MSG_INVALID_X_API_UID = "Access is denied! X-API-UID is empty or invalid!";
 
     public static final String UNKNOWN_USER = "Unknown";
 

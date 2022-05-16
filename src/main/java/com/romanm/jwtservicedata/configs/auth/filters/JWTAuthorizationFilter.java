@@ -51,7 +51,7 @@ public class JWTAuthorizationFilter implements WebFilter {
                 if (authUser == null) {
                     return response.setComplete();
                 } else {
-                    response.getHeaders().add(MessageConstants.X_CONFIRMED_UID, authUser.getId());
+                    exchange.getResponse().getHeaders().add(MessageConstants.X_CONFIRMED_UID, authUser.getId());
                 }
             } else {
                 MessageConstants.getDecodedUserMsg(exchange.getRequest().getRemoteAddress().getHostString(), exchange.getRequest().getURI().toString(), exchange.getRequest().getMethod().name());

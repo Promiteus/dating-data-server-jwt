@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.configs.auth;
 import com.romanm.jwtservicedata.components.auth.OpenUrlChecker;
 import com.romanm.jwtservicedata.configs.auth.filters.JWTAuthorizationFilter;
 import com.romanm.jwtservicedata.configs.auth.filters.OpenedPathsFilter;
+import com.romanm.jwtservicedata.configs.auth.filters.UserTokenOwnerFilter;
 import com.romanm.jwtservicedata.services.UserServiceV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +57,9 @@ public class SecurityConfiguration {
                .logout().disable()
                .addFilterAt(new OpenedPathsFilter(this.openUrlChecker), SecurityWebFiltersOrder.FIRST)
                .addFilterAt(new JWTAuthorizationFilter(this.userService), SecurityWebFiltersOrder.AUTHENTICATION)
+               .addFilterAfter(new UserTokenOwnerFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
                .build();
     }
+
+
 }

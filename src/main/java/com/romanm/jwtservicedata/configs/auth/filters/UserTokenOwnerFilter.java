@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.configs.auth.filters;
 
 import com.romanm.jwtservicedata.constants.MessageConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -9,7 +10,9 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 public class UserTokenOwnerFilter implements WebFilter {
 
     /**
@@ -28,12 +31,14 @@ public class UserTokenOwnerFilter implements WebFilter {
         if (hasPaths && hasMethods) {
             /*Проверить на наличие заголовок X-API-UID*/
             List<String> X_APIS = exchange.getRequest().getHeaders().get(MessageConstants.X_API_UID);
-            List<String> X_CONFIRMS = exchange.getRequest().getHeaders().get(MessageConstants.X_CONFIRMED_UID);
-            if ((!X_APIS.isEmpty()) && (!X_CONFIRMS.isEmpty())) {
+            List<String> X_CONFIRMS = exchange.getResponse().getHeaders().get(MessageConstants.X_CONFIRMED_UID);
+            if ((X_APIS != null) && (X_CONFIRMS != null)) {
                 String userId = X_APIS.get(0);
                 String confirmedUserId = X_CONFIRMS.get(0);
-                return confirmedUserId.trim() == userId.trim(); //Проверить, совпадают ли userId
+                log.warn("userId: "+userId+" confirmedUserId: "+confirmedUserId);
+                return confirmedUserId.trim().equals(userId.trim()); //Проверить, совпадают ли userId
             }
+            log.error(MessageConstants.errorPrefixMsg(MessageConstants.MSG_INVALID_X_API_UID));
             return false;
         }
 
@@ -44,8 +49,23 @@ public class UserTokenOwnerFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpResponse response = exchange.getResponse();
 
-        response.setStatusCode(HttpStatus.OK);
 
-        return chain.filter(exchange);
+
+        /*if (this.confirmUserIdWithToken(exchange, List.of("GET"), List.of("user_profile"))) {
+            response.setStatusCode(HttpStatus.OK);
+            return chain.filter(exchange);
+        }
+
+
+
+        response.setStatusCode(HttpStatus.FORBIDDEN);*/
+
+
+        return chain.filter(exchange).doFinally(sink -> {
+            List<String> X_APIS = exchange.getResponse().getHeaders().get("X-API-USER-ID");
+            //exchange.getResponse().
+            log.warn("X_API: "+exchange.getResponse().getHeaders().toString());
+
+        });
     }
 }
