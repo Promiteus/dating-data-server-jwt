@@ -46,7 +46,7 @@ public class UserProfileController {
      * @param userId String
      * @return Mono<ResponseEntity<ResponseUserProfile>>
      */
-    @GetMapping(value = Api.API_USER_PROFILE_USER_ID)
+   /* @GetMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<ResponseEntity<ResponseUserProfile>> getUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
         return Mono.create(sink -> {
             Mono<ResponseUserProfile> responseUserProfileMono = this.userProfileService.getUserProfile(userId);
@@ -60,7 +60,7 @@ public class UserProfileController {
                 }
             });
         });
-    }
+    }*/
 
     /**
      * Создать/изменить профиль пользователя

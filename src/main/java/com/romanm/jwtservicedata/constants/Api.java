@@ -20,7 +20,7 @@ public class Api {
     public final static String MAIN_ICON = "/favicon";
     public final static String API_CHAT_MESSAGES = "/chat_messages";
     public final static String API_CHAT_USERS_MESSAGES = "/chat_users_messages";
-    public final static String API_USER_PROFILE = "/user_profile";
+    public final static String API_USER_PROFILE = "/user/profile";
     public final static String API_USER_PROFILES = "/user_profiles";
     public final static String API_POST_USER_PROFILES = "/user_profiles/{page}/{not_user_id}";
     public final static String API_CHAT_USER_PROFILES = "/user_profiles_chats";
