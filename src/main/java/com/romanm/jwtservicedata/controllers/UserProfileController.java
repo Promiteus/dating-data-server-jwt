@@ -41,33 +41,13 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-    /**
-     * Получить профиль пользователя
-     * @param userId String
-     * @return Mono<ResponseEntity<ResponseUserProfile>>
-     */
-   /* @GetMapping(value = Api.API_USER_PROFILE_USER_ID)
-    public Mono<ResponseEntity<ResponseUserProfile>> getUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
-        return Mono.create(sink -> {
-            Mono<ResponseUserProfile> responseUserProfileMono = this.userProfileService.getUserProfile(userId);
-            responseUserProfileMono.subscribe(userProfile -> {
-                if  (userProfile.getUserProfile() != null) {
-                    MultiValueMap<String, String> headers = new HttpHeaders();
-                    headers.add("X-API-USER-ID", userProfile.getUserProfile().getId());
-                    sink.success(new ResponseEntity<>(userProfile, headers, HttpStatus.OK));
-                } else {
-                    sink.success(ResponseEntity.notFound().build());
-                }
-            });
-        });
-    }*/
 
     /**
      * Создать/изменить профиль пользователя
      * @param userProfile UserProfile
      * @return Mono<ResponseEntity<UserProfile>>
      */
-    @PostMapping(value = Api.API_USER_PROFILE)
+  /*  @PostMapping(value = Api.API_USER_PROFILE)
     public Mono<ResponseEntity<UserProfile>> updateOrSaveUserProfile(@RequestBody UserProfile userProfile) {
         return Mono.create(sink -> {
             this.userProfileService.saveOrUpdateUserProfile(userProfile).doOnSuccess(profile -> {
@@ -80,7 +60,7 @@ public class UserProfileController {
                 sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
             }).subscribe();
         });
-    }
+    }*/
 
     /**
      * Удалить профиль пользователя

@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.configs.routes;
 
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
+import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.function.Predicate;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
+import static org.springframework.web.reactive.function.BodyInserters.fromProducer;
 
 @Slf4j
 @Component
@@ -42,5 +44,21 @@ public class UserProfileRoutesHandler {
                         return ServerResponse.notFound().build();
                     }
                 });
+    }
+
+    public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
+        Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
+
+        return ServerResponse
+                .accepted()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(fromProducer(body.flatMap(this::save), UserProfile.class));
+    }
+
+    private Mono<UserProfile> save(UserProfile userProfile) {
+        return Mono.fromSupplier(() -> {
+            this.userProfileService.saveOrUpdateUserProfile(userProfile).subscribe();
+            return userProfile;
+        });
     }
 }
