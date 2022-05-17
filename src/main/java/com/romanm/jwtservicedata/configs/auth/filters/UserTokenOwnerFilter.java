@@ -1,9 +1,16 @@
 package com.romanm.jwtservicedata.configs.auth.filters;
 
+import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.HandlerFilterFunction;
+import org.springframework.web.reactive.function.server.HandlerFunction;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -13,60 +20,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class UserTokenOwnerFilter implements WebFilter {
-
-    /**
-     * Сравнить принажлежность userId с таким же userId из JWT токена
-     * @param exchange ServerWebExchange
-     * @return boolean
-     */
-    private boolean confirmUserIdWithToken(ServerWebExchange exchange, List<String> methods, List<String> paths) {
-        String path = exchange.getRequest().getPath().value();
-
-        /*Проверяемые методы*/
-        boolean hasMethods = methods.stream().filter(item -> (exchange.getRequest().getMethodValue() == item)).count() > 0;
-        /*Проверяемые маршруты*/
-        boolean hasPaths = paths.stream().filter(item -> (exchange.getRequest().getPath().value().contains(item))).count() > 0;
-
-        if (hasPaths && hasMethods) {
-            /*Проверить на наличие заголовок X-API-UID*/
-            List<String> X_APIS = exchange.getRequest().getHeaders().get(MessageConstants.X_API_UID);
-            List<String> X_CONFIRMS = exchange.getResponse().getHeaders().get(MessageConstants.X_CONFIRMED_UID);
-            if ((X_APIS != null) && (X_CONFIRMS != null)) {
-                String userId = X_APIS.get(0);
-                String confirmedUserId = X_CONFIRMS.get(0);
-                log.warn("userId: "+userId+" confirmedUserId: "+confirmedUserId);
-                return confirmedUserId.trim().equals(userId.trim()); //Проверить, совпадают ли userId
-            }
-            log.error(MessageConstants.errorPrefixMsg(MessageConstants.MSG_INVALID_X_API_UID));
-            return false;
-        }
-
-        return true;
-    }
-
+public class UserTokenOwnerFilter implements HandlerFilterFunction<ServerResponse, ServerResponse> {
+    
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpResponse response = exchange.getResponse();
+    public Mono<ServerResponse> filter(ServerRequest request, HandlerFunction<ServerResponse> next) {
+        String userId = request.pathVariable(Api.PARAM_USER_ID);
+        String confirmedUserId = request.headers().firstHeader(Api.X_CONFIRMED_UID);
 
-
-
-        /*if (this.confirmUserIdWithToken(exchange, List.of("GET"), List.of("user_profile"))) {
-            response.setStatusCode(HttpStatus.OK);
-            return chain.filter(exchange);
+        if ((confirmedUserId != null) && confirmedUserId.equals(userId)) {
+            return next.handle(request);
         }
 
-
-
-        response.setStatusCode(HttpStatus.FORBIDDEN);*/
-
-        //log.warn("path variable owner filter: "+exchange.getRequest().getPath().);
-
-        return chain.filter(exchange).doFinally(sink -> {
-            List<String> X_APIS = exchange.getResponse().getHeaders().get("X-API-USER-ID");
-            //exchange.getResponse().
-            log.warn("X_API: "+exchange.getResponse().getHeaders().toString());
-
-        });
+        log.error(MessageConstants.prefixMsg(MessageConstants.MSG_INVALID_JWT_OWNER));
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, MessageConstants.MSG_INVALID_JWT_OWNER);
     }
 }

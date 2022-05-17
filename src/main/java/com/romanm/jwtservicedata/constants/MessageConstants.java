@@ -8,9 +8,6 @@ public class MessageConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
-    public static final String X_API_UID = "X-API-UID";
-    public static final String X_CONFIRMED_UID = "X-CONFIRMED-UID";
-
     public static final String MSG_PREFIX = ">> ";
     public static final String ERROR_MSG_PREFIX = " **** : ";
 
@@ -37,7 +34,7 @@ public class MessageConstants {
 
     public static final String MSG_NOT_ALL_HTTP_PARAMS = "Not all params have been passed!";
     public static final String MSG_UNKNOWN_MEDIA_TYPE = "It's unknown media type!";
-    public static final String MSG_INVALID_X_API_UID = "Access is denied! X-API-UID is empty or invalid!";
+    public static final String MSG_INVALID_JWT_OWNER = "Access is denied! Tried to access to stranger account!";
 
     public static final String UNKNOWN_USER = "Unknown";
 

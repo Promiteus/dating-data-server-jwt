@@ -1,6 +1,8 @@
 package com.romanm.jwtservicedata.constants;
 
 public class Api {
+    public static final String X_CONFIRMED_UID = "X-CONFIRMED-UID";
+
     public final static String API_PREFIX = "/api";
     public final static String PARAM_PAGE = "page";
     public final static String PARAM_PAGE_SIZE = "size";
