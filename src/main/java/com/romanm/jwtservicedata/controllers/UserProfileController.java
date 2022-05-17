@@ -42,25 +42,7 @@ public class UserProfileController {
     }
 
 
-    /**
-     * Создать/изменить профиль пользователя
-     * @param userProfile UserProfile
-     * @return Mono<ResponseEntity<UserProfile>>
-     */
-  /*  @PostMapping(value = Api.API_USER_PROFILE)
-    public Mono<ResponseEntity<UserProfile>> updateOrSaveUserProfile(@RequestBody UserProfile userProfile) {
-        return Mono.create(sink -> {
-            this.userProfileService.saveOrUpdateUserProfile(userProfile).doOnSuccess(profile -> {
-                if (profile != null) {
-                    sink.success(ResponseEntity.accepted().body(profile));
-                } else {
-                    sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
-                }
-            }).doOnError(error -> {
-                sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
-            }).subscribe();
-        });
-    }*/
+
 
     /**
      * Удалить профиль пользователя
