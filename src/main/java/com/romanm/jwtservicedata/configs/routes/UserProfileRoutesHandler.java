@@ -1,7 +1,6 @@
 package com.romanm.jwtservicedata.configs.routes;
 
 import com.romanm.jwtservicedata.constants.Api;
-import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
@@ -13,7 +12,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Predicate;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 import static org.springframework.web.reactive.function.BodyInserters.fromProducer;
@@ -32,6 +30,11 @@ public class UserProfileRoutesHandler {
         this.userProfileService = userProfileService;
     }
 
+    /**
+     * Получить профиль пользователя
+     * @param serverRequest ServerRequest
+     * @return  Mono<ServerResponse>
+     */
     public Mono<ServerResponse> getUserProfile(ServerRequest serverRequest) {
         Mono<ResponseUserProfile> responseUserProfileMono = this.userProfileService.getUserProfile(serverRequest.pathVariable(Api.PARAM_USER_ID));
         return responseUserProfileMono
@@ -46,6 +49,11 @@ public class UserProfileRoutesHandler {
                 });
     }
 
+    /**
+     * Создать/изменить профиль пользователя
+     * @param serverRequest ServerRequest
+     * @return Mono<ServerResponse>
+     */
     public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
 
@@ -55,6 +63,11 @@ public class UserProfileRoutesHandler {
                 .body(fromProducer(body.flatMap(this::save), UserProfile.class));
     }
 
+    /**
+     * (Действие) Создать/изменить профиль пользователя
+     * @param userProfile UserProfile
+     * @return Mono<UserProfile>
+     */
     private Mono<UserProfile> save(UserProfile userProfile) {
         return Mono.fromSupplier(() -> {
             this.userProfileService.saveOrUpdateUserProfile(userProfile).subscribe();
