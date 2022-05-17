@@ -6,6 +6,7 @@ import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -62,6 +63,25 @@ public class UserProfileRoutesHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(fromProducer(body.flatMap(this::save), UserProfile.class));
     }
+
+    /**
+     * Удалить профиль пользователя
+     * @param serverRequest Mono<ServerResponse>
+     * @return Mono<ServerResponse>
+     */
+    public Mono<ServerResponse> removeUserProfile(ServerRequest serverRequest) {
+        Mono<Boolean> removed = this.userProfileService.removeUserProfile(serverRequest.pathVariable(Api.PARAM_USER_ID), false);
+
+        return removed.flatMap(res -> {
+            if (res) {
+                return ServerResponse.accepted().build();
+            } else {
+                return ServerResponse.status(HttpStatus.NOT_MODIFIED).build();
+            }
+        });
+    }
+
+
 
     /**
      * (Действие) Создать/изменить профиль пользователя

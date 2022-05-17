@@ -49,7 +49,7 @@ public class UserProfileController {
      * @param userId String
      * @return  Mono<ResponseEntity<Void>>
      */
-    @DeleteMapping(value = Api.API_USER_PROFILE_USER_ID)
+   /* @DeleteMapping(value = Api.API_USER_PROFILE_USER_ID)
     public Mono<ResponseEntity<Void>> removeUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
         return Mono.create(sink -> {
             this.userProfileService.removeUserProfile(userId, false).subscribe(res -> {
@@ -60,7 +60,7 @@ public class UserProfileController {
                 }
             });
         });
-    }
+    }*/
 
     /**
      * Получить постраничный список профилей пользователей, кроме указанного userId
