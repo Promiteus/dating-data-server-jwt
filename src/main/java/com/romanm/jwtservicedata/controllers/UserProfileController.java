@@ -19,12 +19,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 
-/**
- * {
- *     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb20zODg5QHlhbmRleC5ydSIsImV4cCI6MTYzOTQwMDI2N30.OK2ZNiQ5znQ4fgPBLsLKsSd4CX8S64WemzT4YDVWgXNUAQJUH8RL38roy4BT3VK_6qPw0oLa2pP1o6GY1uGIcQ",
- *     "token_expire_sec": "2021-12-13 T 22:57:47.351",
- *     "user_id": "ff8081817ce58288017ce584265d0000"
- * }*/
 @Slf4j
 @RestController
 @RequestMapping(value = Api.API_PREFIX)
@@ -41,22 +35,6 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-
-    /**
-     * Получить список профилей пользователей по заданным параметрам поиска searchBody
-     * @param page int
-     * @param userId String
-     * @param searchBody SearchBody
-     * @return ResponseEntity<Flux<UserProfile>>
-     */
-   /* @PostMapping(value = Api.API_POST_USER_PROFILES)
-    public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithSearchBody(
-            @PathVariable(value = Api.PARAM_PAGE) int page,
-            @PathVariable(value = Api.PARAM_NOT_USER_ID) String userId,
-            @RequestBody SearchBody searchBody) {
-
-        return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId, searchBody));
-    }*/
 
     /**
      * Найти все чаты профиля пользователя по userId
