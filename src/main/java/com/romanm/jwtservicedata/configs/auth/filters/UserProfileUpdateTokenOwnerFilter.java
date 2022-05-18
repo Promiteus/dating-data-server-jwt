@@ -29,6 +29,7 @@ public class UserProfileUpdateTokenOwnerFilter implements HandlerFilterFunction<
         String confirmedUserId = request.headers().firstHeader(Api.X_CONFIRMED_UID);
 
         return userProfileMono.flatMap(body -> {
+            log.warn("body profile: "+body.toString());
             if (body.getId() != null) {
                 if ((confirmedUserId != null) && confirmedUserId.equals(body.getId())) {
                     return next.handle(request);
