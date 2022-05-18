@@ -42,39 +42,6 @@ public class UserProfileController {
     }
 
 
-
-
-    /**
-     * Удалить профиль пользователя
-     * @param userId String
-     * @return  Mono<ResponseEntity<Void>>
-     */
-   /* @DeleteMapping(value = Api.API_USER_PROFILE_USER_ID)
-    public Mono<ResponseEntity<Void>> removeUserProfile(@PathVariable(Api.PARAM_USER_ID) String userId) {
-        return Mono.create(sink -> {
-            this.userProfileService.removeUserProfile(userId, false).subscribe(res -> {
-                if (res) {
-                    sink.success(ResponseEntity.accepted().build()) ;
-                } else {
-                    sink.success(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
-                }
-            });
-        });
-    }*/
-
-    /**
-     * Получить постраничный список профилей пользователей, кроме указанного userId
-     * @param page int
-     * @return ResponseEntity<Flux<UserProfile>>
-     */
-    @GetMapping(value = Api.API_USER_PROFILES, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
-    public ResponseEntity<Flux<UserProfile>> findAllPageble(
-            @RequestParam(value = Api.PARAM_PAGE, defaultValue = "0") int page,
-            @RequestParam(value = Api.PARAM_NOT_USER_ID, defaultValue = "") String userId) {
-
-         return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId));
-    }
-
     /**
      * Получить список профилей пользователей по заданным параметрам поиска searchBody
      * @param page int
@@ -82,14 +49,14 @@ public class UserProfileController {
      * @param searchBody SearchBody
      * @return ResponseEntity<Flux<UserProfile>>
      */
-    @PostMapping(value = Api.API_POST_USER_PROFILES)
+   /* @PostMapping(value = Api.API_POST_USER_PROFILES)
     public ResponseEntity<Flux<UserProfile>> findAllProfilesPageableWithSearchBody(
             @PathVariable(value = Api.PARAM_PAGE) int page,
             @PathVariable(value = Api.PARAM_NOT_USER_ID) String userId,
             @RequestBody SearchBody searchBody) {
 
         return ResponseEntity.ok(this.userProfileService.findAllUserProfilesByPage(30, page, userId, searchBody));
-    }
+    }*/
 
     /**
      * Найти все чаты профиля пользователя по userId

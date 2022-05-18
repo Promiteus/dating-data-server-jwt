@@ -20,7 +20,9 @@ public class UserProfileRoutes {
         return route(GET(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfile)
                .filter(new UserTokenOwnerFilter())
                .andRoute(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::saveUserProfile)
-               .andRoute(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::removeUserProfile);
+               .andRoute(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::removeUserProfile)
+               .andRoute(GET(Api.API_PREFIX+Api.API_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfilesByPage)
+               .andRoute(POST(Api.API_PREFIX+Api.API_POST_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfilesByPageWithSearchBody);
 
     }
 }

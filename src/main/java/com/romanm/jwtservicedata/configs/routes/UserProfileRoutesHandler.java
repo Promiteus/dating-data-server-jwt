@@ -2,6 +2,7 @@ package com.romanm.jwtservicedata.configs.routes;
 
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.UserProfile;
+import com.romanm.jwtservicedata.models.requests.SearchBody;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 import static org.springframework.web.reactive.function.BodyInserters.fromProducer;
@@ -81,7 +86,73 @@ public class UserProfileRoutesHandler {
         });
     }
 
+    /**
+     * Получить постраничный список профилей пользователей, кроме указанного userId
+     * @param serverRequest ServerRequest
+     * @return Mono<ServerResponse>
+     */
+    public Mono<ServerResponse> getUserProfilesByPage(ServerRequest serverRequest) {
+        String page = "0";
+        page = this.getQueryParam(Api.PARAM_PAGE, serverRequest);
 
+        String notUserId = "0";
+        notUserId = this.getQueryParam(Api.PARAM_NOT_USER_ID, serverRequest);
+
+        Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(page), notUserId);
+
+        return userProfileFlux.collectList().flatMap(userProfiles -> {
+            return ServerResponse
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(fromObject(userProfiles));
+        });
+    }
+
+    /**
+     * Получить список профилей пользователей по заданным параметрам поиска searchBody
+     * @param serverRequest ServerRequest
+     * @return Mono<ServerResponse>
+     */
+    public Mono<ServerResponse> getUserProfilesByPageWithSearchBody(ServerRequest serverRequest) {
+        String page = "0";
+        page = serverRequest.pathVariable(Api.PARAM_PAGE);
+
+        String notUserId = "0";
+        notUserId = serverRequest.pathVariable(Api.PARAM_NOT_USER_ID);
+
+        Mono<SearchBody> body = serverRequest.bodyToMono(SearchBody.class);
+
+        String finalPage = page;
+        String finalNotUserId = notUserId;
+
+        Mono<List<UserProfile>> userProfileFlux = body.flatMap(searchBody -> {
+            log.warn("body: "+searchBody.toString());
+            return this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(finalPage), finalNotUserId, searchBody).collectList();
+        });
+
+
+        return userProfileFlux.flatMap(userProfiles -> {
+            return ServerResponse
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(fromObject(userProfiles));
+        });
+    }
+
+    /**
+     * Получить query параметр из объекта ServerRequest
+     * @param paramName String
+     * @param serverRequest ServerRequest
+     * @return String
+     */
+    private String getQueryParam(String paramName, ServerRequest serverRequest) {
+        String value = "0";
+        Optional<String> optValue = serverRequest.queryParam(paramName);
+        if (optValue.isPresent()) {
+            value = optValue.get();
+        }
+        return value;
+    }
 
     /**
      * (Действие) Создать/изменить профиль пользователя

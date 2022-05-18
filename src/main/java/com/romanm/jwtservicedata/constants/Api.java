@@ -21,8 +21,8 @@ public class Api {
     public final static String API_CHAT_MESSAGES = "/chat_messages";
     public final static String API_CHAT_USERS_MESSAGES = "/chat_users_messages";
     public final static String API_USER_PROFILE = "/user/profile";
-    public final static String API_USER_PROFILES = "/user_profiles";
-    public final static String API_POST_USER_PROFILES = "/user_profiles/{page}/{not_user_id}";
+    public final static String API_USER_PROFILES = "/user/profiles";
+    public final static String API_POST_USER_PROFILES = API_USER_PROFILES+"/{page}/{not_user_id}";
     public final static String API_CHAT_USER_PROFILES = "/user_profiles_chats";
     public final static String API_USER_IMAGE = "/resource";
     public final static String API_USER_IMAGES = "/uploads";
