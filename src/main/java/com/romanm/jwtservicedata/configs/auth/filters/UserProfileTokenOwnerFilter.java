@@ -4,24 +4,23 @@ import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
-public class UserTokenOwnerFilter implements HandlerFilterFunction<ServerResponse, ServerResponse> {
-    
+public class UserProfileTokenOwnerFilter implements HandlerFilterFunction<ServerResponse, ServerResponse> {
+    /**
+     * Фильтр, блокирующий получение данных пользователя, если была попытка запроса с чужого токена
+     * @param request ServerRequest
+     * @param next HandlerFunction<ServerResponse>
+     * @return Mono<ServerResponse>
+     */
     @Override
     public Mono<ServerResponse> filter(ServerRequest request, HandlerFunction<ServerResponse> next) {
         String userId = request.pathVariable(Api.PARAM_USER_ID);

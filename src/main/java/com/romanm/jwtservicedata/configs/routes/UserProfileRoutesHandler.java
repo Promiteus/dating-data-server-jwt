@@ -126,10 +126,8 @@ public class UserProfileRoutesHandler {
         String finalNotUserId = notUserId;
 
         Mono<List<UserProfile>> userProfileFlux = body.flatMap(searchBody -> {
-            log.warn("body: "+searchBody.toString());
             return this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(finalPage), finalNotUserId, searchBody).collectList();
         });
-
 
         return userProfileFlux.flatMap(userProfiles -> {
             return ServerResponse
