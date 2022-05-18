@@ -26,11 +26,12 @@ public class UserProfileTokenOwnerFilter implements HandlerFilterFunction<Server
         String userId = request.pathVariable(Api.PARAM_USER_ID);
         String confirmedUserId = request.headers().firstHeader(Api.X_CONFIRMED_UID);
 
+
         if ((confirmedUserId != null) && confirmedUserId.equals(userId)) {
             return next.handle(request);
         }
 
         log.error(MessageConstants.prefixMsg(MessageConstants.MSG_INVALID_JWT_OWNER));
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, MessageConstants.MSG_INVALID_JWT_OWNER);
+        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, MessageConstants.MSG_INVALID_JWT_OWNER));
     }
 }
