@@ -1,7 +1,6 @@
 package com.romanm.jwtservicedata.configs.routes;
 
 import com.romanm.jwtservicedata.configs.auth.filters.UserProfileTokenOwnerFilter;
-import com.romanm.jwtservicedata.configs.auth.filters.UserProfileUpdateTokenOwnerFilter;
 import com.romanm.jwtservicedata.constants.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -24,23 +23,27 @@ public class UserProfileRoutes {
 
     @Bean
     public RouterFunction<ServerResponse> pageableProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
-        return route(GET(Api.API_PREFIX+Api.API_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfilesByPage);
+        return route(GET(Api.API_PREFIX+Api.API_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::getUserProfilesByPage);
     }
 
     @Bean
     public RouterFunction<ServerResponse> updateProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
-        return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::saveUserProfile)
-               .filter(new UserProfileUpdateTokenOwnerFilter());
+        return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::saveUserProfile);
+              // .filter(new UserProfileUpdateTokenOwnerFilter());
     }
 
     @Bean
     public RouterFunction<ServerResponse> deleteProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
-        return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::removeUserProfile)
+        return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::removeUserProfile)
                .filter(new UserProfileTokenOwnerFilter());
     }
 
     @Bean
     public RouterFunction<ServerResponse> searchProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
-        return route(POST(Api.API_PREFIX+Api.API_POST_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfilesByPageWithSearchBody);
+        return route(POST(Api.API_PREFIX+Api.API_POST_USER_PROFILES).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::getUserProfilesByPageWithSearchBody);
     }
 }

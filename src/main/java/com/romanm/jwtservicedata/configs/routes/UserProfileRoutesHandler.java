@@ -1,6 +1,7 @@
 package com.romanm.jwtservicedata.configs.routes;
 
 import com.romanm.jwtservicedata.constants.Api;
+import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
 import com.romanm.jwtservicedata.models.requests.SearchBody;
 import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
@@ -62,12 +63,27 @@ public class UserProfileRoutesHandler {
      */
     public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
+        String confirmedUserId = serverRequest.headers().firstHeader(Api.X_CONFIRMED_UID);
 
-        log.warn("saving..");
-        return ServerResponse
-                .accepted()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(fromProducer(body.flatMap(this::save), UserProfile.class));
+        return body.flatMap(userProfile -> {
+             if (userProfile == null) {
+                 return ServerResponse
+                         .status(HttpStatus.BAD_REQUEST)
+                         .build();
+             } else {
+                 if ((confirmedUserId != null) && confirmedUserId.equals(userProfile.getId())) {
+                     return ServerResponse
+                             .accepted()
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(fromProducer(this.save(userProfile), UserProfile.class));
+                 } else {
+                     log.warn(MessageConstants.prefixMsg(MessageConstants.MSG_INVALID_JWT_OWNER));
+                     return ServerResponse
+                             .status(HttpStatus.FORBIDDEN)
+                             .build();
+                 }
+             }
+        });
     }
 
     /**
@@ -159,6 +175,8 @@ public class UserProfileRoutesHandler {
      * @return Mono<UserProfile>
      */
     private Mono<UserProfile> save(UserProfile userProfile) {
+
+        log.warn("body is: "+userProfile.toString());
         return Mono.fromSupplier(() -> {
             this.userProfileService.saveOrUpdateUserProfile(userProfile).subscribe();
             return userProfile;
