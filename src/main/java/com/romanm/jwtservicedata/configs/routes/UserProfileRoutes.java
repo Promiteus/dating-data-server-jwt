@@ -35,7 +35,8 @@ public class UserProfileRoutes {
 
     @Bean
     public RouterFunction<ServerResponse> deleteProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
-        return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::removeUserProfile);
+        return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::removeUserProfile)
+               .filter(new UserProfileTokenOwnerFilter());
     }
 
     @Bean

@@ -10,7 +10,10 @@ import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * Класс-фильтр для защиты изменения данных профиля чужим аккаунтом
@@ -28,15 +31,14 @@ public class UserProfileUpdateTokenOwnerFilter implements HandlerFilterFunction<
         Mono<UserProfile> userProfileMono = request.bodyToMono(UserProfile.class);
         String confirmedUserId = request.headers().firstHeader(Api.X_CONFIRMED_UID);
 
+
         return userProfileMono.flatMap(body -> {
-            if (body.getId() != null) {
                 if ((confirmedUserId != null) && confirmedUserId.equals(body.getId())) {
+                    log.warn("ok");
                     return next.handle(request);
                 }
                 log.error(MessageConstants.prefixMsg(MessageConstants.MSG_INVALID_JWT_OWNER));
                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, MessageConstants.MSG_INVALID_JWT_OWNER));
-            }
-            return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, MessageConstants.MSG_INVALID_JWT_OWNER));
         });
     }
 }

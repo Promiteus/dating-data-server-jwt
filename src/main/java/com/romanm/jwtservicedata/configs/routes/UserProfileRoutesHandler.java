@@ -63,6 +63,7 @@ public class UserProfileRoutesHandler {
     public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
 
+        log.warn("saving..");
         return ServerResponse
                 .accepted()
                 .contentType(MediaType.APPLICATION_JSON)
