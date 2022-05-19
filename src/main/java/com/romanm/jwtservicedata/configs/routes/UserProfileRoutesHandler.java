@@ -109,20 +109,18 @@ public class UserProfileRoutesHandler {
      * @return Mono<ServerResponse>
      */
     public Mono<ServerResponse> getUserProfilesByPage(ServerRequest serverRequest) {
-        String page = "0";
+        String page;
         page = this.getQueryParam(Api.PARAM_PAGE, serverRequest);
 
-        String notUserId = "0";
+        String notUserId;
         notUserId = this.getQueryParam(Api.PARAM_NOT_USER_ID, serverRequest);
 
         Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(page), notUserId);
 
-        return userProfileFlux.collectList().flatMap(userProfiles -> {
-            return ServerResponse
-                    .ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(fromObject(userProfiles));
-        });
+        return userProfileFlux.collectList().flatMap(userProfiles -> ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(fromObject(userProfiles)));
     }
 
     /**
@@ -131,10 +129,10 @@ public class UserProfileRoutesHandler {
      * @return Mono<ServerResponse>
      */
     public Mono<ServerResponse> getUserProfilesByPageWithSearchBody(ServerRequest serverRequest) {
-        String page = "0";
+        String page;
         page = serverRequest.pathVariable(Api.PARAM_PAGE);
 
-        String notUserId = "0";
+        String notUserId;
         notUserId = serverRequest.pathVariable(Api.PARAM_NOT_USER_ID);
 
         Mono<SearchBody> body = serverRequest.bodyToMono(SearchBody.class);
@@ -142,16 +140,12 @@ public class UserProfileRoutesHandler {
         String finalPage = page;
         String finalNotUserId = notUserId;
 
-        Mono<List<UserProfile>> userProfileFlux = body.flatMap(searchBody -> {
-            return this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(finalPage), finalNotUserId, searchBody).collectList();
-        });
+        Mono<List<UserProfile>> userProfileFlux = body.flatMap(searchBody -> this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(finalPage), finalNotUserId, searchBody).collectList());
 
-        return userProfileFlux.flatMap(userProfiles -> {
-            return ServerResponse
-                    .ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(fromObject(userProfiles));
-        });
+        return userProfileFlux.flatMap(userProfiles -> ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(fromObject(userProfiles)));
     }
 
     /**

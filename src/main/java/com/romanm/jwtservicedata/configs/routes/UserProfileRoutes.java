@@ -31,7 +31,6 @@ public class UserProfileRoutes {
     public RouterFunction<ServerResponse> updateProfileRoutes(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)),
                 userProfileRoutesHandler::saveUserProfile);
-              // .filter(new UserProfileUpdateTokenOwnerFilter());
     }
 
     @Bean
