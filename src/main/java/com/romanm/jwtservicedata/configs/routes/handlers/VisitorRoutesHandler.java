@@ -3,6 +3,7 @@ package com.romanm.jwtservicedata.configs.routes.handlers;
 import com.romanm.jwtservicedata.configs.routes.Routes;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.models.Visitor;
+import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import com.romanm.jwtservicedata.services.interfaces.VisitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +14,20 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class VisitorRoutesHandler {
     private final VisitorService visitorService;
+    private final UserProfileService userProfileService;
 
     @Autowired
-    public VisitorRoutesHandler(VisitorService visitorService) {
+    public VisitorRoutesHandler(VisitorService visitorService, UserProfileService userProfileService) {
         this.visitorService = visitorService;
+        this.userProfileService = userProfileService;
     }
 
     /**
@@ -39,7 +44,8 @@ public class VisitorRoutesHandler {
 
         return visitorFlux.collectList().flatMap(visitors -> {
             if (!visitors.isEmpty() && (visitors.size() > 0)) {
-                return ServerResponse.ok().body(Mono.just(visitors), Visitor.class);
+                List<String> userIds = visitors.stream().map(item -> item.getVisitorUserId()).collect(Collectors.toList());
+                return ServerResponse.ok().body(this.userProfileService.getUserProfiles(userIds), Visitor.class);
             } else {
                 return ServerResponse.notFound().build();
             }

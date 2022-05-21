@@ -61,6 +61,10 @@ public class UserProfileServiceV1 implements UserProfileService {
         })).switchIfEmpty(Mono.just(new ResponseUserProfile()));
     }
 
+    @Override
+    public  Mono<List<UserProfile>> getUserProfiles(List<String> userIds) {
+        return this.userProfileRepository.findUserProfilesByIdIn(userIds).collectList();
+    }
 
 
     /**

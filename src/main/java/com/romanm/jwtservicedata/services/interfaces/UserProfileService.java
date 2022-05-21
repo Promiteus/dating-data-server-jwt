@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface UserProfileService {
      Mono<ResponseUserProfile> getUserProfile(String userId);
+     Mono<List<UserProfile>> getUserProfiles(List<String> userIds);
      Mono<UserProfile> saveOrUpdateUserProfile(UserProfile userProfile);
      Mono<Boolean> removeUserProfile(String userId, boolean soft);
      Flux<UserProfile> findAllUserProfilesByPage(int pageSize, int page, String notUserId);
