@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.configs.routes;
 
+import com.romanm.jwtservicedata.constants.Api;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.util.Optional;
@@ -19,5 +20,15 @@ public class Routes {
             value = optValue.get();
         }
         return value;
+    }
+
+    /**
+     * Получить параметр из заголовков
+     * @param paramName String
+     * @param serverRequest
+     * @return String ServerRequest
+     */
+    public static String getHeaderParam(String paramName, ServerRequest serverRequest) {
+        return serverRequest.headers().firstHeader(paramName);
     }
 }

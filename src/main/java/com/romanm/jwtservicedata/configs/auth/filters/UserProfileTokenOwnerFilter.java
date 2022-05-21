@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.configs.auth.filters;
 
+import com.romanm.jwtservicedata.configs.routes.Routes;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,18 @@ public class UserProfileTokenOwnerFilter implements HandlerFilterFunction<Server
      */
     @Override
     public Mono<ServerResponse> filter(ServerRequest request, HandlerFunction<ServerResponse> next) {
-        String userId = request.pathVariable(Api.PARAM_USER_ID);
-        String confirmedUserId = request.headers().firstHeader(Api.X_CONFIRMED_UID);
+        String userId = "";
+        try {
+            userId = request.pathVariable(Api.PARAM_USER_ID);
+        } catch (IllegalArgumentException iae) {
+            try {
+                userId = Routes.getQueryParam(Api.PARAM_USER_ID, request);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        String confirmedUserId = Routes.getHeaderParam(Api.X_CONFIRMED_UID, request);
 
 
         if ((confirmedUserId != null) && confirmedUserId.equals(userId)) {

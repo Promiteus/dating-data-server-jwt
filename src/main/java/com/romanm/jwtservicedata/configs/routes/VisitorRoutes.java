@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.configs.routes;
 
+import com.romanm.jwtservicedata.configs.auth.filters.UserProfileTokenOwnerFilter;
 import com.romanm.jwtservicedata.configs.routes.handlers.VisitorRoutesHandler;
 import com.romanm.jwtservicedata.constants.Api;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,9 @@ public class VisitorRoutes {
      */
     @Bean
     public RouterFunction<ServerResponse> getUserVisitorsRoute(VisitorRoutesHandler visitorRoutesHandler) {
-        return route(GET(Api.API_PREFIX+Api.API_USER_VISITOR).and(accept(MediaType.APPLICATION_JSON)), visitorRoutesHandler::getUserVisitors);
+        return route(GET(Api.API_PREFIX+Api.API_USER_VISITOR).and(accept(MediaType.APPLICATION_JSON)),
+                visitorRoutesHandler::getUserVisitors)
+                .filter(new UserProfileTokenOwnerFilter());
 
     }
 }
