@@ -76,7 +76,7 @@ public class UserProfileRoutesHandler {
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(fromProducer(this.save(userProfile), UserProfile.class));
                  } else {
-                     log.warn(MessageConstants.prefixMsg(MessageConstants.MSG_INVALID_JWT_OWNER));
+                     log.warn(MessageConstants.prefixMsg(String.format(MessageConstants.MSG_FORMAT_INVALID_JWT_OWNER, confirmedUserId, userProfile.getId())));
                      return ServerResponse
                              .status(HttpStatus.FORBIDDEN)
                              .build();

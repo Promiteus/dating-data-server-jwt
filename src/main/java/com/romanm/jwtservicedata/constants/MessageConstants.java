@@ -35,6 +35,7 @@ public class MessageConstants {
     public static final String MSG_NOT_ALL_HTTP_PARAMS = "Not all params have been passed!";
     public static final String MSG_UNKNOWN_MEDIA_TYPE = "It's unknown media type!";
     public static final String MSG_INVALID_JWT_OWNER = "Access is denied! Tried to access to stranger account!";
+    public static final String MSG_FORMAT_INVALID_JWT_OWNER = "Access is denied! Tried to access to stranger account! Expected '%s', got '%s'.";
 
     public static final String UNKNOWN_USER = "Unknown";
 
