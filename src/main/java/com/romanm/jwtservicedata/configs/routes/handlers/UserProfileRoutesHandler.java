@@ -1,5 +1,6 @@
-package com.romanm.jwtservicedata.configs.routes;
+package com.romanm.jwtservicedata.configs.routes.handlers;
 
+import com.romanm.jwtservicedata.configs.routes.Routes;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.MessageConstants;
 import com.romanm.jwtservicedata.models.UserProfile;
@@ -16,9 +17,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 import static org.springframework.web.reactive.function.BodyInserters.fromProducer;
@@ -110,10 +109,10 @@ public class UserProfileRoutesHandler {
      */
     public Mono<ServerResponse> getUserProfilesByPage(ServerRequest serverRequest) {
         String page;
-        page = this.getQueryParam(Api.PARAM_PAGE, serverRequest);
+        page = Routes.getQueryParam(Api.PARAM_PAGE, serverRequest);
 
         String notUserId;
-        notUserId = this.getQueryParam(Api.PARAM_NOT_USER_ID, serverRequest);
+        notUserId = Routes.getQueryParam(Api.PARAM_NOT_USER_ID, serverRequest);
 
         Flux<UserProfile> userProfileFlux = this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(page), notUserId);
 
@@ -148,20 +147,7 @@ public class UserProfileRoutesHandler {
                 .body(fromObject(userProfiles)));
     }
 
-    /**
-     * Получить query параметр из объекта ServerRequest
-     * @param paramName String
-     * @param serverRequest ServerRequest
-     * @return String
-     */
-    private String getQueryParam(String paramName, ServerRequest serverRequest) {
-        String value = "0";
-        Optional<String> optValue = serverRequest.queryParam(paramName);
-        if (optValue.isPresent()) {
-            value = optValue.get();
-        }
-        return value;
-    }
+
 
     /**
      * (Действие) Создать/изменить профиль пользователя

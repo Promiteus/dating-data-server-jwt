@@ -33,7 +33,7 @@ public class VisitorController {
      * @param userId String
      * @return ResponseEntity<Mono<Visitor>>
      */
-    @PutMapping(value = Api.API_USER_VISITOR_UPDATE)
+    @PutMapping(value = Api.API_USER_VISITOR)
     public ResponseEntity<Mono<Visitor>> refresh(@RequestParam(value = Api.PARAM_VISITOR_USER_ID, defaultValue = "") String visitorUserId,
                                                  @RequestParam(value = Api.PARAM_USER_ID, defaultValue = "") String userId) {
 
