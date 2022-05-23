@@ -1,5 +1,6 @@
 package com.romanm.jwtservicedata.controllers;
 
+import com.romanm.jwtservicedata.configs.auth.TestSecurityConfiguration;
 import com.romanm.jwtservicedata.constants.Api;
 import com.romanm.jwtservicedata.constants.CommonConstants;
 import com.romanm.jwtservicedata.constants.MessageConstants;
@@ -8,14 +9,17 @@ import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -25,7 +29,9 @@ import java.util.Calendar;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@WebFluxTest(controllers = UserProfileController.class,  excludeAutoConfiguration = {ReactiveSecurityAutoConfiguration.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(value = {"test"})
+@Import(value = {TestSecurityConfiguration.class})
 public class UserProfileControllerTest {
     @Autowired
     private WebTestClient webTestClient;
@@ -34,6 +40,9 @@ public class UserProfileControllerTest {
     @Qualifier("userProfileServiceV1")
     private UserProfileService userProfileService;
 
+    @Autowired
+    private ApplicationContext context;
+
    /* @Configuration
     static class ServiceTestConf {
         @Bean
@@ -41,6 +50,12 @@ public class UserProfileControllerTest {
             return new UserProfileServiceV1();
         }
     }*/
+
+    @Before
+    public void setUp()
+    {
+        webTestClient = WebTestClient.bindToApplicationContext(context).build();
+    }
 
     private UserProfile getUserProfile() {
         UserProfile userProfileTest = new UserProfile();

@@ -208,11 +208,12 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
         this.userProfileRepository
                     .findUserProfileById(userId)
                     .doOnSuccess(userProfile -> {
+                        if (userProfile != null) {
                             List<String> fileThumbUrls = this.fileConfig
-                                .listFiles(userId+"/"+this.fileConfig.getThumbDir())
-                                .stream()
-                                .map(file -> (String.format(Api.API_RESOURCE_URI_THUMB, userId)))
-                                .collect(Collectors.toList());
+                                    .listFiles(userId+"/"+this.fileConfig.getThumbDir())
+                                    .stream()
+                                    .map(file -> (String.format(Api.API_RESOURCE_URI_THUMB, userId)))
+                                    .collect(Collectors.toList());
 
                             List<ImageRef> imgRefs = this.fileConfig
                                     .listFiles(userId)
@@ -227,7 +228,7 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                                 this.deleteThumb(userId);
                                 log.info("Ok 1 Deletes thumb");
                             } else if ((fileStatus != null) && (imgRefs.size() > 0) && (fileThumbUrls.size() > 0)) {
-                               // log.info("Ok 2 fileStatus.getFileName().split "+fileStatus.getFileName().split("/").length);
+                                // log.info("Ok 2 fileStatus.getFileName().split "+fileStatus.getFileName().split("/").length);
                                 if (!fileStatus.getFileName().contains("/")) {
                                     userProfile.setThumbUrl(new ImageRef(fileThumbUrls.get(0), fileStatus.getFileName()));
                                 }
@@ -243,8 +244,11 @@ public class StorageServiceV1 extends StorageServiceBase implements StorageServi
                             userProfile.getImgUrls().clear();
                             userProfile.getImgUrls().addAll(imgRefs);
                             this.userProfileRepository.save(userProfile).subscribe();
+                        }
 
-                     }).subscribe();
+                     }).doOnError(throwable -> {
+                         log.error(throwable.getMessage());
+        }).subscribe();
 
         return fileStatus;
     }

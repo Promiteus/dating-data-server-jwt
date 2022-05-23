@@ -9,6 +9,7 @@ import com.romanm.jwtservicedata.models.responses.profile.ResponseUserProfile;
 import com.romanm.jwtservicedata.services.interfaces.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -60,6 +61,7 @@ public class UserProfileRoutesHandler {
      * @param serverRequest ServerRequest
      * @return Mono<ServerResponse>
      */
+    @Profile(value = {"dev, prod"})
     public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
         String confirmedUserId = serverRequest.headers().firstHeader(Api.X_CONFIRMED_UID);
@@ -82,6 +84,29 @@ public class UserProfileRoutesHandler {
                              .build();
                  }
              }
+        });
+    }
+
+    /**
+     * Создать/изменить профиль пользователя
+     * @param serverRequest ServerRequest
+     * @return Mono<ServerResponse>
+     */
+    @Profile(value = {"test"})
+    public Mono<ServerResponse> testSaveUserProfile(ServerRequest serverRequest) {
+        Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
+
+        return body.flatMap(userProfile -> {
+            if (userProfile == null) {
+                return ServerResponse
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build();
+            } else {
+                return ServerResponse
+                        .accepted()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(fromProducer(this.save(userProfile), UserProfile.class));
+            }
         });
     }
 

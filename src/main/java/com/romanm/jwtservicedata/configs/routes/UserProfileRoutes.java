@@ -6,6 +6,7 @@ import com.romanm.jwtservicedata.constants.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.*;
 
@@ -17,9 +18,18 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class UserProfileRoutes {
 
     @Bean
+    @Profile(value = {"dev, prod"})
     public RouterFunction<ServerResponse> profileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(GET(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfile)
                 .filter(new UserProfileTokenOwnerFilter());
+    }
+
+
+    @Bean
+    @Profile(value = {"test"})
+    public RouterFunction<ServerResponse> testProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
+        return route(GET(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::getUserProfile);
     }
 
     @Bean
@@ -35,10 +45,18 @@ public class UserProfileRoutes {
     }
 
     @Bean
+    @Profile(value = {"dev, prod"})
     public RouterFunction<ServerResponse> deleteProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)),
                 userProfileRoutesHandler::removeUserProfile)
                .filter(new UserProfileTokenOwnerFilter());
+    }
+
+    @Bean
+    @Profile(value = {"test"})
+    public RouterFunction<ServerResponse> testDeleteProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
+        return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::removeUserProfile);
     }
 
     @Bean
