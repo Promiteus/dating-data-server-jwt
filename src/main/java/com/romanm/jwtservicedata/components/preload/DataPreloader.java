@@ -71,7 +71,7 @@ public class DataPreloader {
             kids = ((i % 2) == 0) ? 1: 0; //Высавлять флага ребенка на каждом втором пользователе
             sex = ((i % 2) == 0) ? CommonConstants.Sex.MAN: CommonConstants.Sex.WOMAN; //Высавлять по мужчины на каждом втором пользователе
 
-            UserProfile roman = UserProfileBuilder.create("2000"+i)
+            UserProfile profile = UserProfileBuilder.create("2000"+i)
                     .setFirstName("Имя "+i)
                     .setLastName("Фамилия "+i)
                     .setBirthDate(c.getTime())
@@ -84,7 +84,7 @@ public class DataPreloader {
                     .setSex(sex)
                     .setSexOrientation(CommonConstants.SexOrientation.HETERO)
                     .setRank(2000).build();
-            userProfiles.add(roman);
+            userProfiles.add(profile);
         }
 
         return this.saveUserProfiles(userProfiles);
@@ -173,10 +173,10 @@ public class DataPreloader {
             this.fillUserProfileCollectionByStartData().collectList().block();
             //Заполнить коллекцию чат-переписки начальными данными
             this.fillCollectionByUserPairsStartData(new ChatMessageSaver(this.chatMessageRepository)).collectList().block();
-            //Заполнить коллекцию посетителей начальными данными
-            this.fillCollectionByUserPairsStartData(new VisitorSaver(this.visitorRepository)).collectList().block();
             //Заполнить коллекцию тестовыми обезличенными профилями
             this.fillUserProfileCollectionByStartDataDef().collectList().block();
+            //Заполнить коллекцию посетителей начальными данными
+            this.fillCollectionByUserPairsStartData(new VisitorSaver(this.visitorRepository)).collectList().block();
         } else {
             log.info(MessageConstants.prefixMsg(MessageConstants.MSG_USER_PROFILE_COLLECTION_FILLED));
         }
