@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -61,9 +62,17 @@ public class UserProfileServiceV1 implements UserProfileService {
         })).switchIfEmpty(Mono.just(new ResponseUserProfile()));
     }
 
+    /**
+     * Получить список профилей пользователя в том же порядке, как и во входящем списке
+     * @param userIds List<String>
+     * @return Mono<List<UserProfile>>
+     */
     @Override
     public  Mono<List<UserProfile>> getUserProfiles(List<String> userIds) {
-        return this.userProfileRepository.findUserProfilesByIdIn(userIds).collectList();
+        return this.userProfileRepository.findUserProfilesByIdIn(userIds).collectList().map(userProfiles -> {
+            userProfiles.sort(Comparator.comparing(userProfile -> userIds.indexOf(userProfile.getId())));
+            return userProfiles;
+        });
     }
 
 
