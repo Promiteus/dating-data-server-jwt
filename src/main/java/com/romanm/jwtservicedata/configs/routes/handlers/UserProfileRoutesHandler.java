@@ -61,7 +61,6 @@ public class UserProfileRoutesHandler {
      * @param serverRequest ServerRequest
      * @return Mono<ServerResponse>
      */
-    @Profile(value = {"dev, prod"})
     public Mono<ServerResponse> saveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
         String confirmedUserId = serverRequest.headers().firstHeader(Api.X_CONFIRMED_UID);
@@ -92,8 +91,7 @@ public class UserProfileRoutesHandler {
      * @param serverRequest ServerRequest
      * @return Mono<ServerResponse>
      */
-    @Profile(value = {"test"})
-    public Mono<ServerResponse> testSaveUserProfile(ServerRequest serverRequest) {
+    public Mono<ServerResponse> noCheckSaveUserProfile(ServerRequest serverRequest) {
         Mono<UserProfile> body = serverRequest.bodyToMono(UserProfile.class);
 
         return body.flatMap(userProfile -> {

@@ -39,9 +39,17 @@ public class UserProfileRoutes {
     }
 
     @Bean
+    @Profile(value = {"dev, prod"})
     public RouterFunction<ServerResponse> updateProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)),
                 userProfileRoutesHandler::saveUserProfile);
+    }
+
+    @Bean
+    @Profile(value = {"test"})
+    public RouterFunction<ServerResponse> testUpdateProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
+        return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)),
+                userProfileRoutesHandler::noCheckSaveUserProfile);
     }
 
     @Bean
