@@ -57,4 +57,6 @@ public class UserProfile implements Serializable {
     private String region = ""; //Регион
     @Indexed(useGeneratedName = true)
     private String locality = ""; //Нас. пункт
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date created = new Date(); //Дата создания профиля
 }

@@ -160,7 +160,7 @@ public class UserProfileServiceV1 implements UserProfileService {
                .collectList()
                .flatMap(s -> {
                    List<String> visitorsIds = s.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
-                   return this.userProfileRepository.findUserProfilesByIdIn(visitorsIds).collectList();
+                   return this.userProfileRepository.findUserProfilesByIdInOrderByCreatedDesc(visitorsIds).collectList();
                });
     }
 
