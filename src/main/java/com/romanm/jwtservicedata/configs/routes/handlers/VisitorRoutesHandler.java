@@ -43,8 +43,8 @@ public class VisitorRoutesHandler {
         Flux<Visitor> visitorFlux = this.visitorService.findPagebleVisitorsByUserId(userId, Integer.parseInt(page), Integer.parseInt(pageSize));
 
         return visitorFlux.collectList().flatMap(visitors -> {
-            if (!visitors.isEmpty() && (visitors.size() > 0)) {
-                List<String> userIds = visitors.stream().map(item -> item.getVisitorUserId()).collect(Collectors.toList());
+            if (!visitors.isEmpty()) {
+                List<String> userIds = visitors.stream().map(Visitor::getVisitorUserId).collect(Collectors.toList());
                 return ServerResponse.ok().body(this.userProfileService.getUserProfiles(userIds), Visitor.class);
             } else {
                 return ServerResponse.notFound().build();
