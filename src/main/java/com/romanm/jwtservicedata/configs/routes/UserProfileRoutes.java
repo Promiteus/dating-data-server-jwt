@@ -18,7 +18,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class UserProfileRoutes {
 
     @Bean
-    @Profile(value = {"dev, prod"})
+    @Profile(value = {"dev", "prod"})
     public RouterFunction<ServerResponse> profileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(GET(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)), userProfileRoutesHandler::getUserProfile)
                 .filter(new UserProfileTokenOwnerFilter());
@@ -39,7 +39,7 @@ public class UserProfileRoutes {
     }
 
     @Bean
-    @Profile(value = {"dev, prod"})
+    @Profile(value = {"dev", "prod"})
     public RouterFunction<ServerResponse> updateProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(POST(Api.API_PREFIX+Api.API_USER_PROFILE).and(accept(MediaType.APPLICATION_JSON)),
                 userProfileRoutesHandler::saveUserProfile);
@@ -53,7 +53,7 @@ public class UserProfileRoutes {
     }
 
     @Bean
-    @Profile(value = {"dev, prod"})
+    @Profile(value = {"dev", "prod"})
     public RouterFunction<ServerResponse> deleteProfileRoute(UserProfileRoutesHandler userProfileRoutesHandler) {
         return route(DELETE(Api.API_PREFIX+Api.API_USER_PROFILE_USER_ID).and(accept(MediaType.APPLICATION_JSON)),
                 userProfileRoutesHandler::removeUserProfile)
