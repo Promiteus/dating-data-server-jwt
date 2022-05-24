@@ -164,10 +164,17 @@ public class UserProfileRoutesHandler {
 
         Mono<List<UserProfile>> userProfileFlux = body.flatMap(searchBody -> this.userProfileService.findAllUserProfilesByPage(30, Integer.parseInt(finalPage), finalNotUserId, searchBody).collectList());
 
-        return userProfileFlux.flatMap(userProfiles -> ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(fromObject(userProfiles)));
+        return userProfileFlux.flatMap(userProfiles -> {
+           if ((userProfiles == null) || (userProfiles.size() == 0)) {
+               return ServerResponse.notFound().build();
+           } else {
+               return ServerResponse
+                       .ok()
+                       .contentType(MediaType.APPLICATION_JSON)
+                       .body(fromObject(userProfiles));
+           }
+        });
+
     }
 
 
