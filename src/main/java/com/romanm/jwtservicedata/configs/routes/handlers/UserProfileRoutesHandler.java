@@ -185,8 +185,6 @@ public class UserProfileRoutesHandler {
      * @return Mono<UserProfile>
      */
     private Mono<UserProfile> save(UserProfile userProfile) {
-
-        log.warn("body is: "+userProfile.toString());
         return Mono.fromSupplier(() -> {
             this.userProfileService.saveOrUpdateUserProfile(userProfile).subscribe();
             return userProfile;

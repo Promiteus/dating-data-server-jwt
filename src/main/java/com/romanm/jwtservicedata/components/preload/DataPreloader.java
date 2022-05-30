@@ -64,7 +64,7 @@ public class DataPreloader {
         int yearStep = 2005;
         CommonConstants.Sex sex = CommonConstants.Sex.MAN;
         int kids = 0;
-        for (int i = 0; i < 60; i++) {
+        for (int i = 0; i < 260; i++) {
             yearStep -= ((i % 10) == 0) ? 1: 0; //Прибавлять возраст на каждом 10-м пользователя
             c.set(yearStep , Calendar.FEBRUARY, 2, 0, 0);
 
