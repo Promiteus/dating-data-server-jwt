@@ -204,7 +204,7 @@ public class DataPreloader {
 
                     }
                 }).subscribe();
-            }).delayElements(Duration.ofMillis(5));
+            }).delayElements(Duration.ofMillis(50));
         }
         return Flux.empty();
     }
