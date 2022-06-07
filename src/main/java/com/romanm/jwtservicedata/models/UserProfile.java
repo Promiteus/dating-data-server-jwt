@@ -11,9 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -23,9 +21,7 @@ import java.util.*;
 @Document(collection = CommonConstants.USER_PROFILE_COLLECTION)
 public class UserProfile implements Serializable {
     @Id
-    @NotNull
     private String id; //код пользователя по регистрации
-    @NotBlank
     private String firstName; //Имя
     private String lastName; //Фамилия
     @JsonFormat(pattern="yyyy-MM-dd")
@@ -34,7 +30,6 @@ public class UserProfile implements Serializable {
     private int age = 18;
     private int height; //Рост
     private int weight; //Масса тела
-    @Size(max = 1000)
     private String aboutMe; //О себе
     private String hobby; //Увлечения
     @Indexed(useGeneratedName = true)

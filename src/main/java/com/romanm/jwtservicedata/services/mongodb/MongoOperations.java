@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -48,6 +49,17 @@ public class MongoOperations {
         query.addCriteria(Criteria.where("id").ne(notUserId));
         query.with(PageRequest.of(page, pageSize));
         return reactiveMongoTemplate.find(query, UserProfile.class);
+    }
+
+    /**
+     *
+     * @param userId String
+     * @return Mono<UserProfile>
+     */
+    public Mono<UserProfile> findUserProfile(String userId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(userId));
+        return reactiveMongoTemplate.findOne(query, UserProfile.class);
     }
 
     /**
