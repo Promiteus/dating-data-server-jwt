@@ -40,13 +40,16 @@ public class ChatItem implements Serializable {
     private Date timestamp;
     private long group = 0;
     private boolean isEmailed = false;
-    private boolean isRead = true;
+    private boolean isRead = false;
 
     public ChatItem(String userId, String fromUserId, String message) {
         this.message = message;
         this.userId = userId;
         this.fromUserId = fromUserId;
         this.timestamp = new Date();
+        this.isEmailed = false;
+        this.isRead = false;
+        this.group = 0;
     }
 
     public ChatItem(String userId, String fromUserId, String message, long group) {
@@ -55,6 +58,8 @@ public class ChatItem implements Serializable {
         this.fromUserId = fromUserId;
         this.group = group;
         this.timestamp = new Date();
+        this.isEmailed = false;
+        this.isRead = false;
     }
 
     public ChatItem(String userId, String fromUserId, String message, Date currentDate) {
@@ -62,6 +67,9 @@ public class ChatItem implements Serializable {
         this.userId = userId;
         this.fromUserId = fromUserId;
         this.timestamp = currentDate;
+        this.isEmailed = false;
+        this.isRead = false;
+        this.group = 0;
     }
 
     public ChatItem(String userId, String fromUserId, String message, Date currentDate, long group) {
@@ -70,5 +78,7 @@ public class ChatItem implements Serializable {
         this.fromUserId = fromUserId;
         this.timestamp = currentDate;
         this.group = group;
+        this.isEmailed = false;
+        this.isRead = false;
     }
 }
