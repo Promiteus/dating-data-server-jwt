@@ -24,6 +24,8 @@ public class AuthUser implements Serializable {
     private Date regDate;
     private String email;
     private boolean verifiedEmail;
+    private Short code;
+    private String rememberToken;
 
     public AuthUser(String username, String password, List<GrantedAuthority> grantedAuthorities, boolean disabled) {
         this.username = username;
